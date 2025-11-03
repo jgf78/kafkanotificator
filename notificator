@@ -338,3 +338,869 @@
 2025-11-03T12:34:47.692+01:00  INFO 33848 --- [notificator] [RMI TCP Connection(10)-127.0.0.1] o.apache.kafka.common.metrics.Metrics    : Closing reporter org.apache.kafka.common.telemetry.internals.ClientTelemetryReporter
 2025-11-03T12:34:47.692+01:00  INFO 33848 --- [notificator] [RMI TCP Connection(10)-127.0.0.1] o.apache.kafka.common.metrics.Metrics    : Metrics reporters closed
 2025-11-03T12:34:47.693+01:00  INFO 33848 --- [notificator] [RMI TCP Connection(10)-127.0.0.1] o.a.kafka.common.utils.AppInfoParser     : App info kafka.producer for notificator-producer-1 unregistered
+2025-11-03T12:34:52.432+01:00  INFO 30460 --- [notificator] [main] c.j.notificator.NotificatorApplication   : Starting NotificatorApplication using Java 17.0.7 with PID 30460 (C:\Workspaces\notificator\target\classes started by jgomezfe in C:\Workspaces\notificator)
+2025-11-03T12:34:52.438+01:00  INFO 30460 --- [notificator] [main] c.j.notificator.NotificatorApplication   : No active profile set, falling back to 1 default profile: "default"
+2025-11-03T12:34:54.295+01:00  INFO 30460 --- [notificator] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8081 (http)
+2025-11-03T12:34:54.327+01:00  INFO 30460 --- [notificator] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-11-03T12:34:54.328+01:00  INFO 30460 --- [notificator] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.48]
+2025-11-03T12:34:54.536+01:00  INFO 30460 --- [notificator] [main] o.a.c.c.C.[Tomcat].[localhost].[/api]    : Initializing Spring embedded WebApplicationContext
+2025-11-03T12:34:54.537+01:00  INFO 30460 --- [notificator] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2017 ms
+2025-11-03T12:34:54.883+01:00  INFO 30460 --- [notificator] [main] o.s.v.b.OptionalValidatorFactoryBean     : Failed to set up a Bean Validation provider: jakarta.validation.NoProviderFoundException: Unable to create a Configuration, because no Jakarta Bean Validation provider could be found. Add a provider like Hibernate Validator (RI) to your classpath.
+2025-11-03T12:34:55.318+01:00  INFO 30460 --- [notificator] [main] o.a.k.clients.admin.AdminClientConfig    : AdminClientConfig values: 
+	auto.include.jmx.reporter = true
+	bootstrap.controllers = []
+	bootstrap.servers = [192.168.1.3:9092]
+	client.dns.lookup = use_all_dns_ips
+	client.id = notificator-admin-0
+	connections.max.idle.ms = 300000
+	default.api.timeout.ms = 60000
+	enable.metrics.push = true
+	metadata.max.age.ms = 300000
+	metadata.recovery.strategy = none
+	metric.reporters = []
+	metrics.num.samples = 2
+	metrics.recording.level = INFO
+	metrics.sample.window.ms = 30000
+	receive.buffer.bytes = 65536
+	reconnect.backoff.max.ms = 1000
+	reconnect.backoff.ms = 50
+	request.timeout.ms = 30000
+	retries = 2147483647
+	retry.backoff.max.ms = 1000
+	retry.backoff.ms = 100
+	sasl.client.callback.handler.class = null
+	sasl.jaas.config = null
+	sasl.kerberos.kinit.cmd = /usr/bin/kinit
+	sasl.kerberos.min.time.before.relogin = 60000
+	sasl.kerberos.service.name = null
+	sasl.kerberos.ticket.renew.jitter = 0.05
+	sasl.kerberos.ticket.renew.window.factor = 0.8
+	sasl.login.callback.handler.class = null
+	sasl.login.class = null
+	sasl.login.connect.timeout.ms = null
+	sasl.login.read.timeout.ms = null
+	sasl.login.refresh.buffer.seconds = 300
+	sasl.login.refresh.min.period.seconds = 60
+	sasl.login.refresh.window.factor = 0.8
+	sasl.login.refresh.window.jitter = 0.05
+	sasl.login.retry.backoff.max.ms = 10000
+	sasl.login.retry.backoff.ms = 100
+	sasl.mechanism = GSSAPI
+	sasl.oauthbearer.clock.skew.seconds = 30
+	sasl.oauthbearer.expected.audience = null
+	sasl.oauthbearer.expected.issuer = null
+	sasl.oauthbearer.header.urlencode = false
+	sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
+	sasl.oauthbearer.jwks.endpoint.url = null
+	sasl.oauthbearer.scope.claim.name = scope
+	sasl.oauthbearer.sub.claim.name = sub
+	sasl.oauthbearer.token.endpoint.url = null
+	security.protocol = PLAINTEXT
+	security.providers = null
+	send.buffer.bytes = 131072
+	socket.connection.setup.timeout.max.ms = 30000
+	socket.connection.setup.timeout.ms = 10000
+	ssl.cipher.suites = null
+	ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+	ssl.endpoint.identification.algorithm = https
+	ssl.engine.factory.class = null
+	ssl.key.password = null
+	ssl.keymanager.algorithm = SunX509
+	ssl.keystore.certificate.chain = null
+	ssl.keystore.key = null
+	ssl.keystore.location = null
+	ssl.keystore.password = null
+	ssl.keystore.type = JKS
+	ssl.protocol = TLSv1.3
+	ssl.provider = null
+	ssl.secure.random.implementation = null
+	ssl.trustmanager.algorithm = PKIX
+	ssl.truststore.certificates = null
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+
+2025-11-03T12:34:55.498+01:00  INFO 30460 --- [notificator] [main] o.a.kafka.common.utils.AppInfoParser     : Kafka version: 3.9.1
+2025-11-03T12:34:55.500+01:00  INFO 30460 --- [notificator] [main] o.a.kafka.common.utils.AppInfoParser     : Kafka commitId: f745dfdcee2b9851
+2025-11-03T12:34:55.501+01:00  INFO 30460 --- [notificator] [main] o.a.kafka.common.utils.AppInfoParser     : Kafka startTimeMs: 1762169695496
+2025-11-03T12:34:56.227+01:00  INFO 30460 --- [notificator] [kafka-admin-client-thread | notificator-admin-0] o.a.kafka.common.utils.AppInfoParser     : App info kafka.admin.client for notificator-admin-0 unregistered
+2025-11-03T12:34:56.232+01:00  INFO 30460 --- [notificator] [kafka-admin-client-thread | notificator-admin-0] o.apache.kafka.common.metrics.Metrics    : Metrics scheduler closed
+2025-11-03T12:34:56.233+01:00  INFO 30460 --- [notificator] [kafka-admin-client-thread | notificator-admin-0] o.apache.kafka.common.metrics.Metrics    : Closing reporter org.apache.kafka.common.metrics.JmxReporter
+2025-11-03T12:34:56.234+01:00  INFO 30460 --- [notificator] [kafka-admin-client-thread | notificator-admin-0] o.apache.kafka.common.metrics.Metrics    : Metrics reporters closed
+2025-11-03T12:34:56.291+01:00  INFO 30460 --- [notificator] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8081 (http) with context path '/api'
+2025-11-03T12:34:56.323+01:00  INFO 30460 --- [notificator] [main] o.a.k.clients.consumer.ConsumerConfig    : ConsumerConfig values: 
+	allow.auto.create.topics = true
+	auto.commit.interval.ms = 5000
+	auto.include.jmx.reporter = true
+	auto.offset.reset = earliest
+	bootstrap.servers = [192.168.1.3:9092]
+	check.crcs = true
+	client.dns.lookup = use_all_dns_ips
+	client.id = consumer-discord-group-1
+	client.rack = 
+	connections.max.idle.ms = 540000
+	default.api.timeout.ms = 60000
+	enable.auto.commit = false
+	enable.metrics.push = true
+	exclude.internal.topics = true
+	fetch.max.bytes = 52428800
+	fetch.max.wait.ms = 500
+	fetch.min.bytes = 1
+	group.id = discord-group
+	group.instance.id = null
+	group.protocol = classic
+	group.remote.assignor = null
+	heartbeat.interval.ms = 3000
+	interceptor.classes = []
+	internal.leave.group.on.close = true
+	internal.throw.on.fetch.stable.offset.unsupported = false
+	isolation.level = read_uncommitted
+	key.deserializer = class org.apache.kafka.common.serialization.StringDeserializer
+	max.partition.fetch.bytes = 1048576
+	max.poll.interval.ms = 300000
+	max.poll.records = 500
+	metadata.max.age.ms = 300000
+	metadata.recovery.strategy = none
+	metric.reporters = []
+	metrics.num.samples = 2
+	metrics.recording.level = INFO
+	metrics.sample.window.ms = 30000
+	partition.assignment.strategy = [class org.apache.kafka.clients.consumer.RangeAssignor, class org.apache.kafka.clients.consumer.CooperativeStickyAssignor]
+	receive.buffer.bytes = 65536
+	reconnect.backoff.max.ms = 1000
+	reconnect.backoff.ms = 50
+	request.timeout.ms = 30000
+	retry.backoff.max.ms = 1000
+	retry.backoff.ms = 100
+	sasl.client.callback.handler.class = null
+	sasl.jaas.config = null
+	sasl.kerberos.kinit.cmd = /usr/bin/kinit
+	sasl.kerberos.min.time.before.relogin = 60000
+	sasl.kerberos.service.name = null
+	sasl.kerberos.ticket.renew.jitter = 0.05
+	sasl.kerberos.ticket.renew.window.factor = 0.8
+	sasl.login.callback.handler.class = null
+	sasl.login.class = null
+	sasl.login.connect.timeout.ms = null
+	sasl.login.read.timeout.ms = null
+	sasl.login.refresh.buffer.seconds = 300
+	sasl.login.refresh.min.period.seconds = 60
+	sasl.login.refresh.window.factor = 0.8
+	sasl.login.refresh.window.jitter = 0.05
+	sasl.login.retry.backoff.max.ms = 10000
+	sasl.login.retry.backoff.ms = 100
+	sasl.mechanism = GSSAPI
+	sasl.oauthbearer.clock.skew.seconds = 30
+	sasl.oauthbearer.expected.audience = null
+	sasl.oauthbearer.expected.issuer = null
+	sasl.oauthbearer.header.urlencode = false
+	sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
+	sasl.oauthbearer.jwks.endpoint.url = null
+	sasl.oauthbearer.scope.claim.name = scope
+	sasl.oauthbearer.sub.claim.name = sub
+	sasl.oauthbearer.token.endpoint.url = null
+	security.protocol = PLAINTEXT
+	security.providers = null
+	send.buffer.bytes = 131072
+	session.timeout.ms = 45000
+	socket.connection.setup.timeout.max.ms = 30000
+	socket.connection.setup.timeout.ms = 10000
+	ssl.cipher.suites = null
+	ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+	ssl.endpoint.identification.algorithm = https
+	ssl.engine.factory.class = null
+	ssl.key.password = null
+	ssl.keymanager.algorithm = SunX509
+	ssl.keystore.certificate.chain = null
+	ssl.keystore.key = null
+	ssl.keystore.location = null
+	ssl.keystore.password = null
+	ssl.keystore.type = JKS
+	ssl.protocol = TLSv1.3
+	ssl.provider = null
+	ssl.secure.random.implementation = null
+	ssl.trustmanager.algorithm = PKIX
+	ssl.truststore.certificates = null
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+	value.deserializer = class org.apache.kafka.common.serialization.StringDeserializer
+
+2025-11-03T12:34:56.378+01:00  INFO 30460 --- [notificator] [main] o.a.k.c.t.i.KafkaMetricsCollector        : initializing Kafka metrics collector
+2025-11-03T12:34:56.478+01:00  INFO 30460 --- [notificator] [main] o.a.kafka.common.utils.AppInfoParser     : Kafka version: 3.9.1
+2025-11-03T12:34:56.479+01:00  INFO 30460 --- [notificator] [main] o.a.kafka.common.utils.AppInfoParser     : Kafka commitId: f745dfdcee2b9851
+2025-11-03T12:34:56.479+01:00  INFO 30460 --- [notificator] [main] o.a.kafka.common.utils.AppInfoParser     : Kafka startTimeMs: 1762169696478
+2025-11-03T12:34:56.481+01:00  INFO 30460 --- [notificator] [main] o.a.k.c.c.i.ClassicKafkaConsumer         : [Consumer clientId=consumer-discord-group-1, groupId=discord-group] Subscribed to topic(s): discord-messages
+2025-11-03T12:34:56.506+01:00  INFO 30460 --- [notificator] [main] c.j.notificator.NotificatorApplication   : Started NotificatorApplication in 5.025 seconds (process running for 6.648)
+2025-11-03T12:34:56.545+01:00  INFO 30460 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] org.apache.kafka.clients.Metadata        : [Consumer clientId=consumer-discord-group-1, groupId=discord-group] Cluster ID: nxiZ94QAQTiDmWKLV5BhyQ
+2025-11-03T12:34:56.546+01:00  INFO 30460 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-discord-group-1, groupId=discord-group] Discovered group coordinator 192.168.1.3:9092 (id: 2147483646 rack: null)
+2025-11-03T12:34:56.551+01:00  INFO 30460 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-discord-group-1, groupId=discord-group] (Re-)joining group
+2025-11-03T12:34:56.584+01:00  INFO 30460 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-discord-group-1, groupId=discord-group] Request joining group due to: need to re-join with the given member-id: consumer-discord-group-1-7fd6cfcd-c9d4-4bbb-ac02-42c5bc3d1774
+2025-11-03T12:34:56.584+01:00  INFO 30460 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-discord-group-1, groupId=discord-group] (Re-)joining group
+2025-11-03T12:34:59.610+01:00  INFO 30460 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-discord-group-1, groupId=discord-group] Successfully joined group with generation Generation{generationId=11, memberId='consumer-discord-group-1-7fd6cfcd-c9d4-4bbb-ac02-42c5bc3d1774', protocol='range'}
+2025-11-03T12:34:59.623+01:00  INFO 30460 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-discord-group-1, groupId=discord-group] Finished assignment for group at generation 11: {consumer-discord-group-1-7fd6cfcd-c9d4-4bbb-ac02-42c5bc3d1774=Assignment(partitions=[discord-messages-0])}
+2025-11-03T12:34:59.636+01:00  INFO 30460 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-discord-group-1, groupId=discord-group] Successfully synced group in generation Generation{generationId=11, memberId='consumer-discord-group-1-7fd6cfcd-c9d4-4bbb-ac02-42c5bc3d1774', protocol='range'}
+2025-11-03T12:34:59.638+01:00  INFO 30460 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-discord-group-1, groupId=discord-group] Notifying assignor about the new Assignment(partitions=[discord-messages-0])
+2025-11-03T12:34:59.643+01:00  INFO 30460 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] k.c.c.i.ConsumerRebalanceListenerInvoker : [Consumer clientId=consumer-discord-group-1, groupId=discord-group] Adding newly assigned partitions: discord-messages-0
+2025-11-03T12:34:59.661+01:00  INFO 30460 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] o.a.k.c.c.internals.ConsumerUtils        : Setting offset for partition discord-messages-0 to the committed offset FetchPosition{offset=6, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[192.168.1.3:9092 (id: 1 rack: null)], epoch=0}}
+2025-11-03T12:34:59.662+01:00  INFO 30460 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] o.s.k.l.KafkaMessageListenerContainer    : discord-group: partitions assigned: [discord-messages-0]
+2025-11-03T12:35:06.819+01:00  INFO 30460 --- [notificator] [http-nio-8081-exec-2] o.a.c.c.C.[Tomcat].[localhost].[/api]    : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-11-03T12:35:06.821+01:00  INFO 30460 --- [notificator] [http-nio-8081-exec-2] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-11-03T12:35:06.822+01:00  INFO 30460 --- [notificator] [http-nio-8081-exec-2] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2025-11-03T12:35:06.909+01:00  INFO 30460 --- [notificator] [http-nio-8081-exec-2] o.a.k.clients.producer.ProducerConfig    : ProducerConfig values: 
+	acks = -1
+	auto.include.jmx.reporter = true
+	batch.size = 16384
+	bootstrap.servers = [192.168.1.3:9092]
+	buffer.memory = 33554432
+	client.dns.lookup = use_all_dns_ips
+	client.id = notificator-producer-1
+	compression.gzip.level = -1
+	compression.lz4.level = 9
+	compression.type = none
+	compression.zstd.level = 3
+	connections.max.idle.ms = 540000
+	delivery.timeout.ms = 120000
+	enable.idempotence = true
+	enable.metrics.push = true
+	interceptor.classes = []
+	key.serializer = class org.apache.kafka.common.serialization.StringSerializer
+	linger.ms = 0
+	max.block.ms = 60000
+	max.in.flight.requests.per.connection = 5
+	max.request.size = 1048576
+	metadata.max.age.ms = 300000
+	metadata.max.idle.ms = 300000
+	metadata.recovery.strategy = none
+	metric.reporters = []
+	metrics.num.samples = 2
+	metrics.recording.level = INFO
+	metrics.sample.window.ms = 30000
+	partitioner.adaptive.partitioning.enable = true
+	partitioner.availability.timeout.ms = 0
+	partitioner.class = null
+	partitioner.ignore.keys = false
+	receive.buffer.bytes = 32768
+	reconnect.backoff.max.ms = 1000
+	reconnect.backoff.ms = 50
+	request.timeout.ms = 30000
+	retries = 2147483647
+	retry.backoff.max.ms = 1000
+	retry.backoff.ms = 100
+	sasl.client.callback.handler.class = null
+	sasl.jaas.config = null
+	sasl.kerberos.kinit.cmd = /usr/bin/kinit
+	sasl.kerberos.min.time.before.relogin = 60000
+	sasl.kerberos.service.name = null
+	sasl.kerberos.ticket.renew.jitter = 0.05
+	sasl.kerberos.ticket.renew.window.factor = 0.8
+	sasl.login.callback.handler.class = null
+	sasl.login.class = null
+	sasl.login.connect.timeout.ms = null
+	sasl.login.read.timeout.ms = null
+	sasl.login.refresh.buffer.seconds = 300
+	sasl.login.refresh.min.period.seconds = 60
+	sasl.login.refresh.window.factor = 0.8
+	sasl.login.refresh.window.jitter = 0.05
+	sasl.login.retry.backoff.max.ms = 10000
+	sasl.login.retry.backoff.ms = 100
+	sasl.mechanism = GSSAPI
+	sasl.oauthbearer.clock.skew.seconds = 30
+	sasl.oauthbearer.expected.audience = null
+	sasl.oauthbearer.expected.issuer = null
+	sasl.oauthbearer.header.urlencode = false
+	sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
+	sasl.oauthbearer.jwks.endpoint.url = null
+	sasl.oauthbearer.scope.claim.name = scope
+	sasl.oauthbearer.sub.claim.name = sub
+	sasl.oauthbearer.token.endpoint.url = null
+	security.protocol = PLAINTEXT
+	security.providers = null
+	send.buffer.bytes = 131072
+	socket.connection.setup.timeout.max.ms = 30000
+	socket.connection.setup.timeout.ms = 10000
+	ssl.cipher.suites = null
+	ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+	ssl.endpoint.identification.algorithm = https
+	ssl.engine.factory.class = null
+	ssl.key.password = null
+	ssl.keymanager.algorithm = SunX509
+	ssl.keystore.certificate.chain = null
+	ssl.keystore.key = null
+	ssl.keystore.location = null
+	ssl.keystore.password = null
+	ssl.keystore.type = JKS
+	ssl.protocol = TLSv1.3
+	ssl.provider = null
+	ssl.secure.random.implementation = null
+	ssl.trustmanager.algorithm = PKIX
+	ssl.truststore.certificates = null
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+	transaction.timeout.ms = 60000
+	transactional.id = null
+	value.serializer = class org.apache.kafka.common.serialization.StringSerializer
+
+2025-11-03T12:35:06.910+01:00  INFO 30460 --- [notificator] [http-nio-8081-exec-2] o.a.k.c.t.i.KafkaMetricsCollector        : initializing Kafka metrics collector
+2025-11-03T12:35:06.925+01:00  INFO 30460 --- [notificator] [http-nio-8081-exec-2] o.a.k.clients.producer.KafkaProducer     : [Producer clientId=notificator-producer-1] Instantiated an idempotent producer.
+2025-11-03T12:35:06.967+01:00  INFO 30460 --- [notificator] [http-nio-8081-exec-2] o.a.kafka.common.utils.AppInfoParser     : Kafka version: 3.9.1
+2025-11-03T12:35:06.967+01:00  INFO 30460 --- [notificator] [http-nio-8081-exec-2] o.a.kafka.common.utils.AppInfoParser     : Kafka commitId: f745dfdcee2b9851
+2025-11-03T12:35:06.967+01:00  INFO 30460 --- [notificator] [http-nio-8081-exec-2] o.a.kafka.common.utils.AppInfoParser     : Kafka startTimeMs: 1762169706967
+2025-11-03T12:35:06.998+01:00  INFO 30460 --- [notificator] [kafka-producer-network-thread | notificator-producer-1] org.apache.kafka.clients.Metadata        : [Producer clientId=notificator-producer-1] Cluster ID: nxiZ94QAQTiDmWKLV5BhyQ
+2025-11-03T12:35:07.003+01:00  INFO 30460 --- [notificator] [kafka-producer-network-thread | notificator-producer-1] o.a.k.c.p.internals.TransactionManager   : [Producer clientId=notificator-producer-1] ProducerId set to 3003 with epoch 0
+2025-11-03T12:49:13.826+01:00  INFO 30460 --- [notificator] [RMI TCP Connection(24)-127.0.0.1] inMXBeanRegistrar$SpringApplicationAdmin : Application shutdown requested.
+2025-11-03T12:49:13.830+01:00  INFO 30460 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] k.c.c.i.ConsumerRebalanceListenerInvoker : [Consumer clientId=consumer-discord-group-1, groupId=discord-group] Revoke previously assigned partitions discord-messages-0
+2025-11-03T12:49:13.832+01:00  INFO 30460 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] o.s.k.l.KafkaMessageListenerContainer    : discord-group: partitions revoked: [discord-messages-0]
+2025-11-03T12:49:13.832+01:00  INFO 30460 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-discord-group-1, groupId=discord-group] Member consumer-discord-group-1-7fd6cfcd-c9d4-4bbb-ac02-42c5bc3d1774 sending LeaveGroup request to coordinator 192.168.1.3:9092 (id: 2147483646 rack: null) due to the consumer unsubscribed from all topics
+2025-11-03T12:49:13.832+01:00  INFO 30460 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-discord-group-1, groupId=discord-group] Resetting generation and member id due to: consumer pro-actively leaving the group
+2025-11-03T12:49:13.832+01:00  INFO 30460 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-discord-group-1, groupId=discord-group] Request joining group due to: consumer pro-actively leaving the group
+2025-11-03T12:49:13.832+01:00  INFO 30460 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] o.a.k.c.c.i.ClassicKafkaConsumer         : [Consumer clientId=consumer-discord-group-1, groupId=discord-group] Unsubscribed all topics or patterns and assigned partitions
+2025-11-03T12:49:13.834+01:00  INFO 30460 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-discord-group-1, groupId=discord-group] Resetting generation and member id due to: consumer pro-actively leaving the group
+2025-11-03T12:49:13.834+01:00  INFO 30460 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-discord-group-1, groupId=discord-group] Request joining group due to: consumer pro-actively leaving the group
+2025-11-03T12:49:14.104+01:00  INFO 30460 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] o.apache.kafka.common.metrics.Metrics    : Metrics scheduler closed
+2025-11-03T12:49:14.105+01:00  INFO 30460 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] o.apache.kafka.common.metrics.Metrics    : Closing reporter org.apache.kafka.common.metrics.JmxReporter
+2025-11-03T12:49:14.105+01:00  INFO 30460 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] o.apache.kafka.common.metrics.Metrics    : Closing reporter org.apache.kafka.common.telemetry.internals.ClientTelemetryReporter
+2025-11-03T12:49:14.105+01:00  INFO 30460 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] o.apache.kafka.common.metrics.Metrics    : Metrics reporters closed
+2025-11-03T12:49:14.112+01:00  INFO 30460 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] o.a.kafka.common.utils.AppInfoParser     : App info kafka.consumer for consumer-discord-group-1 unregistered
+2025-11-03T12:49:14.113+01:00  INFO 30460 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] o.s.k.l.KafkaMessageListenerContainer    : discord-group: Consumer stopped
+2025-11-03T12:49:14.116+01:00  INFO 30460 --- [notificator] [RMI TCP Connection(24)-127.0.0.1] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-11-03T12:49:14.938+01:00  INFO 30460 --- [notificator] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-11-03T12:49:14.940+01:00  INFO 30460 --- [notificator] [RMI TCP Connection(24)-127.0.0.1] o.a.k.clients.producer.KafkaProducer     : [Producer clientId=notificator-producer-1] Closing the Kafka producer with timeoutMillis = 30000 ms.
+2025-11-03T12:49:14.943+01:00  INFO 30460 --- [notificator] [RMI TCP Connection(24)-127.0.0.1] o.apache.kafka.common.metrics.Metrics    : Metrics scheduler closed
+2025-11-03T12:49:14.943+01:00  INFO 30460 --- [notificator] [RMI TCP Connection(24)-127.0.0.1] o.apache.kafka.common.metrics.Metrics    : Closing reporter org.apache.kafka.common.metrics.JmxReporter
+2025-11-03T12:49:14.943+01:00  INFO 30460 --- [notificator] [RMI TCP Connection(24)-127.0.0.1] o.apache.kafka.common.metrics.Metrics    : Closing reporter org.apache.kafka.common.telemetry.internals.ClientTelemetryReporter
+2025-11-03T12:49:14.943+01:00  INFO 30460 --- [notificator] [RMI TCP Connection(24)-127.0.0.1] o.apache.kafka.common.metrics.Metrics    : Metrics reporters closed
+2025-11-03T12:49:14.944+01:00  INFO 30460 --- [notificator] [RMI TCP Connection(24)-127.0.0.1] o.a.kafka.common.utils.AppInfoParser     : App info kafka.producer for notificator-producer-1 unregistered
+2025-11-03T12:49:53.138+01:00  INFO 35416 --- [notificator] [main] c.j.n.NotificatorApplicationTests        : Starting NotificatorApplicationTests using Java 17.0.7 with PID 35416 (started by jgomezfe in C:\Workspaces\notificator)
+2025-11-03T12:49:53.140+01:00  INFO 35416 --- [notificator] [main] c.j.n.NotificatorApplicationTests        : No active profile set, falling back to 1 default profile: "default"
+2025-11-03T12:49:54.777+01:00  INFO 35416 --- [notificator] [main] o.s.v.b.OptionalValidatorFactoryBean     : Failed to set up a Bean Validation provider: jakarta.validation.NoProviderFoundException: Unable to create a Configuration, because no Jakarta Bean Validation provider could be found. Add a provider like Hibernate Validator (RI) to your classpath.
+2025-11-03T12:49:55.549+01:00  INFO 35416 --- [notificator] [main] o.a.k.clients.admin.AdminClientConfig    : AdminClientConfig values: 
+	auto.include.jmx.reporter = true
+	bootstrap.controllers = []
+	bootstrap.servers = [192.168.1.3:9092]
+	client.dns.lookup = use_all_dns_ips
+	client.id = notificator-admin-0
+	connections.max.idle.ms = 300000
+	default.api.timeout.ms = 60000
+	enable.metrics.push = true
+	metadata.max.age.ms = 300000
+	metadata.recovery.strategy = none
+	metric.reporters = []
+	metrics.num.samples = 2
+	metrics.recording.level = INFO
+	metrics.sample.window.ms = 30000
+	receive.buffer.bytes = 65536
+	reconnect.backoff.max.ms = 1000
+	reconnect.backoff.ms = 50
+	request.timeout.ms = 30000
+	retries = 2147483647
+	retry.backoff.max.ms = 1000
+	retry.backoff.ms = 100
+	sasl.client.callback.handler.class = null
+	sasl.jaas.config = null
+	sasl.kerberos.kinit.cmd = /usr/bin/kinit
+	sasl.kerberos.min.time.before.relogin = 60000
+	sasl.kerberos.service.name = null
+	sasl.kerberos.ticket.renew.jitter = 0.05
+	sasl.kerberos.ticket.renew.window.factor = 0.8
+	sasl.login.callback.handler.class = null
+	sasl.login.class = null
+	sasl.login.connect.timeout.ms = null
+	sasl.login.read.timeout.ms = null
+	sasl.login.refresh.buffer.seconds = 300
+	sasl.login.refresh.min.period.seconds = 60
+	sasl.login.refresh.window.factor = 0.8
+	sasl.login.refresh.window.jitter = 0.05
+	sasl.login.retry.backoff.max.ms = 10000
+	sasl.login.retry.backoff.ms = 100
+	sasl.mechanism = GSSAPI
+	sasl.oauthbearer.clock.skew.seconds = 30
+	sasl.oauthbearer.expected.audience = null
+	sasl.oauthbearer.expected.issuer = null
+	sasl.oauthbearer.header.urlencode = false
+	sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
+	sasl.oauthbearer.jwks.endpoint.url = null
+	sasl.oauthbearer.scope.claim.name = scope
+	sasl.oauthbearer.sub.claim.name = sub
+	sasl.oauthbearer.token.endpoint.url = null
+	security.protocol = PLAINTEXT
+	security.providers = null
+	send.buffer.bytes = 131072
+	socket.connection.setup.timeout.max.ms = 30000
+	socket.connection.setup.timeout.ms = 10000
+	ssl.cipher.suites = null
+	ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+	ssl.endpoint.identification.algorithm = https
+	ssl.engine.factory.class = null
+	ssl.key.password = null
+	ssl.keymanager.algorithm = SunX509
+	ssl.keystore.certificate.chain = null
+	ssl.keystore.key = null
+	ssl.keystore.location = null
+	ssl.keystore.password = null
+	ssl.keystore.type = JKS
+	ssl.protocol = TLSv1.3
+	ssl.provider = null
+	ssl.secure.random.implementation = null
+	ssl.trustmanager.algorithm = PKIX
+	ssl.truststore.certificates = null
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+
+2025-11-03T12:49:55.740+01:00  INFO 35416 --- [notificator] [main] o.a.kafka.common.utils.AppInfoParser     : Kafka version: 3.9.1
+2025-11-03T12:49:55.743+01:00  INFO 35416 --- [notificator] [main] o.a.kafka.common.utils.AppInfoParser     : Kafka commitId: f745dfdcee2b9851
+2025-11-03T12:49:55.743+01:00  INFO 35416 --- [notificator] [main] o.a.kafka.common.utils.AppInfoParser     : Kafka startTimeMs: 1762170595737
+2025-11-03T12:49:56.251+01:00  INFO 35416 --- [notificator] [kafka-admin-client-thread | notificator-admin-0] o.a.kafka.common.utils.AppInfoParser     : App info kafka.admin.client for notificator-admin-0 unregistered
+2025-11-03T12:49:56.258+01:00  INFO 35416 --- [notificator] [kafka-admin-client-thread | notificator-admin-0] o.apache.kafka.common.metrics.Metrics    : Metrics scheduler closed
+2025-11-03T12:49:56.258+01:00  INFO 35416 --- [notificator] [kafka-admin-client-thread | notificator-admin-0] o.apache.kafka.common.metrics.Metrics    : Closing reporter org.apache.kafka.common.metrics.JmxReporter
+2025-11-03T12:49:56.259+01:00  INFO 35416 --- [notificator] [kafka-admin-client-thread | notificator-admin-0] o.apache.kafka.common.metrics.Metrics    : Metrics reporters closed
+2025-11-03T12:49:56.291+01:00  INFO 35416 --- [notificator] [main] o.a.k.clients.consumer.ConsumerConfig    : ConsumerConfig values: 
+	allow.auto.create.topics = true
+	auto.commit.interval.ms = 5000
+	auto.include.jmx.reporter = true
+	auto.offset.reset = earliest
+	bootstrap.servers = [192.168.1.3:9092]
+	check.crcs = true
+	client.dns.lookup = use_all_dns_ips
+	client.id = consumer-discord-group-1
+	client.rack = 
+	connections.max.idle.ms = 540000
+	default.api.timeout.ms = 60000
+	enable.auto.commit = false
+	enable.metrics.push = true
+	exclude.internal.topics = true
+	fetch.max.bytes = 52428800
+	fetch.max.wait.ms = 500
+	fetch.min.bytes = 1
+	group.id = discord-group
+	group.instance.id = null
+	group.protocol = classic
+	group.remote.assignor = null
+	heartbeat.interval.ms = 3000
+	interceptor.classes = []
+	internal.leave.group.on.close = true
+	internal.throw.on.fetch.stable.offset.unsupported = false
+	isolation.level = read_uncommitted
+	key.deserializer = class org.apache.kafka.common.serialization.StringDeserializer
+	max.partition.fetch.bytes = 1048576
+	max.poll.interval.ms = 300000
+	max.poll.records = 500
+	metadata.max.age.ms = 300000
+	metadata.recovery.strategy = none
+	metric.reporters = []
+	metrics.num.samples = 2
+	metrics.recording.level = INFO
+	metrics.sample.window.ms = 30000
+	partition.assignment.strategy = [class org.apache.kafka.clients.consumer.RangeAssignor, class org.apache.kafka.clients.consumer.CooperativeStickyAssignor]
+	receive.buffer.bytes = 65536
+	reconnect.backoff.max.ms = 1000
+	reconnect.backoff.ms = 50
+	request.timeout.ms = 30000
+	retry.backoff.max.ms = 1000
+	retry.backoff.ms = 100
+	sasl.client.callback.handler.class = null
+	sasl.jaas.config = null
+	sasl.kerberos.kinit.cmd = /usr/bin/kinit
+	sasl.kerberos.min.time.before.relogin = 60000
+	sasl.kerberos.service.name = null
+	sasl.kerberos.ticket.renew.jitter = 0.05
+	sasl.kerberos.ticket.renew.window.factor = 0.8
+	sasl.login.callback.handler.class = null
+	sasl.login.class = null
+	sasl.login.connect.timeout.ms = null
+	sasl.login.read.timeout.ms = null
+	sasl.login.refresh.buffer.seconds = 300
+	sasl.login.refresh.min.period.seconds = 60
+	sasl.login.refresh.window.factor = 0.8
+	sasl.login.refresh.window.jitter = 0.05
+	sasl.login.retry.backoff.max.ms = 10000
+	sasl.login.retry.backoff.ms = 100
+	sasl.mechanism = GSSAPI
+	sasl.oauthbearer.clock.skew.seconds = 30
+	sasl.oauthbearer.expected.audience = null
+	sasl.oauthbearer.expected.issuer = null
+	sasl.oauthbearer.header.urlencode = false
+	sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
+	sasl.oauthbearer.jwks.endpoint.url = null
+	sasl.oauthbearer.scope.claim.name = scope
+	sasl.oauthbearer.sub.claim.name = sub
+	sasl.oauthbearer.token.endpoint.url = null
+	security.protocol = PLAINTEXT
+	security.providers = null
+	send.buffer.bytes = 131072
+	session.timeout.ms = 45000
+	socket.connection.setup.timeout.max.ms = 30000
+	socket.connection.setup.timeout.ms = 10000
+	ssl.cipher.suites = null
+	ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+	ssl.endpoint.identification.algorithm = https
+	ssl.engine.factory.class = null
+	ssl.key.password = null
+	ssl.keymanager.algorithm = SunX509
+	ssl.keystore.certificate.chain = null
+	ssl.keystore.key = null
+	ssl.keystore.location = null
+	ssl.keystore.password = null
+	ssl.keystore.type = JKS
+	ssl.protocol = TLSv1.3
+	ssl.provider = null
+	ssl.secure.random.implementation = null
+	ssl.trustmanager.algorithm = PKIX
+	ssl.truststore.certificates = null
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+	value.deserializer = class org.apache.kafka.common.serialization.StringDeserializer
+
+2025-11-03T12:49:56.350+01:00  INFO 35416 --- [notificator] [main] o.a.k.c.t.i.KafkaMetricsCollector        : initializing Kafka metrics collector
+2025-11-03T12:49:56.433+01:00  INFO 35416 --- [notificator] [main] o.a.kafka.common.utils.AppInfoParser     : Kafka version: 3.9.1
+2025-11-03T12:49:56.433+01:00  INFO 35416 --- [notificator] [main] o.a.kafka.common.utils.AppInfoParser     : Kafka commitId: f745dfdcee2b9851
+2025-11-03T12:49:56.433+01:00  INFO 35416 --- [notificator] [main] o.a.kafka.common.utils.AppInfoParser     : Kafka startTimeMs: 1762170596433
+2025-11-03T12:49:56.436+01:00  INFO 35416 --- [notificator] [main] o.a.k.c.c.i.ClassicKafkaConsumer         : [Consumer clientId=consumer-discord-group-1, groupId=discord-group] Subscribed to topic(s): discord-messages
+2025-11-03T12:49:56.458+01:00  INFO 35416 --- [notificator] [main] c.j.n.NotificatorApplicationTests        : Started NotificatorApplicationTests in 3.799 seconds (process running for 5.934)
+2025-11-03T12:49:56.508+01:00  INFO 35416 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] org.apache.kafka.clients.Metadata        : [Consumer clientId=consumer-discord-group-1, groupId=discord-group] Cluster ID: nxiZ94QAQTiDmWKLV5BhyQ
+2025-11-03T12:49:56.511+01:00  INFO 35416 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-discord-group-1, groupId=discord-group] Discovered group coordinator 192.168.1.3:9092 (id: 2147483646 rack: null)
+2025-11-03T12:49:56.517+01:00  INFO 35416 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-discord-group-1, groupId=discord-group] (Re-)joining group
+2025-11-03T12:49:56.569+01:00  INFO 35416 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-discord-group-1, groupId=discord-group] Request joining group due to: need to re-join with the given member-id: consumer-discord-group-1-8e862caa-ac41-49db-ac8b-79b98a730b3e
+2025-11-03T12:49:56.569+01:00  INFO 35416 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-discord-group-1, groupId=discord-group] (Re-)joining group
+2025-11-03T12:49:58.206+01:00  INFO 35416 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-discord-group-1, groupId=discord-group] Member consumer-discord-group-1-8e862caa-ac41-49db-ac8b-79b98a730b3e sending LeaveGroup request to coordinator 192.168.1.3:9092 (id: 2147483646 rack: null) due to the consumer unsubscribed from all topics
+2025-11-03T12:49:58.208+01:00  INFO 35416 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-discord-group-1, groupId=discord-group] Resetting generation and member id due to: consumer pro-actively leaving the group
+2025-11-03T12:49:58.208+01:00  INFO 35416 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-discord-group-1, groupId=discord-group] Request joining group due to: consumer pro-actively leaving the group
+2025-11-03T12:49:58.209+01:00  INFO 35416 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] o.a.k.c.c.i.ClassicKafkaConsumer         : [Consumer clientId=consumer-discord-group-1, groupId=discord-group] Unsubscribed all topics or patterns and assigned partitions
+2025-11-03T12:49:58.210+01:00  INFO 35416 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-discord-group-1, groupId=discord-group] Resetting generation and member id due to: consumer pro-actively leaving the group
+2025-11-03T12:49:58.211+01:00  INFO 35416 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-discord-group-1, groupId=discord-group] Request joining group due to: consumer pro-actively leaving the group
+2025-11-03T12:49:59.585+01:00  INFO 35416 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] o.apache.kafka.common.metrics.Metrics    : Metrics scheduler closed
+2025-11-03T12:49:59.585+01:00  INFO 35416 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] o.apache.kafka.common.metrics.Metrics    : Closing reporter org.apache.kafka.common.metrics.JmxReporter
+2025-11-03T12:49:59.585+01:00  INFO 35416 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] o.apache.kafka.common.metrics.Metrics    : Closing reporter org.apache.kafka.common.telemetry.internals.ClientTelemetryReporter
+2025-11-03T12:49:59.586+01:00  INFO 35416 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] o.apache.kafka.common.metrics.Metrics    : Metrics reporters closed
+2025-11-03T12:49:59.597+01:00  INFO 35416 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] o.a.kafka.common.utils.AppInfoParser     : App info kafka.consumer for consumer-discord-group-1 unregistered
+2025-11-03T12:49:59.598+01:00  INFO 35416 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] o.s.k.l.KafkaMessageListenerContainer    : discord-group: Consumer stopped
+2025-11-03T12:50:12.365+01:00  INFO 34628 --- [notificator] [main] c.j.notificator.NotificatorApplication   : Starting NotificatorApplication using Java 17.0.7 with PID 34628 (C:\Workspaces\notificator\target\classes started by jgomezfe in C:\Workspaces\notificator)
+2025-11-03T12:50:12.370+01:00  INFO 34628 --- [notificator] [main] c.j.notificator.NotificatorApplication   : No active profile set, falling back to 1 default profile: "default"
+2025-11-03T12:50:14.043+01:00  INFO 34628 --- [notificator] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8081 (http)
+2025-11-03T12:50:14.069+01:00  INFO 34628 --- [notificator] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-11-03T12:50:14.070+01:00  INFO 34628 --- [notificator] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.48]
+2025-11-03T12:50:14.217+01:00  INFO 34628 --- [notificator] [main] o.a.c.c.C.[Tomcat].[localhost].[/api]    : Initializing Spring embedded WebApplicationContext
+2025-11-03T12:50:14.218+01:00  INFO 34628 --- [notificator] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1764 ms
+2025-11-03T12:50:14.576+01:00  INFO 34628 --- [notificator] [main] o.s.v.b.OptionalValidatorFactoryBean     : Failed to set up a Bean Validation provider: jakarta.validation.NoProviderFoundException: Unable to create a Configuration, because no Jakarta Bean Validation provider could be found. Add a provider like Hibernate Validator (RI) to your classpath.
+2025-11-03T12:50:15.065+01:00  INFO 34628 --- [notificator] [main] o.a.k.clients.admin.AdminClientConfig    : AdminClientConfig values: 
+	auto.include.jmx.reporter = true
+	bootstrap.controllers = []
+	bootstrap.servers = [192.168.1.3:9092]
+	client.dns.lookup = use_all_dns_ips
+	client.id = notificator-admin-0
+	connections.max.idle.ms = 300000
+	default.api.timeout.ms = 60000
+	enable.metrics.push = true
+	metadata.max.age.ms = 300000
+	metadata.recovery.strategy = none
+	metric.reporters = []
+	metrics.num.samples = 2
+	metrics.recording.level = INFO
+	metrics.sample.window.ms = 30000
+	receive.buffer.bytes = 65536
+	reconnect.backoff.max.ms = 1000
+	reconnect.backoff.ms = 50
+	request.timeout.ms = 30000
+	retries = 2147483647
+	retry.backoff.max.ms = 1000
+	retry.backoff.ms = 100
+	sasl.client.callback.handler.class = null
+	sasl.jaas.config = null
+	sasl.kerberos.kinit.cmd = /usr/bin/kinit
+	sasl.kerberos.min.time.before.relogin = 60000
+	sasl.kerberos.service.name = null
+	sasl.kerberos.ticket.renew.jitter = 0.05
+	sasl.kerberos.ticket.renew.window.factor = 0.8
+	sasl.login.callback.handler.class = null
+	sasl.login.class = null
+	sasl.login.connect.timeout.ms = null
+	sasl.login.read.timeout.ms = null
+	sasl.login.refresh.buffer.seconds = 300
+	sasl.login.refresh.min.period.seconds = 60
+	sasl.login.refresh.window.factor = 0.8
+	sasl.login.refresh.window.jitter = 0.05
+	sasl.login.retry.backoff.max.ms = 10000
+	sasl.login.retry.backoff.ms = 100
+	sasl.mechanism = GSSAPI
+	sasl.oauthbearer.clock.skew.seconds = 30
+	sasl.oauthbearer.expected.audience = null
+	sasl.oauthbearer.expected.issuer = null
+	sasl.oauthbearer.header.urlencode = false
+	sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
+	sasl.oauthbearer.jwks.endpoint.url = null
+	sasl.oauthbearer.scope.claim.name = scope
+	sasl.oauthbearer.sub.claim.name = sub
+	sasl.oauthbearer.token.endpoint.url = null
+	security.protocol = PLAINTEXT
+	security.providers = null
+	send.buffer.bytes = 131072
+	socket.connection.setup.timeout.max.ms = 30000
+	socket.connection.setup.timeout.ms = 10000
+	ssl.cipher.suites = null
+	ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+	ssl.endpoint.identification.algorithm = https
+	ssl.engine.factory.class = null
+	ssl.key.password = null
+	ssl.keymanager.algorithm = SunX509
+	ssl.keystore.certificate.chain = null
+	ssl.keystore.key = null
+	ssl.keystore.location = null
+	ssl.keystore.password = null
+	ssl.keystore.type = JKS
+	ssl.protocol = TLSv1.3
+	ssl.provider = null
+	ssl.secure.random.implementation = null
+	ssl.trustmanager.algorithm = PKIX
+	ssl.truststore.certificates = null
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+
+2025-11-03T12:50:15.185+01:00  INFO 34628 --- [notificator] [main] o.a.kafka.common.utils.AppInfoParser     : Kafka version: 3.9.1
+2025-11-03T12:50:15.187+01:00  INFO 34628 --- [notificator] [main] o.a.kafka.common.utils.AppInfoParser     : Kafka commitId: f745dfdcee2b9851
+2025-11-03T12:50:15.187+01:00  INFO 34628 --- [notificator] [main] o.a.kafka.common.utils.AppInfoParser     : Kafka startTimeMs: 1762170615184
+2025-11-03T12:50:15.789+01:00  INFO 34628 --- [notificator] [kafka-admin-client-thread | notificator-admin-0] o.a.kafka.common.utils.AppInfoParser     : App info kafka.admin.client for notificator-admin-0 unregistered
+2025-11-03T12:50:15.799+01:00  INFO 34628 --- [notificator] [kafka-admin-client-thread | notificator-admin-0] o.apache.kafka.common.metrics.Metrics    : Metrics scheduler closed
+2025-11-03T12:50:15.800+01:00  INFO 34628 --- [notificator] [kafka-admin-client-thread | notificator-admin-0] o.apache.kafka.common.metrics.Metrics    : Closing reporter org.apache.kafka.common.metrics.JmxReporter
+2025-11-03T12:50:15.800+01:00  INFO 34628 --- [notificator] [kafka-admin-client-thread | notificator-admin-0] o.apache.kafka.common.metrics.Metrics    : Metrics reporters closed
+2025-11-03T12:50:15.868+01:00  INFO 34628 --- [notificator] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8081 (http) with context path '/api'
+2025-11-03T12:50:15.901+01:00  INFO 34628 --- [notificator] [main] o.a.k.clients.consumer.ConsumerConfig    : ConsumerConfig values: 
+	allow.auto.create.topics = true
+	auto.commit.interval.ms = 5000
+	auto.include.jmx.reporter = true
+	auto.offset.reset = earliest
+	bootstrap.servers = [192.168.1.3:9092]
+	check.crcs = true
+	client.dns.lookup = use_all_dns_ips
+	client.id = consumer-discord-group-1
+	client.rack = 
+	connections.max.idle.ms = 540000
+	default.api.timeout.ms = 60000
+	enable.auto.commit = false
+	enable.metrics.push = true
+	exclude.internal.topics = true
+	fetch.max.bytes = 52428800
+	fetch.max.wait.ms = 500
+	fetch.min.bytes = 1
+	group.id = discord-group
+	group.instance.id = null
+	group.protocol = classic
+	group.remote.assignor = null
+	heartbeat.interval.ms = 3000
+	interceptor.classes = []
+	internal.leave.group.on.close = true
+	internal.throw.on.fetch.stable.offset.unsupported = false
+	isolation.level = read_uncommitted
+	key.deserializer = class org.apache.kafka.common.serialization.StringDeserializer
+	max.partition.fetch.bytes = 1048576
+	max.poll.interval.ms = 300000
+	max.poll.records = 500
+	metadata.max.age.ms = 300000
+	metadata.recovery.strategy = none
+	metric.reporters = []
+	metrics.num.samples = 2
+	metrics.recording.level = INFO
+	metrics.sample.window.ms = 30000
+	partition.assignment.strategy = [class org.apache.kafka.clients.consumer.RangeAssignor, class org.apache.kafka.clients.consumer.CooperativeStickyAssignor]
+	receive.buffer.bytes = 65536
+	reconnect.backoff.max.ms = 1000
+	reconnect.backoff.ms = 50
+	request.timeout.ms = 30000
+	retry.backoff.max.ms = 1000
+	retry.backoff.ms = 100
+	sasl.client.callback.handler.class = null
+	sasl.jaas.config = null
+	sasl.kerberos.kinit.cmd = /usr/bin/kinit
+	sasl.kerberos.min.time.before.relogin = 60000
+	sasl.kerberos.service.name = null
+	sasl.kerberos.ticket.renew.jitter = 0.05
+	sasl.kerberos.ticket.renew.window.factor = 0.8
+	sasl.login.callback.handler.class = null
+	sasl.login.class = null
+	sasl.login.connect.timeout.ms = null
+	sasl.login.read.timeout.ms = null
+	sasl.login.refresh.buffer.seconds = 300
+	sasl.login.refresh.min.period.seconds = 60
+	sasl.login.refresh.window.factor = 0.8
+	sasl.login.refresh.window.jitter = 0.05
+	sasl.login.retry.backoff.max.ms = 10000
+	sasl.login.retry.backoff.ms = 100
+	sasl.mechanism = GSSAPI
+	sasl.oauthbearer.clock.skew.seconds = 30
+	sasl.oauthbearer.expected.audience = null
+	sasl.oauthbearer.expected.issuer = null
+	sasl.oauthbearer.header.urlencode = false
+	sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
+	sasl.oauthbearer.jwks.endpoint.url = null
+	sasl.oauthbearer.scope.claim.name = scope
+	sasl.oauthbearer.sub.claim.name = sub
+	sasl.oauthbearer.token.endpoint.url = null
+	security.protocol = PLAINTEXT
+	security.providers = null
+	send.buffer.bytes = 131072
+	session.timeout.ms = 45000
+	socket.connection.setup.timeout.max.ms = 30000
+	socket.connection.setup.timeout.ms = 10000
+	ssl.cipher.suites = null
+	ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+	ssl.endpoint.identification.algorithm = https
+	ssl.engine.factory.class = null
+	ssl.key.password = null
+	ssl.keymanager.algorithm = SunX509
+	ssl.keystore.certificate.chain = null
+	ssl.keystore.key = null
+	ssl.keystore.location = null
+	ssl.keystore.password = null
+	ssl.keystore.type = JKS
+	ssl.protocol = TLSv1.3
+	ssl.provider = null
+	ssl.secure.random.implementation = null
+	ssl.trustmanager.algorithm = PKIX
+	ssl.truststore.certificates = null
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+	value.deserializer = class org.apache.kafka.common.serialization.StringDeserializer
+
+2025-11-03T12:50:15.949+01:00  INFO 34628 --- [notificator] [main] o.a.k.c.t.i.KafkaMetricsCollector        : initializing Kafka metrics collector
+2025-11-03T12:50:16.052+01:00  INFO 34628 --- [notificator] [main] o.a.kafka.common.utils.AppInfoParser     : Kafka version: 3.9.1
+2025-11-03T12:50:16.052+01:00  INFO 34628 --- [notificator] [main] o.a.kafka.common.utils.AppInfoParser     : Kafka commitId: f745dfdcee2b9851
+2025-11-03T12:50:16.052+01:00  INFO 34628 --- [notificator] [main] o.a.kafka.common.utils.AppInfoParser     : Kafka startTimeMs: 1762170616052
+2025-11-03T12:50:16.055+01:00  INFO 34628 --- [notificator] [main] o.a.k.c.c.i.ClassicKafkaConsumer         : [Consumer clientId=consumer-discord-group-1, groupId=discord-group] Subscribed to topic(s): discord-messages
+2025-11-03T12:50:16.082+01:00  INFO 34628 --- [notificator] [main] c.j.notificator.NotificatorApplication   : Started NotificatorApplication in 4.839 seconds (process running for 6.584)
+2025-11-03T12:50:16.137+01:00  INFO 34628 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] org.apache.kafka.clients.Metadata        : [Consumer clientId=consumer-discord-group-1, groupId=discord-group] Cluster ID: nxiZ94QAQTiDmWKLV5BhyQ
+2025-11-03T12:50:16.138+01:00  INFO 34628 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-discord-group-1, groupId=discord-group] Discovered group coordinator 192.168.1.3:9092 (id: 2147483646 rack: null)
+2025-11-03T12:50:16.145+01:00  INFO 34628 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-discord-group-1, groupId=discord-group] (Re-)joining group
+2025-11-03T12:50:16.186+01:00  INFO 34628 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-discord-group-1, groupId=discord-group] Request joining group due to: need to re-join with the given member-id: consumer-discord-group-1-9639986f-1b85-4ec9-8909-ef1a15cfd613
+2025-11-03T12:50:16.187+01:00  INFO 34628 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-discord-group-1, groupId=discord-group] (Re-)joining group
+2025-11-03T12:50:19.198+01:00  INFO 34628 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-discord-group-1, groupId=discord-group] Successfully joined group with generation Generation{generationId=15, memberId='consumer-discord-group-1-9639986f-1b85-4ec9-8909-ef1a15cfd613', protocol='range'}
+2025-11-03T12:50:19.208+01:00  INFO 34628 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-discord-group-1, groupId=discord-group] Finished assignment for group at generation 15: {consumer-discord-group-1-9639986f-1b85-4ec9-8909-ef1a15cfd613=Assignment(partitions=[discord-messages-0])}
+2025-11-03T12:50:19.224+01:00  INFO 34628 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-discord-group-1, groupId=discord-group] Successfully synced group in generation Generation{generationId=15, memberId='consumer-discord-group-1-9639986f-1b85-4ec9-8909-ef1a15cfd613', protocol='range'}
+2025-11-03T12:50:19.225+01:00  INFO 34628 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-discord-group-1, groupId=discord-group] Notifying assignor about the new Assignment(partitions=[discord-messages-0])
+2025-11-03T12:50:19.230+01:00  INFO 34628 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] k.c.c.i.ConsumerRebalanceListenerInvoker : [Consumer clientId=consumer-discord-group-1, groupId=discord-group] Adding newly assigned partitions: discord-messages-0
+2025-11-03T12:50:19.264+01:00  INFO 34628 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] o.a.k.c.c.internals.ConsumerUtils        : Setting offset for partition discord-messages-0 to the committed offset FetchPosition{offset=7, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[192.168.1.3:9092 (id: 1 rack: null)], epoch=0}}
+2025-11-03T12:50:19.270+01:00  INFO 34628 --- [notificator] [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] o.s.k.l.KafkaMessageListenerContainer    : discord-group: partitions assigned: [discord-messages-0]
+2025-11-03T12:50:26.851+01:00  INFO 34628 --- [notificator] [http-nio-8081-exec-2] o.a.c.c.C.[Tomcat].[localhost].[/api]    : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-11-03T12:50:26.852+01:00  INFO 34628 --- [notificator] [http-nio-8081-exec-2] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-11-03T12:50:26.854+01:00  INFO 34628 --- [notificator] [http-nio-8081-exec-2] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
+2025-11-03T12:50:26.932+01:00  INFO 34628 --- [notificator] [http-nio-8081-exec-2] o.a.k.clients.producer.ProducerConfig    : ProducerConfig values: 
+	acks = -1
+	auto.include.jmx.reporter = true
+	batch.size = 16384
+	bootstrap.servers = [192.168.1.3:9092]
+	buffer.memory = 33554432
+	client.dns.lookup = use_all_dns_ips
+	client.id = notificator-producer-1
+	compression.gzip.level = -1
+	compression.lz4.level = 9
+	compression.type = none
+	compression.zstd.level = 3
+	connections.max.idle.ms = 540000
+	delivery.timeout.ms = 120000
+	enable.idempotence = true
+	enable.metrics.push = true
+	interceptor.classes = []
+	key.serializer = class org.apache.kafka.common.serialization.StringSerializer
+	linger.ms = 0
+	max.block.ms = 60000
+	max.in.flight.requests.per.connection = 5
+	max.request.size = 1048576
+	metadata.max.age.ms = 300000
+	metadata.max.idle.ms = 300000
+	metadata.recovery.strategy = none
+	metric.reporters = []
+	metrics.num.samples = 2
+	metrics.recording.level = INFO
+	metrics.sample.window.ms = 30000
+	partitioner.adaptive.partitioning.enable = true
+	partitioner.availability.timeout.ms = 0
+	partitioner.class = null
+	partitioner.ignore.keys = false
+	receive.buffer.bytes = 32768
+	reconnect.backoff.max.ms = 1000
+	reconnect.backoff.ms = 50
+	request.timeout.ms = 30000
+	retries = 2147483647
+	retry.backoff.max.ms = 1000
+	retry.backoff.ms = 100
+	sasl.client.callback.handler.class = null
+	sasl.jaas.config = null
+	sasl.kerberos.kinit.cmd = /usr/bin/kinit
+	sasl.kerberos.min.time.before.relogin = 60000
+	sasl.kerberos.service.name = null
+	sasl.kerberos.ticket.renew.jitter = 0.05
+	sasl.kerberos.ticket.renew.window.factor = 0.8
+	sasl.login.callback.handler.class = null
+	sasl.login.class = null
+	sasl.login.connect.timeout.ms = null
+	sasl.login.read.timeout.ms = null
+	sasl.login.refresh.buffer.seconds = 300
+	sasl.login.refresh.min.period.seconds = 60
+	sasl.login.refresh.window.factor = 0.8
+	sasl.login.refresh.window.jitter = 0.05
+	sasl.login.retry.backoff.max.ms = 10000
+	sasl.login.retry.backoff.ms = 100
+	sasl.mechanism = GSSAPI
+	sasl.oauthbearer.clock.skew.seconds = 30
+	sasl.oauthbearer.expected.audience = null
+	sasl.oauthbearer.expected.issuer = null
+	sasl.oauthbearer.header.urlencode = false
+	sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
+	sasl.oauthbearer.jwks.endpoint.url = null
+	sasl.oauthbearer.scope.claim.name = scope
+	sasl.oauthbearer.sub.claim.name = sub
+	sasl.oauthbearer.token.endpoint.url = null
+	security.protocol = PLAINTEXT
+	security.providers = null
+	send.buffer.bytes = 131072
+	socket.connection.setup.timeout.max.ms = 30000
+	socket.connection.setup.timeout.ms = 10000
+	ssl.cipher.suites = null
+	ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+	ssl.endpoint.identification.algorithm = https
+	ssl.engine.factory.class = null
+	ssl.key.password = null
+	ssl.keymanager.algorithm = SunX509
+	ssl.keystore.certificate.chain = null
+	ssl.keystore.key = null
+	ssl.keystore.location = null
+	ssl.keystore.password = null
+	ssl.keystore.type = JKS
+	ssl.protocol = TLSv1.3
+	ssl.provider = null
+	ssl.secure.random.implementation = null
+	ssl.trustmanager.algorithm = PKIX
+	ssl.truststore.certificates = null
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+	transaction.timeout.ms = 60000
+	transactional.id = null
+	value.serializer = class org.apache.kafka.common.serialization.StringSerializer
+
+2025-11-03T12:50:26.933+01:00  INFO 34628 --- [notificator] [http-nio-8081-exec-2] o.a.k.c.t.i.KafkaMetricsCollector        : initializing Kafka metrics collector
+2025-11-03T12:50:26.956+01:00  INFO 34628 --- [notificator] [http-nio-8081-exec-2] o.a.k.clients.producer.KafkaProducer     : [Producer clientId=notificator-producer-1] Instantiated an idempotent producer.
+2025-11-03T12:50:27.004+01:00  INFO 34628 --- [notificator] [http-nio-8081-exec-2] o.a.kafka.common.utils.AppInfoParser     : Kafka version: 3.9.1
+2025-11-03T12:50:27.006+01:00  INFO 34628 --- [notificator] [http-nio-8081-exec-2] o.a.kafka.common.utils.AppInfoParser     : Kafka commitId: f745dfdcee2b9851
+2025-11-03T12:50:27.006+01:00  INFO 34628 --- [notificator] [http-nio-8081-exec-2] o.a.kafka.common.utils.AppInfoParser     : Kafka startTimeMs: 1762170627004
+2025-11-03T12:50:27.041+01:00  INFO 34628 --- [notificator] [kafka-producer-network-thread | notificator-producer-1] org.apache.kafka.clients.Metadata        : [Producer clientId=notificator-producer-1] Cluster ID: nxiZ94QAQTiDmWKLV5BhyQ
+2025-11-03T12:50:27.042+01:00  INFO 34628 --- [notificator] [kafka-producer-network-thread | notificator-producer-1] o.a.k.c.p.internals.TransactionManager   : [Producer clientId=notificator-producer-1] ProducerId set to 3004 with epoch 0
