@@ -1,4 +1,4 @@
-package com.julian.notificator.service.impl;
+package com.julian.notificator.service.impl.discord;
 
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,4 @@
-package com.julian.notificator.service.impl;
+package com.julian.notificator.service.impl.discord;
 
 import java.util.Map;
 
