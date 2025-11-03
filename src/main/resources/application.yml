@@ -1,0 +1,36 @@
+spring:
+  application:
+      name: notificator
+  kafka:
+    bootstrap-servers: 192.168.1.3:9092
+    consumer:
+      group-id: discord-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+discord:
+  webhook-url: "https://discord.com/api/webhooks/1434849038586609758/Iru_TKLtmXNXyaheORsntKlBDYb7_35j_GpcG7BdoN3smld4dAPqNbExX5XJSwVcDGY-"
+
+server:
+  port: 8081
+  servlet:
+    context-path: /api
+    
+logging:
+  file:
+    path: ./target/
+    name: ${spring.application.name}
+    level:
+      com.julian: INFO
+      org.springframework.boot: INFO
+      org.springframework.web: INFO
+
+springdoc:
+   swagger-ui:
+        operationsSorter: alpha
+        tagsSorter: alpha
+          
