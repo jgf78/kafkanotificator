@@ -20,6 +20,7 @@ public class KafkaProducerServiceImpl implements KafkaProducerService {
     @Override
     public void sendMessage(String message) {
         kafkaTemplate.send("discord-messages", message);
+        kafkaTemplate.send("telegram-messages", message);
         log.debug("KafkaProducerService - sendMessage, message: {}", message);
     }
 }

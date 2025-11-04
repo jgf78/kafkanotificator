@@ -1,5 +1,6 @@
 package com.julian.notificator.service.impl.discord;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +15,7 @@ public class DiscordConsumerServiceImpl implements KafkaConsumerService {
 
     private final NotificationService discordService;
 
-    public DiscordConsumerServiceImpl(NotificationService notificationService) {
+    public DiscordConsumerServiceImpl(@Qualifier("discordServiceImpl") NotificationService notificationService) {
         this.discordService = notificationService;
     }
 
