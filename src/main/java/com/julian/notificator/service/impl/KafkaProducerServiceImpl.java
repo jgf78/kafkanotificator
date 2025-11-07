@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import com.julian.notificator.model.DestinationType;
 import com.julian.notificator.service.KafkaProducerService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -28,10 +29,17 @@ public class KafkaProducerServiceImpl implements KafkaProducerService {
     }
 
     @Override
-    public void sendMessage(String message) {
-        kafkaTemplate.send(discord, message);
-        kafkaTemplate.send(telegram, message);
-        kafkaTemplate.send(mail, message);
-        log.debug("KafkaProducerService - sendMessage, message: {}", message);
+    public void sendMessage(String message, DestinationType destination) {
+        switch (destination) {
+            case DISCORD -> kafkaTemplate.send(discord, message);
+            case TELEGRAM -> kafkaTemplate.send(telegram, message);
+            case MAIL -> kafkaTemplate.send(mail, message);
+            case ALL -> {
+                kafkaTemplate.send(discord, message);
+                kafkaTemplate.send(telegram, message);
+                kafkaTemplate.send(mail, message);
+            }
+        }
+        log.info("KafkaProducerService - sendMessage. Mensaje enviado a {}: {}", destination, message);
     }
 }
