@@ -1,10 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'maven:3.9-eclipse-temurin-17'
-            args '-v /var/run/docker.sock:/var/run/docker.sock -v /usr/bin/docker:/usr/bin/docker --user root'
-        }
-    }
+    agent any
 
     triggers {
         githubPush()
@@ -30,15 +25,18 @@ pipeline {
 
         stage('Build Docker image') {
             steps {
-                // Usamos docker build normal, compatible con ARM
+                // Construcción normal, compatible con ARM y sin BuildKit
                 sh 'docker build --no-cache -t $DOCKER_IMAGE -f docker/Dockerfile .'
             }
         }
 
         stage('Push Docker image') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                    sh 'echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin'
+                // Usamos credentialsId 'dockerhub' que debe contener usuario y token de Docker Hub
+                withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_TOKEN')]) {
+                    // Login seguro usando token
+                    sh 'echo "$DOCKER_TOKEN" | docker login -u "$DOCKER_USER" --password-stdin'
+                    // Push de la imagen
                     sh 'docker push $DOCKER_IMAGE'
                 }
             }
