@@ -16,18 +16,32 @@ public class TelegramServiceImpl implements NotificationService {
 
     @Value("${telegram.proxy-url}")
     private String telegramProxyUrl;
+    
     @Value("${telegram.chat-id}")
-    private String telegramChatId;
+    private String chatIdUser;
+    
+    @Value("${telegram.chat-id-group}")
+    private String chatIdGroup;
 
     private final RestTemplate restTemplate = new RestTemplate();
 
     @Override
     public void sendMessage(String message) {
-        Map<String, String> payload = Map.of(
-            "chat_id", telegramChatId,
-            "text", message
-        );
-        restTemplate.postForEntity(telegramProxyUrl, payload, String.class);
+        sendToChat(chatIdUser, message);
+        sendToChat(chatIdGroup, message);
+    }
+
+    private void sendToChat(String chatId, String message) {
+        try {
+            Map<String, String> payload = Map.of(
+                "chat_id", chatId,
+                "text", message
+            );
+            restTemplate.postForEntity(telegramProxyUrl, payload, String.class);
+            log.debug("Mensaje enviado a Telegram chat_id {}: {}", chatId, message);
+        } catch (Exception e) {
+            log.error("Error enviando mensaje a Telegram chat_id {}: {}", chatId, e.getMessage());
+        }
     }
 
 
