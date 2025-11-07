@@ -1,13 +1,16 @@
 pipeline {
     agent any
 
+    triggers {
+        githubPush()
+    }
+
     environment {
         DOCKERHUB_USER = 'jgf78'
         DOCKER_IMAGE = 'jgf78/notificator:latest'
     }
 
     stages {
-
         stage('Checkout') {
             steps {
                 checkout scm
@@ -37,11 +40,7 @@ pipeline {
     }
 
     post {
-        success {
-            echo '✅ Build y push completado correctamente'
-        }
-        failure {
-            echo '❌ Error en el pipeline'
-        }
+        success { echo '✅ Build y push completado correctamente' }
+        failure { echo '❌ Error en el pipeline' }
     }
 }
