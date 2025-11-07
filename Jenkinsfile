@@ -11,6 +11,7 @@ pipeline {
     }
 
     stages {
+
         stage('Checkout') {
             steps {
                 checkout scm
@@ -19,24 +20,22 @@ pipeline {
 
         stage('Build with Maven') {
             steps {
+                // Ejecutamos Maven directamente en el Jenkins host
                 sh 'mvn clean install -DskipTests'
             }
         }
 
         stage('Build Docker image') {
             steps {
-                // Construcción normal, compatible con ARM y sin BuildKit
-                sh 'docker build --no-cache -t $DOCKER_IMAGE -f docker/Dockerfile .'
+                // Usamos buildx para ARM y sin cache
+                sh 'docker buildx build --no-cache --platform linux/arm64 -t $DOCKER_IMAGE -f docker/Dockerfile --load .'
             }
         }
 
         stage('Push Docker image') {
             steps {
-                // Usamos credentialsId 'dockerhub' que debe contener usuario y token de Docker Hub
                 withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_TOKEN')]) {
-                    // Login seguro usando token
                     sh 'echo "$DOCKER_TOKEN" | docker login -u "$DOCKER_USER" --password-stdin'
-                    // Push de la imagen
                     sh 'docker push $DOCKER_IMAGE'
                 }
             }
@@ -44,11 +43,11 @@ pipeline {
     }
 
     post {
-        success { 
-            echo '✅ Build y push completado correctamente' 
+        success {
+            echo '✅ Build y push completado correctamente'
         }
-        failure { 
-            echo '❌ Error en el pipeline' 
+        failure {
+            echo '❌ Error en el pipeline'
         }
     }
 }
