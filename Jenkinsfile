@@ -18,12 +18,6 @@ pipeline {
         }
 
         stage('Build with Maven') {
-            agent {
-                docker {
-                    image 'maven:3.9-eclipse-temurin-17'
-                    args '-v /var/run/docker.sock:/var/run/docker.sock'
-                }
-            }
             steps {
                 sh 'mvn clean install -DskipTests'
             }
@@ -31,7 +25,8 @@ pipeline {
 
         stage('Build Docker image') {
             steps {
-                sh 'docker buildx build --no-cache --platform linux/arm64 -t $DOCKER_IMAGE -f docker/Dockerfile --load .'
+                // Usamos docker build normal, compatible con ARM
+                sh 'docker build --no-cache -t $DOCKER_IMAGE -f docker/Dockerfile .'
             }
         }
 
@@ -46,7 +41,11 @@ pipeline {
     }
 
     post {
-        success { echo '✅ Build y push completado correctamente' }
-        failure { echo '❌ Error en el pipeline' }
+        success { 
+            echo '✅ Build y push completado correctamente' 
+        }
+        failure { 
+            echo '❌ Error en el pipeline' 
+        }
     }
 }
