@@ -11,29 +11,39 @@ pipeline {
     }
 
     stages {
-
         stage('Checkout') {
             steps {
-                checkout scm
+                // Usamos las credenciales de GitHub
+                checkout([
+                    $class: 'GitSCM', 
+                    branches: [[name: '*/main']], 
+                    userRemoteConfigs: [[
+                        url: 'https://github.com/jgf78/kafkanotificator.git',
+                        credentialsId: 'github'
+                    ]]
+                ])
             }
         }
 
         stage('Build with Maven') {
             steps {
-                // Ejecutamos Maven directamente en el Jenkins host
-                sh 'mvn clean install -DskipTests'
+                // Usamos un contenedor Maven oficial para no depender de Maven instalado en Jenkins
+                docker.image('maven:3.9-eclipse-temurin-17').inside {
+                    sh 'mvn clean install -DskipTests'
+                }
             }
         }
 
         stage('Build Docker image') {
             steps {
-                // Usamos buildx para ARM y sin cache
-                sh 'docker buildx build --no-cache --platform linux/arm64 -t $DOCKER_IMAGE -f docker/Dockerfile --load .'
+                // Construcción normal de Docker, compatible con ARM
+                sh 'docker build --no-cache -t $DOCKER_IMAGE -f docker/Dockerfile .'
             }
         }
 
         stage('Push Docker image') {
             steps {
+                // Usamos las credenciales de Docker Hub
                 withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_TOKEN')]) {
                     sh 'echo "$DOCKER_TOKEN" | docker login -u "$DOCKER_USER" --password-stdin'
                     sh 'docker push $DOCKER_IMAGE'
@@ -43,11 +53,11 @@ pipeline {
     }
 
     post {
-        success {
-            echo '✅ Build y push completado correctamente'
+        success { 
+            echo '✅ Build y push completado correctamente' 
         }
-        failure {
-            echo '❌ Error en el pipeline'
+        failure { 
+            echo '❌ Error en el pipeline' 
         }
     }
 }
