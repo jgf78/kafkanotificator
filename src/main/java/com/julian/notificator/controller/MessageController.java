@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.julian.notificator.model.MessageRequest;
 import com.julian.notificator.service.KafkaProducerService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,8 +33,8 @@ public class MessageController {
     @Operation(summary = "Send Message", operationId = "sendMessage", description = "Send Message", tags = {
             "Answers API", })
     @PostMapping("/send")
-    public String sendMessage(@RequestBody String message) {
-        kafkaProducerService.sendMessage(message);
-        return "Mensaje enviado a Kafka: " + message;
+    public String sendMessage(@RequestBody MessageRequest request) {
+        kafkaProducerService.sendMessage(request.getMessage(), request.getDestination());
+        return "Mensaje enviado a " + request.getDestination() + ": " + request.getMessage();
     }
 }
