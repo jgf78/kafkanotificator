@@ -47,13 +47,12 @@ pipeline {
         
         stage('Deploy to Docker') {
             steps {
-                // Detiene y elimina el contenedor si existe
-                sh "docker stop $CONTAINER_NAME || true"
-                sh "docker rm $CONTAINER_NAME || true"
-                
-                // Pull de la nueva imagen y arranque del contenedor
-                sh "docker pull $DOCKER_IMAGE"
-                sh "docker run -d -p $HOST_PORT:$CONTAINER_PORT --name $CONTAINER_NAME $DOCKER_IMAGE"
+                sh '''
+                    docker stop notificator || true
+                    docker rm notificator || true
+                    docker pull jgf78/notificator:latest
+                    docker run -d -p 8083:8081 --name notificator jgf78/notificator:latest
+                '''
             }
         }
     }
