@@ -44,6 +44,18 @@ pipeline {
                 }
             }
         }
+        
+        stage('Deploy to Docker') {
+            steps {
+                // Detiene y elimina el contenedor si existe
+                sh "docker stop $CONTAINER_NAME || true"
+                sh "docker rm $CONTAINER_NAME || true"
+                
+                // Pull de la nueva imagen y arranque del contenedor
+                sh "docker pull $DOCKER_IMAGE"
+                sh "docker run -d -p $HOST_PORT:$CONTAINER_PORT --name $CONTAINER_NAME $DOCKER_IMAGE"
+            }
+        }
     }
 
     post {
