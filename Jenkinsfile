@@ -21,7 +21,7 @@ pipeline {
             agent {
                 docker {
                     image 'maven:3.9-eclipse-temurin-17'
-                    args '-v /root/.m2:/root/.m2' // cache local de Maven
+                    args '-v /root/.m2:/root/.m2'
                 }
             }
             steps {
@@ -31,7 +31,7 @@ pipeline {
 
         stage('Build Docker image') {
             steps {
-                sh 'docker buildx build --no-cache --platform linux/arm64 -t $DOCKER_IMAGE -f docker/Dockerfile --load .'
+                sh 'docker buildx build --platform linux/arm64 -t $DOCKER_IMAGE -f docker/Dockerfile --load . --no-cache'
             }
         }
 
