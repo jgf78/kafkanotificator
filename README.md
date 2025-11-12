@@ -106,6 +106,33 @@ Aplicación disponible en:
 
 ---
 
+## ⚙️ Variables de entorno disponibles
+
+| Variable | Descripción | Valor por defecto |
+|-----------|--------------|-------------------|
+| `BOOTSTRAP_SERVER` | Servidor Kafka | `192.168.1.3:9092` |
+| `TOPIC_DISCORD` | Tópico Kafka para Discord | `discord-messages` |
+| `TOPIC_TELEGRAM` | Tópico Kafka para Telegram | `telegram-messages` |
+| `TOPIC_MAIL` | Tópico Kafka para email | `mail-messages` |
+| `SMTP_SERVER` | Servidor SMTP | `smtp.gmail.com` |
+| `SMTP_PORT` | Puerto SMTP | `587` |
+| `EMAIL_USERNAME` | Usuario del correo | `julian.rss.android@gmail.com` |
+| `EMAIL_PASSWORD` | Contraseña o token de aplicación | `eqcu jplq okul xqzz` |
+| `DISCORD_WEBHOOK_URL` | URL del webhook de Discord | *(Requerido)* |
+| `TELEGRAM_PROXY_URL` | URL proxy/bot de Telegram | `http://192.168.1.3:8080/...` |
+| `TELEGRAM_ID_CHAT` | ID del chat de Telegram | `6610892` |
+| `TELEGRAM_ID_GROUP` | ID del grupo de Telegram | `-1001236662890` |
+| `EMAIL_TO` | Correo destino de las notificaciones | `julian_gomez_fdez@yahoo.es` |
+| `EMAIL_SUBJECT` | Asunto del correo | `Notificación por email` |
+| `SERVER_PORT` | Puerto interno de la app | `8081` |
+| `SERVER_CONTEXT_PATH` | Context path del servidor | `/api` |
+| `LOG_PATH` | Ruta de logs en contenedor | `/var/logs/` |
+| `LOG_LEVEL_APP` | Nivel de log de la app | `DEBUG` |
+| `LOG_LEVEL_SPRING_BOOT` | Nivel de log de Spring Boot | `INFO` |
+| `LOG_LEVEL_SPRING_WEB` | Nivel de log de Spring Web | `INFO` |
+
+---
+
 ## 📬 Canales de notificación
 
 ### 💬 Telegram
@@ -169,6 +196,7 @@ POST /notify
 | Telegram | `"telegram"` |
 | Discord | `"discord"` |
 | Email | `"email"` |
+| Todos | `"all"` |
 
 ### Ejemplo con `curl`
 
@@ -247,4 +275,4 @@ Puedes usarlo, modificarlo y distribuirlo libremente bajo sus términos.
 ---
 
 > 🧠 “Automatiza, despliega y notifica.  
-> Con **Notificator**, tus eventos hablan por sí mismos.”
+> Con **Notificator**, tus eventos hablan por sí mismos.” 
