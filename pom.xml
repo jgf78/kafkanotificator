@@ -53,9 +53,9 @@
         
         <!--Openapi-->
         <dependency>
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-ui</artifactId>
-            <version>1.8.0</version> 
+          <groupId>org.springdoc</groupId>
+          <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+          <version>2.6.0</version>
         </dependency>
         
         <!-- Mail -->
@@ -71,6 +71,27 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>7.9.0</version>
+                <executions>
+                    <execution>
+                        <id>generate-services</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/src/main/resources/api-docs.yaml</inputSpec>
+                            <generatorName>spring</generatorName>
+                            <apiPackage>com.julian.notificator.api</apiPackage>
+                            <modelPackage>com.julian.notificator.model</modelPackage>
+                            <output>${project.build.directory}/generated-sources/notificator</output>
+                            <interfaceOnly>true</interfaceOnly>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
