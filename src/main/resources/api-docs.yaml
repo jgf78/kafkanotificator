@@ -1,0 +1,80 @@
+openapi: 3.0.1
+info:
+  title: Notificator API
+  version: v0
+servers:
+  - url: http://localhost:8081/api
+    description: Generated server url
+paths:
+  /messages/send:
+    post:
+      tags:
+        - Answers API
+      summary: Send Message
+      description: Send Message
+      operationId: sendMessage
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MessageRequest"
+        required: true
+      responses:
+        "200":
+          description: Request Successful
+          content:
+            '*/*':
+              schema:
+                type: string
+
+  /hello/send:
+    post:
+      tags:
+        - Hello API
+      summary: Say Hello
+      description: Returns a greeting
+      operationId: sayHello
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/HelloRequest"
+        required: true
+      responses:
+        "200":
+          description: Greeting returned
+          content:
+            application/json:
+              schema:
+                 $ref: "#/components/schemas/HelloResponse"
+
+components:
+  schemas:
+    MessageRequest:
+      required:
+        - message
+      type: object
+      properties:
+        message:
+          type: string
+        destination:
+          type: string
+          enum:
+            - discord
+            - telegram
+            - mail
+            - all
+
+    HelloRequest:
+      required:
+        - name
+      type: object
+      properties:
+        name:
+          type: string
+
+    HelloResponse:
+      type: object
+      properties:
+        message:
+          type: string      

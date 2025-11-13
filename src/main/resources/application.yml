@@ -63,6 +63,6 @@ logging:
 
 springdoc:
    swagger-ui:
-        operationsSorter: alpha
-        tagsSorter: alpha
+     operationsSorter: alpha
+     tagsSorter: alpha
           
