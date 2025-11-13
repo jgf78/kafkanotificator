@@ -1,21 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.5.7</version>
-		<relativePath/> <!-- lookup parent from repository -->
-	</parent>
-	<groupId>com.julian.notificator</groupId>
-	<artifactId>notificator</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>notificator</name>
-	<description>Kafka notificator</description>
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+         https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.5.7</version>
+        <relativePath/>
+    </parent>
+
+    <groupId>com.julian.notificator</groupId>
+    <artifactId>notificator</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>notificator</name>
+    <description>Kafka notificator</description>
+
     <properties>
         <java.version>17</java.version>
-        <spring.boot.version>3.3.4</spring.boot.version>
     </properties>
 
     <dependencies>
@@ -31,17 +36,11 @@
             <artifactId>spring-kafka</artifactId>
         </dependency>
 
-        <!-- Lombok (opcional pero recomendado para getters/setters) -->
+        <!-- Lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
-        </dependency>
-
-        <!-- Logging -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-logging</artifactId>
         </dependency>
 
         <!-- Tests -->
@@ -51,11 +50,11 @@
             <scope>test</scope>
         </dependency>
         
-        <!--Openapi-->
+        <!-- OpenAPI UI -->
         <dependency>
-          <groupId>org.springdoc</groupId>
-          <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-          <version>2.6.0</version>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>2.6.0</version>
         </dependency>
         
         <!-- Mail -->
@@ -64,103 +63,80 @@
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
         
-        <!-- Jakarta Validation API (reemplaza javax.* por jakarta.* en tiempo de compilación) -->
+        <!-- Compatibilidad Jakarta completa -->
         <dependency>
-            <groupId>jakarta.validation</groupId>
-            <artifactId>jakarta.validation-api</artifactId>
-        </dependency>
-        
-        <!-- Jakarta Annotation API -->
-        <dependency>
-            <groupId>jakarta.annotation</groupId>
-            <artifactId>jakarta.annotation-api</artifactId>
-        </dependency>
-        
-        <!-- Jakarta Servlet API -->
-        <dependency>
-            <groupId>jakarta.servlet</groupId>
-            <artifactId>jakarta.servlet-api</artifactId>
+            <groupId>jakarta.platform</groupId>
+            <artifactId>jakarta.jakartaee-api</artifactId>
+            <version>10.0.0</version>
             <scope>provided</scope>
         </dependency>
-        
-        <!-- Compatibilidad con javax-->
-        <dependency>
-          <groupId>jakarta.platform</groupId>
-          <artifactId>jakarta.jakartaee-api</artifactId>
-          <version>10.0.0</version>
-          <scope>provided</scope>
-        </dependency>
 
-        
-        <!-- Soporte para JsonNullable de OpenAPI -->
+        <!-- Soporte JsonNullable para OpenAPI -->
         <dependency>
             <groupId>org.openapitools</groupId>
             <artifactId>jackson-databind-nullable</artifactId>
             <version>0.2.6</version>
         </dependency>
-
     </dependencies>
 
     <build>
-    <plugins>
+        <plugins>
 
-        <!-- Plugin de Spring Boot -->
-        <plugin>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-maven-plugin</artifactId>
-        </plugin>
+            <!-- Spring Boot -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
 
-        <!-- Plugin de OpenAPI Generator -->
-        <!--<plugin>
-            <groupId>org.openapitools</groupId>
-            <artifactId>openapi-generator-maven-plugin</artifactId>
-            <version>7.9.0</version>
-            <executions>
-                <execution>
-                    <id>generate-services</id>
-                    <goals>
-                        <goal>generate</goal>
-                    </goals>
-                    <configuration>
-                        <inputSpec>${project.basedir}/src/main/resources/api-docs.yaml</inputSpec>
-                        <generatorName>spring</generatorName>
-                        <apiPackage>com.julian.notificator.api</apiPackage>
-                        <modelPackage>com.julian.notificator.model</modelPackage>
-                        <output>${project.build.directory}/generated-sources/notificator</output>
-                        <interfaceOnly>true</interfaceOnly>
-                        <addCompileSourceRoot>true</addCompileSourceRoot> 
-                        <generateApiTests>false</generateApiTests>
-                        <generateModelTests>false</generateModelTests>
-                        <generateModels>false</generateModels>
-                        <skipOverwrite>true</skipOverwrite>
-                        <additionalProperties>
-                            <useJakartaEe>true</useJakartaEe>
-                        </additionalProperties>
-                    </configuration>
-                </execution>
-            </executions>
-        </plugin>-->
+            <!-- OpenAPI Generator -->
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>7.9.0</version>
+                <executions>
+                    <execution>
+                        <id>generate-services</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/src/main/resources/api-docs.yaml</inputSpec>
+                            <generatorName>spring</generatorName>
+                            <apiPackage>com.julian.notificator.api</apiPackage>
+                            <modelPackage>com.julian.notificator.model</modelPackage>
+                            <output>${project.build.directory}/generated-sources/openapi</output>
+                            <interfaceOnly>true</interfaceOnly>
+                            <addCompileSourceRoot>true</addCompileSourceRoot>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <generateModels>true</generateModels>
+                            <skipOverwrite>true</skipOverwrite>
+                            <additionalProperties>
+                                <useJakartaEe>true</useJakartaEe>
+                            </additionalProperties>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 
-        <!-- Plugin de compilación para que Lombok funcione correctamente -->
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <version>3.11.0</version>
-            <configuration>
-                <source>${java.version}</source>
-                <target>${java.version}</target>
-                <encoding>UTF-8</encoding>
-                <annotationProcessorPaths>
-                    <path>
-                        <groupId>org.projectlombok</groupId>
-                        <artifactId>lombok</artifactId>
-                        <version>1.18.32</version>
-                    </path>
-                </annotationProcessorPaths>
-            </configuration>
-        </plugin>
-
-    </plugins>
-</build>
-
+            <!-- Compiler (para Lombok y UTF-8) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <encoding>UTF-8</encoding>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>1.18.32</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
