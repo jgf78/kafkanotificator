@@ -276,3 +276,4 @@ Puedes usarlo, modificarlo y distribuirlo libremente bajo sus términos.
 
 > 🧠 “Automatiza, despliega y notifica.  
 > Con **Notificator**, tus eventos hablan por sí mismos.” 
+
