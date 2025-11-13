@@ -89,7 +89,7 @@
             </plugin>
 
             <!-- OpenAPI Generator -->
-            <plugin>
+            <!--<plugin>
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
                 <version>7.9.0</version>
@@ -117,7 +117,7 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin>-->
 
             <!-- Compiler (para Lombok y UTF-8) -->
             <plugin>
