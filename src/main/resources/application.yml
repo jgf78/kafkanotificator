@@ -33,6 +33,7 @@ kafka:
     discord: discord-messages
     telegram: telegram-messages
     mail: mail-messages
+    alexa: alexa-messages
   group-id: notificator-group
               
 discord:
