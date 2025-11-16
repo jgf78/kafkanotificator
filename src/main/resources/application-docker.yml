@@ -10,6 +10,7 @@ spring:
       discord: ${TOPIC_DISCORD:discord-messages}
       telegram: ${TOPIC_TELEGRAM:telegram-messages}
       mail: ${TOPIC_MAIL:mail-messages}
+      alexa: ${TOPIC_ALEXA:alexa-messages}
     group-id: notificator-group
 
   mail:
