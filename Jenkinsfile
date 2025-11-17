@@ -31,7 +31,6 @@ pipeline {
 
         stage('Build Docker image') {
             steps {
-                //sh 'docker buildx build --platform linux/arm64 -t $DOCKER_IMAGE -f docker/Dockerfile --load . --no-cache'
                 sh 'docker build -t jgf78/notificator:latest -f docker/Dockerfile . '
             }
         }
