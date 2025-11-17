@@ -32,7 +32,6 @@ pipeline {
 
         stage('Copy Jar') {
             steps {
-                // Copia el JAR desde el workspace real (@2) al workspace principal
                 sh '''
                     echo "🔧 Sincronizando workspace..."
                     mkdir -p target
