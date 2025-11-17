@@ -30,7 +30,7 @@ pipeline {
             }
         }
 
-        stage('Sync workspace (fix @2 issue)') {
+        stage('Copy Jar') {
             steps {
                 // Copia el JAR desde el workspace real (@2) al workspace principal
                 sh '''
