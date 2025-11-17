@@ -11,6 +11,7 @@ pipeline {
     }
 
     stages {
+
         stage('Checkout') {
             steps {
                 checkout scm
@@ -29,21 +30,38 @@ pipeline {
             }
         }
 
+        stage('Sync workspace (fix @2 issue)') {
+            steps {
+                // Copia el JAR desde el workspace real (@2) al workspace principal
+                sh '''
+                    echo "🔧 Sincronizando workspace..."
+                    mkdir -p target
+                    cp -fv ${WORKSPACE}@2/target/*.jar target/
+                    ls -la target
+                '''
+            }
+        }
+
         stage('Build Docker image') {
             steps {
-                sh 'docker build --no-cache -t jgf78/notificator:latest -f docker/Dockerfile . '
+                sh '''
+                    echo "🐳 Construyendo imagen Docker SIN CACHE..."
+                    docker build --no-cache -t jgf78/notificator:latest -f docker/Dockerfile .
+                '''
             }
         }
 
         stage('Push Docker image') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_TOKEN')]) {
-                    sh 'echo "$DOCKER_TOKEN" | docker login -u "$DOCKER_USER" --password-stdin'
-                    sh 'docker push $DOCKER_IMAGE'
+                    sh '''
+                        echo "$DOCKER_TOKEN" | docker login -u "$DOCKER_USER" --password-stdin
+                        docker push $DOCKER_IMAGE
+                    '''
                 }
             }
         }
-        
+
         stage('Deploy to Docker') {
             steps {
                 sh '''
@@ -57,7 +75,7 @@ pipeline {
     }
 
     post {
-        success { echo '✅ Build y push completado correctamente' }
+        success { echo '✅ Build, push y despliegue completado correctamente' }
         failure { echo '❌ Error en el pipeline' }
     }
 }
