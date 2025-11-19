@@ -63,6 +63,13 @@
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
         
+        <!-- MQTT -->
+        <dependency>
+            <groupId>org.eclipse.paho</groupId>
+            <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
+            <version>1.2.5</version>
+        </dependency>
+        
         <!-- Compatibilidad Jakarta completa -->
         <dependency>
             <groupId>jakarta.platform</groupId>

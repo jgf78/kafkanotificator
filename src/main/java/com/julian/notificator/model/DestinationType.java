@@ -9,6 +9,7 @@ public enum DestinationType {
     MAIL,
     ALEXA,
     WHATSAPP,
+    MQTT,
     ALL; 
     
     @JsonCreator

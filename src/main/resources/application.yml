@@ -35,6 +35,7 @@ kafka:
     mail: mail-messages
     alexa: alexa-messages
     whatsapp: whatsapp-messages
+    mqtt: mqtt-messages
   group-id: notificator-group
               
 discord:
@@ -52,6 +53,12 @@ mail:
 whatsapp:
   apikey: "XfuU9jEgea2MRrB0"
   type: alarm_notification
+
+mqtt:
+  broker: tcp://broker.hivemq.com:1883
+  topic: notificator/alertas
+  clientId: notificator-app
+  qos: 1
   
 server:
   port: 8081
