@@ -39,7 +39,13 @@ mail:
 whatsapp:
   apikey: ${WHATSAPP_APIKEY:XfuU9jEgea2MRrB0}
   type: ${WHATSAPP_TYPE:alarm_notification}
-  
+
+mqtt:
+  broker: ${MQTT_BROKER:tcp://broker.hivemq.com:1883}
+  topic: ${MQTT_TOPIC:notificator/alerts}
+  clientId: ${MQTT_CLIENT_ID:notificator-app}
+  qos: ${MQTT_QOS:1}
+    
 logging:
   file:
     path: ${LOG_PATH:/var/logs/}

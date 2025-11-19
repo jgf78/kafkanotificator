@@ -7,7 +7,7 @@
 ![License](https://img.shields.io/badge/license-MIT-lightgrey)
 
 **Notificator** es una aplicación **Spring Boot** diseñada para centralizar el envío de notificaciones a múltiples canales:  
-💬 **Telegram**, 💬 **Whatsapp**, 💻 **Discord** y 📧 **correo electrónico (SMTP)**.
+💬 **Telegram**, 💬 **Whatsapp**, 💻 **Discord**, 💻 **MQTT** y 📧 **correo electrónico (SMTP)**.
 
 El proyecto se compila, genera imagen Docker y se publica automáticamente en **Docker Hub** mediante un **pipeline CI/CD con Jenkins**.  
 Está preparado para ejecutarse tanto en servidores **x86** como en **Raspberry Pi (ARM64)**.
@@ -21,6 +21,7 @@ Está preparado para ejecutarse tanto en servidores **x86** como en **Raspberry 
   - 💬 **Telegram Bot**
   - 💬 **Whatsapp**
   - 💻 **Discord Webhook**
+  - 💻 **MQTT**
   - 📧 **Email (SMTP configurable)**
 - 🐳 **Dockerfile** optimizado (multi-stage)
 - 🔄 **Pipeline Jenkins** para build + push automáticos
@@ -41,8 +42,6 @@ Está preparado para ejecutarse tanto en servidores **x86** como en **Raspberry 
 | Maven 3.9 | Build system |
 | Docker | Contenedorización |
 | Jenkins LTS (JDK17) | CI/CD |
-| Telegram Bot API | Notificaciones Telegram |
-| Discord Webhook | Notificaciones Discord |
 
 ---
 
@@ -100,7 +99,9 @@ docker build -t jgf78/notificator:latest -f docker/Dockerfile .
 
 ```bash
 docker run -d -p 8083:8081   -e TELEGRAM_BOT_TOKEN=xxxxx   -e TELEGRAM_CHAT_ID=xxxxx   -e DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/...   -e SMTP_HOST=smtp.gmail.com   -e SMTP_PORT=587   -e SMTP_USER=xxxxx@gmail.com   -e SMTP_PASS=xxxxx   
--e WHATSAPP_APIKEY=xxxxx -e WHATSAPP_TYPE=xxxxx --name notificator   jgf78/notificator:latest
+-e WHATSAPP_APIKEY=xxxxx -e WHATSAPP_TYPE=xxxxx --name notificator   
+-e MQTT_BROKER=xxxxx  -e MQTT_TOPIC=xxxxx -e MQTT_CLIENT_ID=xxxxx -e MQTT_QOS=xxxxx
+jgf78/notificator:latest
 ```
 
 Aplicación disponible en:  
@@ -128,6 +129,10 @@ Aplicación disponible en:
 | `EMAIL_SUBJECT` | Asunto del correo | `Notificación por email` |
 | `WHATSAPP_APIKEY` | Apikey | `XfuU9jEgea2MRrB0` |
 | `WHATSAPP_TYPE` | Tipo de mensaje | `alarm_notification` |
+| `MQTT_BROKER` | Broker MQTT | `tcp://broker.hivemq.com:1883` |
+| `MQTT_TOPIC` | Topic MQTT | `notificator/alerts` |
+| `MQTT_CLIENT_ID` | ClientId MQTT | `notificator-app` |
+| `MQTT_QOS` | QOS MQTT | `1` |
 | `SERVER_PORT` | Puerto interno de la app | `8081` |
 | `SERVER_CONTEXT_PATH` | Context path del servidor | `/api` |
 | `LOG_PATH` | Ruta de logs en contenedor | `/var/logs/` |
@@ -169,7 +174,21 @@ Envía mensajes a un canal mediante **Discord Webhook**.
 
 **Variables necesarias:**
 ```bash
-DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/XXXXXXXXX
+DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/xxxx
+```
+
+---
+
+### 💻 MQTT
+
+Envía mensajes a un cliente MQTT.
+
+**Variables necesarias:**
+```bash
+MQTT_BROKER=xxxx
+MQTT_TOPIC=xxxx
+MQTT_CLIENT_ID=xxxx
+MQTT_QOS=xxxx
 ```
 
 ---

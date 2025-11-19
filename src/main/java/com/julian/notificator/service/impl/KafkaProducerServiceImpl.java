@@ -28,6 +28,9 @@ public class KafkaProducerServiceImpl implements KafkaProducerService {
     @Value("${kafka.topics.whatsapp}")
     private String whatsapp;
     
+    @Value("${kafka.topics.mqtt}")
+    private String mqtt;
+    
     private final KafkaTemplate<String, String> kafkaTemplate;
 
     public KafkaProducerServiceImpl(KafkaTemplate<String, String> kafkaTemplate) {
@@ -42,12 +45,14 @@ public class KafkaProducerServiceImpl implements KafkaProducerService {
             case MAIL -> kafkaTemplate.send(mail, message);
             case ALEXA -> kafkaTemplate.send(alexa, message);
             case WHATSAPP -> kafkaTemplate.send(whatsapp, message);
+            case MQTT -> kafkaTemplate.send(mqtt, message);
             case ALL -> {
                 kafkaTemplate.send(discord, message);
                 kafkaTemplate.send(telegram, message);
                 kafkaTemplate.send(mail, message);
                 kafkaTemplate.send(alexa, message);
                 kafkaTemplate.send(whatsapp, message);
+                kafkaTemplate.send(mqtt, message);
             }
         }
         log.info("KafkaProducerService - sendMessage. Mensaje enviado a {}: {}", destination, message);
