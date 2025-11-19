@@ -42,7 +42,7 @@ whatsapp:
 
 mqtt:
   broker: ${MQTT_BROKER:tcp://broker.hivemq.com:1883}
-  topic: ${MQTT_TOPIC:notificator/alertas}
+  topic: ${MQTT_TOPIC:notificator/alerts}
   clientId: ${MQTT_CLIENT_ID:notificator-app}
   qos: ${MQTT_QOS:1}
     
