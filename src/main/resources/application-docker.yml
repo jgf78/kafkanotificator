@@ -36,6 +36,10 @@ mail:
   to: ${EMAIL_TO:julian_gomez_fdez@yahoo.es}
   subject: ${EMAIL_SUBJECT:Notificación por email}
 
+whatsapp:
+  apikey: ${WHATSAPP_APIKEY:XfuU9jEgea2MRrB0}
+  type: ${WHATSAPP_TYPE:alarm_notification}
+  
 logging:
   file:
     path: ${LOG_PATH:/var/logs/}

@@ -7,7 +7,7 @@
 ![License](https://img.shields.io/badge/license-MIT-lightgrey)
 
 **Notificator** es una aplicación **Spring Boot** diseñada para centralizar el envío de notificaciones a múltiples canales:  
-💬 **Telegram**, 💻 **Discord** y 📧 **correo electrónico (SMTP)**.
+💬 **Telegram**, 💬 **Whatsapp**, 💻 **Discord** y 📧 **correo electrónico (SMTP)**.
 
 El proyecto se compila, genera imagen Docker y se publica automáticamente en **Docker Hub** mediante un **pipeline CI/CD con Jenkins**.  
 Está preparado para ejecutarse tanto en servidores **x86** como en **Raspberry Pi (ARM64)**.
@@ -19,6 +19,7 @@ Está preparado para ejecutarse tanto en servidores **x86** como en **Raspberry 
 - ✅ API REST desarrollada con **Spring Boot 3 + Java 17**  
 - 🤖 Envío de notificaciones a:
   - 💬 **Telegram Bot**
+  - 💬 **Whatsapp**
   - 💻 **Discord Webhook**
   - 📧 **Email (SMTP configurable)**
 - 🐳 **Dockerfile** optimizado (multi-stage)
@@ -98,7 +99,8 @@ docker build -t jgf78/notificator:latest -f docker/Dockerfile .
 ### ▶️ Ejecutar el contenedor
 
 ```bash
-docker run -d -p 8083:8081   -e TELEGRAM_BOT_TOKEN=xxxxx   -e TELEGRAM_CHAT_ID=xxxxx   -e DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/...   -e SMTP_HOST=smtp.gmail.com   -e SMTP_PORT=587   -e SMTP_USER=xxxxx@gmail.com   -e SMTP_PASS=xxxxx   --name notificator   jgf78/notificator:latest
+docker run -d -p 8083:8081   -e TELEGRAM_BOT_TOKEN=xxxxx   -e TELEGRAM_CHAT_ID=xxxxx   -e DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/...   -e SMTP_HOST=smtp.gmail.com   -e SMTP_PORT=587   -e SMTP_USER=xxxxx@gmail.com   -e SMTP_PASS=xxxxx   
+-e WHATSAPP_APIKEY=xxxxx -e WHATSAPP_TYPE=xxxxx --name notificator   jgf78/notificator:latest
 ```
 
 Aplicación disponible en:  
@@ -124,6 +126,8 @@ Aplicación disponible en:
 | `TELEGRAM_ID_GROUP` | ID del grupo de Telegram | `-1001236662890` |
 | `EMAIL_TO` | Correo destino de las notificaciones | `julian_gomez_fdez@yahoo.es` |
 | `EMAIL_SUBJECT` | Asunto del correo | `Notificación por email` |
+| `WHATSAPP_APIKEY` | Apikey | `XfuU9jEgea2MRrB0` |
+| `WHATSAPP_TYPE` | Tipo de mensaje | `alarm_notification` |
 | `SERVER_PORT` | Puerto interno de la app | `8081` |
 | `SERVER_CONTEXT_PATH` | Context path del servidor | `/api` |
 | `LOG_PATH` | Ruta de logs en contenedor | `/var/logs/` |
@@ -143,6 +147,18 @@ Se requiere un bot creado con **@BotFather** y un chat ID válido.
 ```bash
 TELEGRAM_BOT_TOKEN=xxxx
 TELEGRAM_CHAT_ID=xxxx
+```
+
+---
+
+### 💬 Whatsapp
+
+Se requiere un bot registro previo en **https://inout.bot/whatsapp-api/** donde obtendras tu Apikey.
+
+**Variables necesarias:**
+```bash
+WHATSAPP_APIKEY=xxxx
+WHATSAPP_TYPE=xxxx
 ```
 
 ---
@@ -178,7 +194,7 @@ Puedes enviar notificaciones mediante una simple llamada HTTP `POST`.
 
 ### Endpoint
 ```
-POST /notify
+POST /api/messages/send
 ```
 
 ### Ejemplo de cuerpo JSON
@@ -196,12 +212,13 @@ POST /notify
 | Telegram | `"telegram"` |
 | Discord | `"discord"` |
 | Email | `"email"` |
+| Whatsapp | `"whatsapp"` |
 | Todos | `"all"` |
 
 ### Ejemplo con `curl`
 
 ```bash
-curl -X POST http://localhost:8081/notify   -H "Content-Type: application/json"   -d '{"channel":"discord", "message":"Mensaje de prueba desde Notificator 🚀"}'
+curl -X POST http://localhost:8081/api/messages/send   -H "Content-Type: application/json"   -d '{"channel":"discord", "message":"Mensaje de prueba desde Notificator 🚀"}'
 ```
 
 ---
