@@ -8,6 +8,7 @@ public enum DestinationType {
     TELEGRAM,
     MAIL,
     ALEXA,
+    WHATSAPP,
     ALL; 
     
     @JsonCreator
@@ -19,7 +20,7 @@ public enum DestinationType {
             return DestinationType.valueOf(value.trim().toUpperCase());
         } catch (IllegalArgumentException ex) {
             throw new IllegalArgumentException(
-                    "Valor inválido para 'destination'. Valores válidos: DISCORD, TELEGRAM, ALEXA, MAIL, ALL"
+                    "Valor inválido para 'destination'. Valores válidos: DISCORD, TELEGRAM, ALEXA, WHATSAPP, MAIL, ALL"
                 );
         }
     }

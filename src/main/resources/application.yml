@@ -34,6 +34,7 @@ kafka:
     telegram: telegram-messages
     mail: mail-messages
     alexa: alexa-messages
+    whatsapp: whatsapp-messages
   group-id: notificator-group
               
 discord:
@@ -47,6 +48,10 @@ telegram:
 mail:
   to: "julian_gomez_fdez@yahoo.es"
   subject: "Notificación por email"  
+  
+whatsapp:
+  apikey: "XfuU9jEgea2MRrB0"
+  type: alarm_notification
   
 server:
   port: 8081
