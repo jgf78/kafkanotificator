@@ -7,7 +7,7 @@
 ![License](https://img.shields.io/badge/license-MIT-lightgrey)
 
 **Notificator** es una aplicación **Spring Boot** diseñada para centralizar el envío de notificaciones a múltiples canales:  
-💬 **Telegram**, 💬 **Whatsapp**, 💻 **Discord**, 💻 **MQTT** y 📧 **correo electrónico (SMTP)**.
+💬 **Telegram**, 💬 **Whatsapp**, 💻 **Discord**, 💻 **MQTT**, 📧 **correo electrónico (SMTP) y mensaje programado a cualquiera de los anteriores canales**.
 
 El proyecto se compila, genera imagen Docker y se publica automáticamente en **Docker Hub** mediante un **pipeline CI/CD con Jenkins**.  
 Está preparado para ejecutarse tanto en servidores **x86** como en **Raspberry Pi (ARM64)**.
@@ -133,6 +133,12 @@ Aplicación disponible en:
 | `MQTT_TOPIC` | Topic MQTT | `notificator/alerts` |
 | `MQTT_CLIENT_ID` | ClientId MQTT | `notificator-app` |
 | `MQTT_QOS` | QOS MQTT | `1` |
+| `SCHEDULER_ENABLED` | Activado | `true` |
+| `SCHEDULER_MESSAGE` | Mensaje a enviar | `Buenos días, ` |
+| `SCHEDULER_HOUR` | Hora | `07` |
+| `SCHEDULER_MINUTE` | Minuto | `00` |
+| `SCHEDULER_ZONE` | Zona horaria | `Europe/Madrid` |
+| `SCHEDULER_SERVICE` | Servicio de envío | `telegramServiceImpl` |
 | `SERVER_PORT` | Puerto interno de la app | `8081` |
 | `SERVER_CONTEXT_PATH` | Context path del servidor | `/api` |
 | `LOG_PATH` | Ruta de logs en contenedor | `/var/logs/` |
@@ -203,6 +209,22 @@ SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_USER=tu_correo@gmail.com
 SMTP_PASS=tu_contraseña_o_token_app
+```
+
+---
+
+### 💬 Mensaje programado
+
+Permite enviarun mensaje programado a cualquiera de los canales anteriores.
+
+**Variables necesarias:**
+```bash
+SCHEDULER_ENABLED=true/false
+SCHEDULER_MESSAGE=Mensaje a enviar
+SCHEDULER_HOUR=Hora
+SCHEDULER_MINUTE=Minuto
+SCHEDULER_ZONE=Zona horaria
+SCHEDULER_SERVICE=Servicio al que se quiere mandar el mensaje (Telegram, Discord, etc...)
 ```
 
 ---
