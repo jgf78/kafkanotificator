@@ -49,11 +49,11 @@ mqtt:
 scheduler:
   daily:
     enabled:  ${SCHEDULER_ENABLED:true}
-    message:  ${SCHEDULER_MESSAGE:"Buenos días, "}
+    message:  ${SCHEDULER_MESSAGE:Buenos días, }
     hour:  ${SCHEDULER_HOUR:07}
     minute:  ${SCHEDULER_MINUTE:00}
-    zone:  ${SCHEDULER_ZONE:"Europe/Madrid"}
-    service:  ${SCHEDULER_SERVICE:"telegramServiceImpl"}  
+    zone:  ${SCHEDULER_ZONE:Europe/Madrid}
+    service:  ${SCHEDULER_SERVICE:telegramServiceImpl}  
   
 logging:
   file:
