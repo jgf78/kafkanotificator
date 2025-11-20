@@ -23,6 +23,7 @@ Está preparado para ejecutarse tanto en servidores **x86** como en **Raspberry 
   - 💻 **Discord Webhook**
   - 💻 **MQTT**
   - 📧 **Email (SMTP configurable)**
+  - 💬 **Envío programado de un mensaje diario a cualquiera de los anteriores canales**
 - 🐳 **Dockerfile** optimizado (multi-stage)
 - 🔄 **Pipeline Jenkins** para build + push automáticos
 - 🌐 Despliegue automático en **Portainer** o **Docker local**
@@ -215,7 +216,7 @@ SMTP_PASS=tu_contraseña_o_token_app
 
 ### 💬 Mensaje programado
 
-Permite enviarun mensaje programado a cualquiera de los canales anteriores.
+Permite enviar un mensaje programado a cualquiera de los canales anteriores.
 
 **Variables necesarias:**
 ```bash
