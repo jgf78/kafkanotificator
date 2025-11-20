@@ -59,7 +59,16 @@ mqtt:
   topic: notificator/alertas
   clientId: notificator-app
   qos: 1
-  
+
+scheduler:
+  daily:
+    enabled: true
+    message: "Buenos días, "
+    hour: 07
+    minute: 00
+    zone: "Europe/Madrid"
+    service: "telegramServiceImpl"  
+
 server:
   port: 8081
   servlet:
