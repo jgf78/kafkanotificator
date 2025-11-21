@@ -24,7 +24,7 @@ public class DailyScheduler {
         this.context = context;
     }
 
-    @Scheduled(cron = "#{@dailyCron}", zone = "#{@dailyZone}")
+    @Scheduled(cron = "#{@dailyCron}", zone = "Europe/Madrid")
     public void sendDailyNotification() {
         if (!props.isEnabled()) {
             return;
