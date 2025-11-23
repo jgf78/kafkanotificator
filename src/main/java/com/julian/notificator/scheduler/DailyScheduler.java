@@ -1,6 +1,7 @@
 package com.julian.notificator.scheduler;
 
-import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 import org.springframework.context.ApplicationContext;
@@ -33,11 +34,13 @@ public class DailyScheduler {
         NotificationService service =
                 context.getBean(props.getService(), NotificationService.class);
 
-        String now = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm"));
+        ZoneId zone = ZoneId.of(props.getZone() == null ? "Europe/Madrid" : props.getZone());
+        String now = ZonedDateTime.now(zone).format(DateTimeFormatter.ofPattern("HH:mm"));
 
-        String finalMessage = String.format("%sson las %s, que tengas un feliz día 🙂",
-                props.getMessage(), now);
-
+        String finalMessage = String.format(
+                "%sson las %s, que tengas un feliz día 🙂",
+                props.getMessage(), now
+        );
 
         log.info("Enviando mensaje diario:\n{}", finalMessage);
 
