@@ -53,7 +53,7 @@ public class MessageController {
     public String sendFile(
             @RequestParam("message") String message,
             @RequestParam(value = "file", required = false) MultipartFile file,
-            @RequestParam("filename") String filename) {
+            @RequestParam(value = "filename", required = false) String filename) {
         try {
             kafkaProducerService.sendFileToTelegram(message, file, filename);
             return "Mensaje enviado con éxito: " + message;
