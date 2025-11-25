@@ -6,6 +6,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+import com.julian.notificator.model.MessagePayload;
 import com.julian.notificator.service.NotificationService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -33,12 +34,16 @@ public class MailServiceImpl implements NotificationService {
             mailSender.send(mail);
             log.debug("MailService - sendMessage: {}", message);
         } catch (Exception e) {
-            log.error("❌ Error enviando mensaje a Discord: {}", e.getMessage(), e);
+            log.error("❌ Error enviando mensaje a Mail: {}", e.getMessage(), e);
         }
     }
 
     @Override
     public String getChannelName() {
-        return "Discord";
+        return "Mail";
+    }
+
+    @Override
+    public void sendMessageFile(MessagePayload payload) {
     }
 }

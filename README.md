@@ -255,6 +255,7 @@ POST /api/messages/send
 | Discord | `"discord"` |
 | Email | `"email"` |
 | Whatsapp | `"whatsapp"` |
+| MQTT | `"mqtt"` |
 | Todos | `"all"` |
 
 ### Ejemplo con `curl`

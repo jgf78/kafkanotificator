@@ -6,7 +6,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.julian.notificator.model.MessageRequest;
 import com.julian.notificator.service.KafkaProducerService;
@@ -15,7 +17,9 @@ import com.julian.notificator.service.impl.alexa.AlexaServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequestMapping("/messages")
 @ApiResponses(value = {
@@ -43,7 +47,22 @@ public class MessageController {
         kafkaProducerService.sendMessage(request.getMessage(), request.getDestination());
         return "Mensaje enviado a " + request.getDestination() + ": " + request.getMessage();
     }
-    
+
+    @Operation(summary = "Send Telegram message with optional image", description = "Send Telegram message with optional image")
+    @PostMapping("/sendFile")
+    public String sendFile(
+            @RequestParam("message") String message,
+            @RequestParam(value = "file", required = false) MultipartFile file,
+            @RequestParam("filename") String filename) {
+        try {
+            kafkaProducerService.sendFileToTelegram(message, file, filename);
+            return "Mensaje enviado con éxito: " + message;
+        } catch (Exception e) {
+            log.error("Error enviando mensaje a Telegram", e);
+            return "Error enviando mensaje: " + e.getMessage();
+        }
+    }
+
     @Operation(summary = "Read last message", operationId = "getLatestMessage", description = "Read last message", tags = {
             "Messages API", })
     @GetMapping("/latest")
