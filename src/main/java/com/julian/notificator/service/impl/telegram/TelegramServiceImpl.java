@@ -43,10 +43,6 @@ public class TelegramServiceImpl implements NotificationService {
         sendTextToUserAndGroup(message);
     }
 
-    /**
-     * NUEVO — Método único llamado por el consumer.
-     * Maneja texto, imágenes y documentos.
-     */
     @Override
     public void sendMessageFile(MessagePayload payload) {
         String filename = payload.getFilename();
