@@ -52,8 +52,6 @@ public class WhatsappServiceImpl implements NotificationService {
 
     @Override
     public void sendMessageFile(MessagePayload payload) {
-        // TODO Auto-generated method stub
-        
     }
     
 }

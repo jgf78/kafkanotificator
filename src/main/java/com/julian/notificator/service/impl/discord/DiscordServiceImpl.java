@@ -37,7 +37,5 @@ public class DiscordServiceImpl implements NotificationService {
 
     @Override
     public void sendMessageFile(MessagePayload payload) {
-        // TODO Auto-generated method stub
-        
     }
 }
