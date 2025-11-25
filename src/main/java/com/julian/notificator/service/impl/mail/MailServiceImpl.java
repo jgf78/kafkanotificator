@@ -33,12 +33,12 @@ public class MailServiceImpl implements NotificationService {
             mailSender.send(mail);
             log.debug("MailService - sendMessage: {}", message);
         } catch (Exception e) {
-            log.error("❌ Error enviando mensaje a Discord: {}", e.getMessage(), e);
+            log.error("❌ Error enviando mensaje a Mail: {}", e.getMessage(), e);
         }
     }
 
     @Override
     public String getChannelName() {
-        return "Discord";
+        return "Mail";
     }
 }
