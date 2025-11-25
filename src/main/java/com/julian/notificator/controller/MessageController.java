@@ -49,7 +49,7 @@ public class MessageController {
     }
 
     @Operation(summary = "Send Telegram message with optional image", description = "Send Telegram message with optional image")
-    @PostMapping("/sendImage")
+    @PostMapping("/sendFile")
     public String sendFile(
             @RequestParam("message") String message,
             @RequestParam(value = "file", required = false) MultipartFile file,
