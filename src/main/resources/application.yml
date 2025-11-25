@@ -42,7 +42,7 @@ discord:
   webhook-url: "https://discord.com/api/webhooks/1434849038586609758/Iru_TKLtmXNXyaheORsntKlBDYb7_35j_GpcG7BdoN3smld4dAPqNbExX5XJSwVcDGY-"
   
 telegram:
- proxy-url: "http://192.168.1.3:8080/bot8254359368:AAEJ7mG6eU_h8aToXq9KDw4WkHuHJWgqer0/sendMessage"
+ proxy-url: "http://192.168.1.3:8080/bot8254359368:AAEJ7mG6eU_h8aToXq9KDw4WkHuHJWgqer0"
  chat-id: "6610892"
  chat-id-group: "-1001236662890"
 

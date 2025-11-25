@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.julian.notificator.model.MessagePayload;
 import com.julian.notificator.service.NotificationService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -48,4 +49,11 @@ public class WhatsappServiceImpl implements NotificationService {
     public String getChannelName() {
         return "Whatsapp";
     }
+
+    @Override
+    public void sendMessageFile(MessagePayload payload) {
+        // TODO Auto-generated method stub
+        
+    }
+    
 }

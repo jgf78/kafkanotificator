@@ -7,6 +7,7 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.julian.notificator.model.MessagePayload;
 import com.julian.notificator.service.NotificationService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -51,5 +52,11 @@ public class MqttServiceImpl implements NotificationService {
     @Override
     public String getChannelName() {
         return "MQTT";
+    }
+
+    @Override
+    public void sendMessageFile(MessagePayload payload) {
+        // TODO Auto-generated method stub
+        
     }
 }

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.julian.notificator.model.MessagePayload;
 import com.julian.notificator.service.NotificationService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -32,5 +33,11 @@ public class DiscordServiceImpl implements NotificationService {
     @Override
     public String getChannelName() {
         return "Discord";
+    }
+
+    @Override
+    public void sendMessageFile(MessagePayload payload) {
+        // TODO Auto-generated method stub
+        
     }
 }

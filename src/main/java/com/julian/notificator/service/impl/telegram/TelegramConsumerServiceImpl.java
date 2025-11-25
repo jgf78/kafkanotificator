@@ -4,16 +4,19 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.julian.notificator.model.MessagePayload;
 import com.julian.notificator.service.KafkaConsumerService;
 import com.julian.notificator.service.NotificationService;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Service
 @Slf4j
+@Service
 public class TelegramConsumerServiceImpl implements KafkaConsumerService {
 
     private final NotificationService telegramService;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public TelegramConsumerServiceImpl(@Qualifier("telegramServiceImpl") NotificationService notificationService) {
         this.telegramService = notificationService;
@@ -21,13 +24,28 @@ public class TelegramConsumerServiceImpl implements KafkaConsumerService {
 
     @Override
     @KafkaListener(topics = "${kafka.topics.telegram}", groupId = "${kafka.group-id}")
-    public void consume(String message) {
+    public void consume(String messageOrJson) {
         try {
-            log.debug("📥 TelegramConsumer - mensaje recibido: {}", message);
-            telegramService.sendMessage(message);
+            MessagePayload payload;
+            boolean isJson = false;
+
+            try {
+                payload = objectMapper.readValue(messageOrJson, MessagePayload.class);
+                isJson = true;
+            } catch (Exception e) {
+                payload = new MessagePayload();
+                payload.setMessage(messageOrJson);
+            }
+
+            if (isJson && payload.getFile() != null && !payload.getFile().isBlank()) {
+                telegramService.sendMessageFile(payload);
+            } else {
+                telegramService.sendMessage(payload.getMessage());
+            }
+
+            log.debug("📥 TelegramConsumer - mensaje procesado: {}", payload.getMessage());
         } catch (Exception e) {
-            log.error("❌ Error al procesar el mensaje: {}", e.getMessage(), e);
+            log.error("❌ Error procesando mensaje Telegram: {}", e.getMessage(), e);
         }
     }
 }
-
