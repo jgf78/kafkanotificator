@@ -23,7 +23,6 @@ public class TelegramBot extends TelegramLongPollingBot {
     private final RestTemplate restTemplate;
 
     public TelegramBot() {
-        super(); // constructor no deprecado
         this.restTemplate = new RestTemplate();
     }
 
@@ -32,8 +31,10 @@ public class TelegramBot extends TelegramLongPollingBot {
         if (update.hasMessage() && update.getMessage().hasText()) {
             String texto = update.getMessage().getText();
             Long chatId = update.getMessage().getChatId();
-
-            if ("/titulares".equalsIgnoreCase(texto)) {
+            
+            String comando = texto.split("@")[0];
+            
+            if ("/titulares".equalsIgnoreCase(comando)) {
                 try {
                     String titulares = restTemplate.getForObject(backendUrl, String.class);
                     sendText(chatId, titulares != null ? titulares : "No se han podido obtener los titulares.");
