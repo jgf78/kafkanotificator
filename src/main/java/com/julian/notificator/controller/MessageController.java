@@ -48,7 +48,8 @@ public class MessageController {
         return "Mensaje enviado a " + request.getDestination() + ": " + request.getMessage();
     }
 
-    @Operation(summary = "Send Telegram message with optional image", description = "Send Telegram message with optional image")
+    @Operation(summary = "Send Telegram message with optional image", description = "Send Telegram message with optional image", tags = {
+            "Messages API", })
     @PostMapping("/sendFile")
     public String sendFile(
             @RequestParam("message") String message,
