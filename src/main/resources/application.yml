@@ -45,6 +45,8 @@ telegram:
  proxy-url: "http://192.168.1.3:8080/bot8254359368:AAEJ7mG6eU_h8aToXq9KDw4WkHuHJWgqer0"
  chat-id: "6610892"
  chat-id-group: "-1001236662890"
+ bot-token: "8254359368:AAEJ7mG6eU_h8aToXq9KDw4WkHuHJWgqer0"
+ bot-username: "kafkajgf_bot"
 
 rss:
   proxy-url: "http://192.168.1.3:9002/elmundo.xml"  

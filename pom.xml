@@ -103,7 +103,13 @@
             <artifactId>rome</artifactId>
             <version>1.18.0</version>
         </dependency>
-
+        
+        <!--Telegram -->
+        <dependency>
+            <groupId>org.telegram</groupId>
+            <artifactId>telegrambots</artifactId>
+            <version>6.8.0</version>
+        </dependency>
     </dependencies>
 
     <build>
