@@ -8,8 +8,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import com.julian.notificator.service.NewsService;
-
 @Component
 public class TelegramBot extends TelegramLongPollingBot {
 
@@ -19,32 +17,30 @@ public class TelegramBot extends TelegramLongPollingBot {
     @Value("${telegram.bot-username}")
     private String botUsername;
 
-    private final NewsService newsService;
-    
+    @Value("${telegram.backend-url}")  // Ej: http://jgf.duckdns.org:8083/news/headlines
+    private String backendUrl;
+
     private final RestTemplate restTemplate;
 
-    public TelegramBot(NewsService newsService) {
-        this.newsService = newsService;
+    public TelegramBot() {
+        super(); // constructor no deprecado
         this.restTemplate = new RestTemplate();
     }
 
     @Override
     public void onUpdateReceived(Update update) {
-
         if (update.hasMessage() && update.getMessage().hasText()) {
-
             String texto = update.getMessage().getText();
             Long chatId = update.getMessage().getChatId();
 
             if ("/titulares".equalsIgnoreCase(texto)) {
                 try {
-                    String titulares = newsService.getHeadlines();
+                    String titulares = restTemplate.getForObject(backendUrl, String.class);
                     sendText(chatId, titulares != null ? titulares : "No se han podido obtener los titulares.");
                 } catch (Exception e) {
                     e.printStackTrace();
                     sendText(chatId, "Error al obtener los titulares.");
                 }
-
             } else {
                 sendText(chatId, "Comando no reconocido.");
             }
