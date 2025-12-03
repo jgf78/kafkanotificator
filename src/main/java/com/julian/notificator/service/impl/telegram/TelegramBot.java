@@ -42,9 +42,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                     e.printStackTrace();
                     sendText(chatId, "Error al obtener los titulares.");
                 }
-            } else {
-                sendText(chatId, "Comando no reconocido.");
-            }
+            } 
         }
     }
 
