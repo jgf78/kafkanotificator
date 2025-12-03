@@ -17,7 +17,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     @Value("${telegram.bot-username}")
     private String botUsername;
 
-    @Value("${telegram.backend-url}")  // Ej: http://jgf.duckdns.org:8083/news/headlines
+    @Value("${telegram.backend-url}")  
     private String backendUrl;
 
     private final RestTemplate restTemplate;
