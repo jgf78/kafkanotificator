@@ -1,9 +1,9 @@
 package com.julian.notificator.scheduler;
 
-import java.time.LocalDate;
+import java.time.DayOfWeek;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.ZoneId;
 import java.util.List;
 
 import org.springframework.context.ApplicationContext;
@@ -63,21 +63,29 @@ public class DailyScheduler {
 
     @Scheduled(cron = "#{@dailyCron}", zone = "Europe/Madrid")
     public void sendDailyNotification() {
+
         if (!props.isEnabled()) {
+            return;
+        }
+
+        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Europe/Madrid"));
+        DayOfWeek dayOfWeek = now.getDayOfWeek();
+
+        if (dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY) {
+            log.info("Fin de semana ({}), no se envía mensaje", dayOfWeek);
             return;
         }
 
         NotificationService service =
                 context.getBean(props.getService(), NotificationService.class);
 
-        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Europe/Madrid"));
         String hour = now.format(DateTimeFormatter.ofPattern("HH:mm"));
 
-        int day = LocalDate.now().getDayOfMonth();
-        String phrase = PHRASES.get(day - 1); // frase según el día
+        int day = now.getDayOfMonth();
+        String phrase = PHRASES.get(day - 1);
 
         String finalMessage = String.format(
-                "%sson las %s, que tengas un feliz día 🙂\n\nMotivación del día: %s",
+                "%s son las %s, que tengas un feliz día 🙂\n\nMotivación del día: %s",
                 props.getMessage(), hour, phrase
         );
 
@@ -85,4 +93,5 @@ public class DailyScheduler {
 
         service.sendMessage(finalMessage);
     }
+
 }
