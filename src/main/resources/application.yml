@@ -48,6 +48,7 @@ telegram:
  bot-token: "8254359368:AAEJ7mG6eU_h8aToXq9KDw4WkHuHJWgqer0"
  bot-username: "kafkajgf_bot"
  backend-url: "http://jgf78.duckdns.org:8083/api/news/headlines"
+ backend-url2: "http://jgf78.duckdns.org:8083/api/football/live"
 
 rss:
   proxy-url: "http://192.168.1.3:9002/elmundo.xml"  
@@ -74,6 +75,11 @@ scheduler:
     minute: 00
     zone: "Europe/Madrid"
     service: "telegramServiceImpl"  
+
+football-data:
+  base-url: https://api.football-data.org/v4
+  token: 5a2156b9c53f4998b008a0beac552f3c
+  team-id: 86 #Real Madrid
 
 server:
   port: 8081
