@@ -70,7 +70,7 @@ public class FootballDataServiceImpl implements FootballDataService {
         Match match = body.getMatches().get(0);
         result.setPlaying(true);
         
-     // Construimos el mensaje principal
+        // Construimos el mensaje principal
         StringBuilder msg = new StringBuilder();
 
         // Competición
@@ -134,19 +134,35 @@ public class FootballDataServiceImpl implements FootballDataService {
             return "⚽ El Real Madrid no está jugando ningún partido en este momento.";
         }
 
-        var match = response.getMatches().get(0); // tomamos el primer partido en juego
+        Match match = response.getMatches().get(0); // tomamos el primer partido en juego
 
-        int homeScore = match.getScore().getFullTime().getHome();
-        int awayScore = match.getScore().getFullTime().getAway();
+        StringBuilder msg = new StringBuilder();
 
-        String homeTeam = match.getHomeTeam().getName();
-        String awayTeam = match.getAwayTeam().getName();
+        // Marcador
+        msg.append("⚽ Partido en juego: ")
+           .append(match.getHomeTeam().getName())
+           .append(" ")
+           .append(match.getScore().getFullTime().getHome())
+           .append(" - ")
+           .append(match.getScore().getFullTime().getAway())
+           .append(" ")
+           .append(match.getAwayTeam().getName())
+           .append("\n");
 
-        return String.format("⚽ Partido en juego: %s %d - %d %s",
-                homeTeam,
-                homeScore,
-                awayScore,
-                awayTeam);
+        // Estado del partido
+        msg.append("⏱ Estado: ")
+           .append(getMatchState(match))
+           .append("\n");
+
+        // Árbitro 
+        if (match.getReferees() != null && !match.getReferees().isEmpty()) {
+            msg.append("⚫ Árbitro: ")
+               .append(match.getReferees().get(0).getName())
+               .append("\n");
+        }
+
+        return msg.toString();
     }
+
 
 }
