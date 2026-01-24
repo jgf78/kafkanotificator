@@ -72,6 +72,13 @@ public class FootballDataServiceImpl implements FootballDataService {
         
      // Construimos el mensaje principal
         StringBuilder msg = new StringBuilder();
+
+        // Competición
+        msg.append("🏆 ")
+           .append(match.getCompetition().getName())
+           .append("\n\n");
+
+        // Marcador
         msg.append("⚽ Partido en juego: ")
            .append(match.getHomeTeam().getName())
            .append(" ")
@@ -83,10 +90,20 @@ public class FootballDataServiceImpl implements FootballDataService {
            .append("\n");
 
         // Estado del partido
-        msg.append("⏱ Estado: ").append(getMatchState(match)).append("\n");
+        msg.append("⏱ Estado: ")
+           .append(getMatchState(match))
+           .append("\n");
+
+        // Árbitro (si viene informado)
+        if (match.getReferees() != null && !match.getReferees().isEmpty()) {
+            msg.append("⚫ Árbitro: ")
+               .append(match.getReferees().get(0).getName())
+               .append("\n");
+        }
 
         result.setMessage(msg.toString());
         result.setData(body);
+
 
         return result;
 

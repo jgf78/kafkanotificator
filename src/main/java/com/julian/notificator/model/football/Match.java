@@ -1,5 +1,7 @@
 package com.julian.notificator.model.football;
 
+import java.util.List;
+
 import lombok.Data;
 
 @Data
@@ -19,6 +21,7 @@ public class Match {
 
     private Team homeTeam;
     private Team awayTeam;
+    private List<Referee> referees;
 
     private Score score;
 }
