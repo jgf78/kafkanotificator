@@ -84,7 +84,7 @@ public class FootballDataServiceImpl implements FootballDataService {
         StringBuilder msg = new StringBuilder();
 
         // Competición
-        msg.append("🏆 ").append(match.getCompetition().getName()).append("\n\n");
+        msg.append("🏆 ").append(match.getCompetition().getName()).append("\n");
 
         // Marcador
         msg.append(match.getHomeTeam().getName()).append(match.getScore().getFullTime().getHome() != null ? match.getScore().getFullTime().getHome()
