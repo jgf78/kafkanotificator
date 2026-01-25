@@ -52,9 +52,8 @@ public class TelegramBot extends TelegramLongPollingBot {
                 }
             }else if ("/realmadrid".equalsIgnoreCase(comando)) {
                 try {
-                    LiveMatchResponse resultLive = restTemplate.getForObject(backendUrlFootball, LiveMatchResponse.class);
-                    String resultLiveFormatted = footballDataService.formatLiveMatchMessage(resultLive.getData());
-                    sendText(chatId, resultLive != null ? resultLiveFormatted : "No se ha podido obtener el resultado.");
+                    String resultLiveFormatted = footballDataService.formatLiveMatchMessage();
+                    sendText(chatId, resultLiveFormatted);
                 } catch (Exception e) {
                     e.printStackTrace();
                     sendText(chatId, "Error al obtener el resultado de fútbol.");
