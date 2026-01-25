@@ -87,8 +87,7 @@ public class FootballDataServiceImpl implements FootballDataService {
         msg.append("🏆 ").append(match.getCompetition().getName()).append("\n\n");
 
         // Marcador
-        msg.append(match.getHomeTeam().getName()).append("\n")
-                .append(match.getScore().getFullTime().getHome() != null ? match.getScore().getFullTime().getHome()
+        msg.append(match.getHomeTeam().getName()).append(match.getScore().getFullTime().getHome() != null ? match.getScore().getFullTime().getHome()
                         : "")
                 .append(" - ")
                 .append(match.getScore().getFullTime().getAway() != null ? match.getScore().getFullTime().getHome()
@@ -99,7 +98,7 @@ public class FootballDataServiceImpl implements FootballDataService {
         msg.append("⏱ Estado: ").append(getMatchState(match)).append("\n");
         
         //Fecha y hora
-        msg.append("📅 Fecha y hora: ").append(formattedDate(match)).append("\n");
+        msg.append("📅 Fecha: ").append(formattedDate(match)).append("\n");
         
         // Árbitro (si viene informado)
         if (match.getReferees() != null && !match.getReferees().isEmpty()) {
