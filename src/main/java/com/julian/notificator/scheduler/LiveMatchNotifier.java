@@ -18,6 +18,7 @@ public class LiveMatchNotifier {
     private Integer lastHomeScore = null;
     private Integer lastAwayScore = null;
     private Long lastMatchId = null;
+    private String lastStatus = null;
 
     public LiveMatchNotifier(FootballDataService footballDataService,
             @Qualifier("telegramServiceImpl") NotificationService notificationService) {
@@ -40,8 +41,10 @@ public class LiveMatchNotifier {
 
 
         Match match = response.getData().getMatches().get(0);
+        String currentStatus = match.getStatus();
 
-        if (!isMatchActive(match.getStatus())) {
+        // Si el partido no está activo ni en descanso → reset
+        if (!isMatchActive(currentStatus) && !"FINISHED".equals(currentStatus)) {
             resetState();
             return;
         }
@@ -49,28 +52,47 @@ public class LiveMatchNotifier {
         Integer home = match.getScore().getFullTime().getHome();
         Integer away = match.getScore().getFullTime().getAway();
 
-        // Primer tick del partido
+        // ▶️ PRIMER TICK DEL PARTIDO → inicio
         if (lastMatchId == null || !lastMatchId.equals(match.getId())) {
             lastMatchId = match.getId();
             lastHomeScore = home;
             lastAwayScore = away;
+            lastStatus = currentStatus;
+
+            if ("IN_PLAY".equals(currentStatus)) {
+                telegramService.sendMessage(buildKickoffMessage(match));
+            }
             return;
         }
 
-        // 🔔 CAMBIO DE MARCADOR
-        if (!home.equals(lastHomeScore) || !away.equals(lastAwayScore)) {
-            String msg = buildGoalMessage(match);
-            telegramService.sendMessage(msg);
+        // 🔄 CAMBIO DE ESTADO (IN_PLAY → PAUSED → FINISHED)
+        if (!currentStatus.equals(lastStatus)) {
 
+            if ("PAUSED".equals(currentStatus)) {
+                telegramService.sendMessage(buildHalftimeMessage(match));
+            }
+
+            if ("FINISHED".equals(currentStatus)) {
+                telegramService.sendMessage(buildFullTimeMessage(match));
+                resetState();
+                return;
+            }
+
+            lastStatus = currentStatus;
+        }
+
+        // ⚽ CAMBIO DE MARCADOR (GOL)
+        if (!home.equals(lastHomeScore) || !away.equals(lastAwayScore)) {
+            telegramService.sendMessage(buildGoalMessage(match));
             lastHomeScore = home;
             lastAwayScore = away;
-        }
-    }
+        }    }
 
     private void resetState() {
         lastMatchId = null;
         lastHomeScore = null;
         lastAwayScore = null;
+        lastStatus = null;
     }
 
     private String buildGoalMessage(Match match) {
@@ -83,9 +105,36 @@ public class LiveMatchNotifier {
         );
     }
     
+    private String buildKickoffMessage(Match match) {
+        return String.format(
+            "🔔 ¡Empieza el partido!%n%n%s vs %s",
+            match.getHomeTeam().getName(),
+            match.getAwayTeam().getName()
+        );
+    }
+    
+    private String buildHalftimeMessage(Match match) {
+        return String.format(
+            "🟡 Descanso%n%n%s %d - %d %s",
+            match.getHomeTeam().getName(),
+            match.getScore().getFullTime().getHome(),
+            match.getScore().getFullTime().getAway(),
+            match.getAwayTeam().getName()
+        );
+    }
+
+    private String buildFullTimeMessage(Match match) {
+        return String.format(
+            "🏁 Final del partido%n%n%s %d - %d %s",
+            match.getHomeTeam().getName(),
+            match.getScore().getFullTime().getHome(),
+            match.getScore().getFullTime().getAway(),
+            match.getAwayTeam().getName()
+        );
+    }
+
     private boolean isMatchActive(String status) {
         return "IN_PLAY".equals(status) || "PAUSED".equals(status);
     }
 
 }
-
