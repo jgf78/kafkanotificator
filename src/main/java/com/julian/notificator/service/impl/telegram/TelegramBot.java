@@ -84,9 +84,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
         if (handler != null) {
             handler.accept(chatId);
-        } else {
-            sendText(chatId, "🤖 Comando no reconocido.\nPrueba con /cartelera, /titulares o /realmadrid");
-        }
+        } 
     }
 
     // =======================
