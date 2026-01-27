@@ -1,5 +1,7 @@
 package com.julian.notificator.service.impl.telegram;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -8,7 +10,8 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import com.julian.notificator.model.football.LiveMatchResponse;
+import com.julian.notificator.model.cinema.TmdbMovie;
+import com.julian.notificator.service.CinemaDataService;
 import com.julian.notificator.service.FootballDataService;
 
 @Component
@@ -28,10 +31,12 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     private final RestTemplate restTemplate;
     private final FootballDataService footballDataService;
+    private final CinemaDataService cinemaDataService;
 
-    public TelegramBot(RestTemplate restTemplate, FootballDataService footballDataService) {
+    public TelegramBot(RestTemplate restTemplate, FootballDataService footballDataService, CinemaDataService cinemaDataService) {
         this.restTemplate = restTemplate;
         this.footballDataService = footballDataService;
+        this.cinemaDataService = cinemaDataService;
     }
 
     @Override
@@ -58,7 +63,23 @@ public class TelegramBot extends TelegramLongPollingBot {
                     e.printStackTrace();
                     sendText(chatId, "Error al obtener el resultado de fútbol.");
                 }
-            } 
+            } else if ("/cartelera".equalsIgnoreCase(comando)) {
+                try {
+                    List<TmdbMovie> movies = cinemaDataService.getTop10NowPlaying();
+
+                    if (movies.isEmpty()) {
+                        sendText(chatId, "🎬 No se ha podido obtener la cartelera en este momento. Inténtalo más tarde.");
+                        return;
+                    }
+
+                    sendText(chatId, cinemaDataService.buildCarteleraMessage(movies));
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    sendText(chatId, "❌ Error al obtener la cartelera de cine.");
+                }
+            }
+
         }
     }
 
