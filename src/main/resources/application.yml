@@ -81,6 +81,10 @@ football-data:
   token: 5a2156b9c53f4998b008a0beac552f3c
   team-id: 86 #Real Madrid
 
+cinema-data:
+  base-url: https://api.themoviedb.org/3/movie/now_playing
+  token: 4dc0a8a4bf4a1752cb0bb20bd6e26e33
+  
 server:
   port: 8081
   servlet:
