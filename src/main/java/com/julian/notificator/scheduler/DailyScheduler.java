@@ -85,7 +85,7 @@ public class DailyScheduler {
         String phrase = PHRASES.get(day - 1);
 
         String finalMessage = String.format(
-                "%s son las %s, que tengas un feliz día 🙂\n\nMotivación del día: %s",
+                "%s son las %s, que tengas un feliz día 🙂%n%nMotivación del día: %s",
                 props.getMessage(), hour, phrase
         );
 
