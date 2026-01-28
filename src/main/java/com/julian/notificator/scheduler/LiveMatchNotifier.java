@@ -30,18 +30,19 @@ public class LiveMatchNotifier {
     public void checkLiveMatch() {
         
         LiveMatchResponse response = footballDataService.getLiveStatus();
-
+        String currentStatus = "FINISHED";
+        Match match = null;
+        
         if (response == null 
                 || response.getData() == null 
                 || response.getData().getMatches() == null 
                 || response.getData().getMatches().isEmpty()) {
             resetState();
-            return;
+            currentStatus = "FINISHED";
+        }else {
+            match = response.getData().getMatches().get(0);
+            currentStatus = match.getStatus();
         }
-
-
-        Match match = response.getData().getMatches().get(0);
-        String currentStatus = match.getStatus();
 
         // Si el partido no está activo ni en descanso → reset
         if (!isMatchActive(currentStatus) && !"FINISHED".equals(currentStatus)) {
