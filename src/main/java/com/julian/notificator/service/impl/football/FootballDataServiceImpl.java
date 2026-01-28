@@ -22,6 +22,7 @@ public class FootballDataServiceImpl implements FootballDataService {
 
     private static final String LIVE_MATCH = "%s/teams/%s/matches?status=IN_PLAY,PAUSED";
     private static final String NEXT_MATCH = "%s/teams/%s/matches?status=SCHEDULED";
+    private static final String FINISHED_MATCH = "%s/teams/%s/matches?status=FINISHED";
 
     @Value("${football-data.team-id}")
     private String teamId;
@@ -41,6 +42,14 @@ public class FootballDataServiceImpl implements FootballDataService {
     @Override
     public String getNextMatch() {
         FootballData body = callAPI(NEXT_MATCH);
+        Match match = body.getMatches().get(0);
+        StringBuilder msg = getFinalMessage(match);
+        return msg.toString();
+    }
+    
+    @Override
+    public String getFinishedMatch() {
+        FootballData body = callAPI(FINISHED_MATCH);
         Match match = body.getMatches().get(0);
         StringBuilder msg = getFinalMessage(match);
         return msg.toString();
