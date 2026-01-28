@@ -20,7 +20,7 @@ import com.julian.notificator.service.FootballDataService;
 @Service
 public class FootballDataServiceImpl implements FootballDataService {
 
-    private static final String LIVE_MATCH = "%s/teams/%s/matches?status=IN_PLAY";
+    private static final String LIVE_MATCH = "%s/teams/%s/matches?status=IN_PLAY,TIMED";
     private static final String NEXT_MATCH = "%s/teams/%s/matches?status=SCHEDULED";
 
     @Value("${football-data.team-id}")
