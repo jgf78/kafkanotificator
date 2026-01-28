@@ -77,7 +77,8 @@ public class LiveMatchNotifier {
             telegramService.sendMessage(buildGoalMessage(match));
             lastHomeScore = home;
             lastAwayScore = away;
-        }    }
+        }   
+    }
 
     private void resetState() {
         lastMatchId = null;
