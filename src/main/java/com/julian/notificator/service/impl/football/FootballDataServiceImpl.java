@@ -48,11 +48,15 @@ public class FootballDataServiceImpl implements FootballDataService {
     }
     
     @Override
-    public String getFinishedMatch() {
+    public LiveMatchResponse getFinishedMatch() {
         FootballData body = callAPI(FINISHED_MATCH);
+        LiveMatchResponse result = new LiveMatchResponse();
+        result.setPlaying(false);
+        result.setData(body);
         Match match = body.getMatches().get(0);
         StringBuilder msg = getFinalMessage(match);
-        return msg.toString();
+        result.setMessage(msg.toString());
+        return result;
     }
 
     @Override

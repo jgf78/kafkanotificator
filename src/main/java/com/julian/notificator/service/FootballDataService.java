@@ -10,6 +10,6 @@ public interface FootballDataService {
 
     String formatLiveMatchMessage();
 
-    String getFinishedMatch();
+    LiveMatchResponse getFinishedMatch();
 
 }

@@ -35,8 +35,7 @@ public class LiveMatchNotifier {
                 || response.getData() == null 
                 || response.getData().getMatches() == null 
                 || response.getData().getMatches().isEmpty()) {
-            resetState();
-            response = footballDataService.getLiveStatus();
+            response = footballDataService.getFinishedMatch();
         }
 
         Match match = response.getData().getMatches().get(0);
