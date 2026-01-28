@@ -30,15 +30,17 @@ public class LiveMatchNotifier {
     public void checkLiveMatch() {
         
         LiveMatchResponse response = footballDataService.getLiveStatus();
-        
+        Match match = null;
         if (response == null 
                 || response.getData() == null 
                 || response.getData().getMatches() == null 
                 || response.getData().getMatches().isEmpty()) {
             response = footballDataService.getFinishedMatch();
+            List<Match> matches = response.getData().getMatches();
+            match = matches.get(matches.size() - 1);
         }
 
-        Match match = response.getData().getMatches().get(0);
+        if(match==null) match = response.getData().getMatches().get(0);
         String currentStatus = match.getStatus();
         Integer home = match.getScore().getFullTime().getHome();
         Integer away = match.getScore().getFullTime().getAway();
