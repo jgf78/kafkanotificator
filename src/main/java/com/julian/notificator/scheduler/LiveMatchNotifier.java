@@ -128,8 +128,4 @@ public class LiveMatchNotifier {
         );
     }
 
-    private boolean isMatchActive(String status) {
-        return "IN_PLAY".equals(status) || "PAUSED".equals(status);
-    }
-
 }
