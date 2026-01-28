@@ -44,12 +44,6 @@ public class LiveMatchNotifier {
             currentStatus = match.getStatus();
         }
 
-        // Si el partido no está activo ni en descanso → reset
-        if (!isMatchActive(currentStatus) && !"FINISHED".equals(currentStatus)) {
-            resetState();
-            return;
-        }
-
         Integer home = match.getScore().getFullTime().getHome();
         Integer away = match.getScore().getFullTime().getAway();
 
