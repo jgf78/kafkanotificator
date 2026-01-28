@@ -99,38 +99,38 @@ public class LiveMatchNotifier {
     private String buildGoalMessage(Match match) {
         return String.format(
             "⚽ ¡Gol en el partido!%n%n%s %d - %d %s",
-            match.getHomeTeam().getName(),
+            match.getHomeTeam().getShortName(),
             match.getScore().getFullTime().getHome(),
             match.getScore().getFullTime().getAway(),
-            match.getAwayTeam().getName()
+            match.getAwayTeam().getShortName()
         );
     }
     
     private String buildKickoffMessage(Match match) {
         return String.format(
             "🔔 ¡Empieza el partido!%n%n%s vs %s",
-            match.getHomeTeam().getName(),
-            match.getAwayTeam().getName()
+            match.getHomeTeam().getShortName(),
+            match.getAwayTeam().getShortName()
         );
     }
     
     private String buildHalftimeMessage(Match match) {
         return String.format(
             "🟡 Descanso%n%n%s %d - %d %s",
-            match.getHomeTeam().getName(),
+            match.getHomeTeam().getShortName(),
             match.getScore().getFullTime().getHome(),
             match.getScore().getFullTime().getAway(),
-            match.getAwayTeam().getName()
+            match.getAwayTeam().getShortName()
         );
     }
 
     private String buildFullTimeMessage(Match match) {
         return String.format(
             "🏁 Final del partido%n%n%s %d - %d %s",
-            match.getHomeTeam().getName(),
+            match.getHomeTeam().getShortName(),
             match.getScore().getFullTime().getHome(),
             match.getScore().getFullTime().getAway(),
-            match.getAwayTeam().getName()
+            match.getAwayTeam().getShortName()
         );
     }
 
