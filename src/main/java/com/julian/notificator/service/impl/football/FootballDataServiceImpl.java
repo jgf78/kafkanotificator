@@ -90,7 +90,7 @@ public class FootballDataServiceImpl implements FootballDataService {
         msg.append(match.getHomeTeam().getName()).append(match.getScore().getFullTime().getHome() != null ? " "+match.getScore().getFullTime().getHome()
                         : "")
                 .append(" - ")
-                .append(match.getScore().getFullTime().getAway() != null ? match.getScore().getFullTime().getHome()
+                .append(match.getScore().getFullTime().getAway() != null ? match.getScore().getFullTime().getAway()
                         : "")
                 .append(" ").append(match.getAwayTeam().getName()).append("\n");
 
