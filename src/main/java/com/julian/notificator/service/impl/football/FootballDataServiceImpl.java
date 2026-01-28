@@ -87,8 +87,7 @@ public class FootballDataServiceImpl implements FootballDataService {
         msg.append("🏆 ").append(match.getCompetition().getName()).append("\n");
 
         // Marcador
-        msg.append(" ");
-        msg.append(match.getHomeTeam().getName()).append(match.getScore().getFullTime().getHome() != null ? match.getScore().getFullTime().getHome()
+        msg.append(match.getHomeTeam().getName()).append(match.getScore().getFullTime().getHome() != null ? " "+match.getScore().getFullTime().getHome()
                         : "")
                 .append(" - ")
                 .append(match.getScore().getFullTime().getAway() != null ? match.getScore().getFullTime().getHome()
