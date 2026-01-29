@@ -34,4 +34,11 @@ public class FootballController {
     public ResponseEntity<LiveMatchResponse> getLiveMatch() {
         return ResponseEntity.ok(service.getLiveStatus());
     }
+    
+    @Operation(summary = "Get finished match", operationId = "getFinishedMatch", description = "Get finished match", tags = {
+            "Football API", })
+    @GetMapping("/finished")
+    public ResponseEntity<LiveMatchResponse> getFinishedMatch() {
+        return ResponseEntity.ok(service.getFinishedMatch());
+    }
 }

@@ -3,6 +3,7 @@ package com.julian.notificator.service.impl.football;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -53,7 +54,8 @@ public class FootballDataServiceImpl implements FootballDataService {
         LiveMatchResponse result = new LiveMatchResponse();
         result.setPlaying(false);
         result.setData(body);
-        Match match = body.getMatches().get(0);
+        List<Match> matches = result.getData().getMatches();
+        Match match = matches.get(matches.size() - 1);
         StringBuilder msg = getFinalMessage(match);
         result.setMessage(msg.toString());
         return result;
