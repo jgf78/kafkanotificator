@@ -59,12 +59,11 @@ public class WeatherServiceImpl implements WeatherService {
 
         // 🌦️ Forecast semanal
         String weatherEndpoint = String.format(
-                "%s?lat=%s&lon=%s&exclude=minutely,hourly,alerts&units=metric&lang=es&appid=%s",
+                "%s?q=%s&units=metric&lang=es&appid=%s",
                 baseUrl,
-                lat,
-                lon,
+                city,
                 apiKey
-        );
+            );
 
         WeatherResponse response = restTemplate.getForObject(weatherEndpoint, WeatherResponse.class);
 
