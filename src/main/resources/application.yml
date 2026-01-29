@@ -87,7 +87,7 @@ cinema-data:
 
 weather:
   api-key: 214694727966c990d5ac588e61b154ec
-  base-url: https://api.openweathermap.org/data/3.0/onecall
+  base-url:   https://api.openweathermap.org/data/2.5/forecast
   geo-url: https://api.openweathermap.org/geo/1.0/direct
 
       
