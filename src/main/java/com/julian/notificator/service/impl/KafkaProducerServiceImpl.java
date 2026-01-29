@@ -58,7 +58,7 @@ public class KafkaProducerServiceImpl implements KafkaProducerService {
             kafkaTemplate.send(alexa, message);
             kafkaTemplate.send(whatsapp, message);
             kafkaTemplate.send(mqtt, message);
-        }
+            }
         }
         log.info("KafkaProducerService - sendMessage. Mensaje enviado a {}: {}", destination, message);
 
@@ -85,5 +85,22 @@ public class KafkaProducerServiceImpl implements KafkaProducerService {
             log.error("Error serializando/enviando archivo a Telegram: {}", e.getMessage(), e);
         }
     }
+
+    @Override
+    public void sendPinMessage(String pinMessage) {
+        try {
+            MessagePayload payload = new MessagePayload();
+            payload.setMessage(pinMessage);
+            payload.setPin(true); 
+
+            String json = objectMapper.writeValueAsString(payload);
+            kafkaTemplate.send(telegram, json);
+
+            log.info("KafkaProducerService - sendPinMessage. Mensaje anclado enviado {}", pinMessage);
+        } catch (Exception e) {
+            log.error("Error enviando mensaje anclado a Telegram: {}", e.getMessage(), e);
+        }
+    }
+
 
 }

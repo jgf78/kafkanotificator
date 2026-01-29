@@ -39,6 +39,8 @@ public class TelegramConsumerServiceImpl implements KafkaConsumerService {
 
             if (isJson && payload.getFile() != null && !payload.getFile().isBlank()) {
                 telegramService.sendMessageFile(payload);
+            } else if (payload.isPin()) { 
+                telegramService.sendPinMessage(payload.getMessage());
             } else {
                 telegramService.sendMessage(payload.getMessage());
             }

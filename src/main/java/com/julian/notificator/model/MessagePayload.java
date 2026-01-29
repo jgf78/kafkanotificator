@@ -10,5 +10,6 @@ import lombok.NoArgsConstructor;
 public class MessagePayload {
     private String message;
     private String file;      
-    private String filename;  
+    private String filename;
+    private boolean pin;
 }

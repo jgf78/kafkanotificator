@@ -6,4 +6,5 @@ public interface NotificationService {
     void sendMessage(String message);
     String getChannelName();
     void sendMessageFile(MessagePayload payload);
+    void sendPinMessage(String message);
 }
