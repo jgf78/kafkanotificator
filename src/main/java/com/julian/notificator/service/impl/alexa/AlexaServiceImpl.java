@@ -32,4 +32,8 @@ public class AlexaServiceImpl implements NotificationService {
     public void sendMessageFile(MessagePayload payload) {
     }
 
+    @Override
+    public void sendPinMessage(String message) {
+    }
+
 }

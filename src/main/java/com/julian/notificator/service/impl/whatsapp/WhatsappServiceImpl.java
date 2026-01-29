@@ -53,5 +53,9 @@ public class WhatsappServiceImpl implements NotificationService {
     @Override
     public void sendMessageFile(MessagePayload payload) {
     }
+
+    @Override
+    public void sendPinMessage(String message) {
+    }
     
 }
