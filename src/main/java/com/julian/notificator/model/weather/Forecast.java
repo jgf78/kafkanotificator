@@ -2,58 +2,86 @@ package com.julian.notificator.model.weather;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Data;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
+// Clase raíz para /forecast (5 días / 3h)
+@Data
 public class Forecast {
-
+    private String cod;
+    private int cnt;
     private List<ForecastItem> list;
+    private City city;
 
-    public List<ForecastItem> getList() {
-        return list;
-    }
-
-    public void setList(List<ForecastItem> list) {
-        this.list = list;
-    }
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
+    @Data
     public static class ForecastItem {
         private long dt; // timestamp en segundos
         private Main main;
         private List<Weather> weather;
-
-        public long getDt() { return dt; }
-        public void setDt(long dt) { this.dt = dt; }
-
-        public Main getMain() { return main; }
-        public void setMain(Main main) { this.main = main; }
-
-        public List<Weather> getWeather() { return weather; }
-        public void setWeather(List<Weather> weather) { this.weather = weather; }
+        private Clouds clouds;
+        private Wind wind;
+        private int visibility;
+        private double pop; // probabilidad de lluvia
+        private Sys sys;
+        private String dt_txt; // fecha/hora en texto
     }
 
-    @JsonIgnoreProperties(ignoreUnknown = true)
+    @Data
     public static class Main {
+        private double temp;
+        private double feels_like;
         private double temp_min;
         private double temp_max;
+        private int pressure;
+        private int sea_level;
+        private int grnd_level;
+        private int humidity;
+        private double temp_kf;
 
+        // Para mapear correctamente el JSON, si es necesario
         public double getTempMin() { return temp_min; }
-        public void setTempMin(double temp_min) { this.temp_min = temp_min; }
-
         public double getTempMax() { return temp_max; }
-        public void setTempMax(double temp_max) { this.temp_max = temp_max; }
     }
 
-    @JsonIgnoreProperties(ignoreUnknown = true)
+    @Data
     public static class Weather {
+        private int id;
+        private String main;
         private String description;
         private String icon;
+    }
 
-        public String getDescription() { return description; }
-        public void setDescription(String description) { this.description = description; }
+    @Data
+    public static class Clouds {
+        private int all;
+    }
 
-        public String getIcon() { return icon; }
-        public void setIcon(String icon) { this.icon = icon; }
+    @Data
+    public static class Wind {
+        private double speed;
+        private int deg;
+        private double gust;
+    }
+
+    @Data
+    public static class Sys {
+        private String pod; // "n" o "d"
+    }
+
+    @Data
+    public static class City {
+        private long id;
+        private String name;
+        private Coord coord;
+        private String country;
+        private int population;
+        private int timezone;
+        private long sunrise;
+        private long sunset;
+    }
+
+    @Data
+    public static class Coord {
+        private double lat;
+        private double lon;
     }
 }
