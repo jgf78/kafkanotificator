@@ -6,14 +6,13 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
-import com.julian.notificator.model.MessagePayload;
-import com.julian.notificator.service.NotificationService;
+import com.julian.notificator.service.AbstractNotificationService;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
-public class MailServiceImpl implements NotificationService {
+public class MailServiceImpl extends AbstractNotificationService {
 
     @Value("${mail.to}")
     private String to;
@@ -43,11 +42,5 @@ public class MailServiceImpl implements NotificationService {
         return "Mail";
     }
 
-    @Override
-    public void sendMessageFile(MessagePayload payload) {
-    }
-
-    @Override
-    public void sendPinMessage(String message) {
-    }
+    
 }

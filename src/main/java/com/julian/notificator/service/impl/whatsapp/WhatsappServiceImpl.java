@@ -7,14 +7,13 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.julian.notificator.model.MessagePayload;
-import com.julian.notificator.service.NotificationService;
+import com.julian.notificator.service.AbstractNotificationService;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service("whatsappServiceImpl")
-public class WhatsappServiceImpl implements NotificationService {
+public class WhatsappServiceImpl extends AbstractNotificationService {
 
     @Value("${whatsapp.apikey}")
     private String apikey;
@@ -49,13 +48,4 @@ public class WhatsappServiceImpl implements NotificationService {
     public String getChannelName() {
         return "Whatsapp";
     }
-
-    @Override
-    public void sendMessageFile(MessagePayload payload) {
-    }
-
-    @Override
-    public void sendPinMessage(String message) {
-    }
-    
 }
