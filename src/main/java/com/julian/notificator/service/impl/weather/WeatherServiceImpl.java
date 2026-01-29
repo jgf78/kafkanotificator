@@ -44,37 +44,28 @@ public class WeatherServiceImpl implements WeatherService {
     public WeeklyWeather getWeeklyForecast(String city) {
 
         // 🌍 Geocoding
-        String geoEndpoint = String.format(
-                "%s?q=%s&limit=1&appid=%s",
-                geoUrl,
-                city,
-                apiKey
-        );
+        String geoEndpoint = String.format("%s?q=%s&limit=1&appid=%s", geoUrl, city, apiKey);
         GeoResponse[] geo = restTemplate.getForObject(geoEndpoint, GeoResponse[].class);
         if (geo == null || geo.length == 0) {
             throw new IllegalArgumentException("Ciudad no encontrada");
         }
 
         // 🌦️ Forecast 5 días / 3h
-        String weatherEndpoint = String.format(
-                "%s?q=%s&units=metric&lang=es&appid=%s",
-                baseUrl,
-                city,
-                apiKey
-        );
-
+        String weatherEndpoint = String.format("%s?q=%s&units=metric&lang=es&appid=%s", baseUrl, city, apiKey);
         Forecast response = restTemplate.getForObject(weatherEndpoint, Forecast.class);
         if (response == null || response.getList() == null) {
             throw new IllegalStateException("No se pudo obtener la previsión");
         }
 
-        // Agrupamos por fecha
+        // Agrupamos bloques de 3h por día
         Map<LocalDate, List<Forecast.ForecastItem>> grouped = response.getList().stream()
                 .collect(Collectors.groupingBy(
                         f -> Instant.ofEpochSecond(f.getDt()).atZone(ZONE_ID).toLocalDate(),
-                        TreeMap::new, Collectors.toList()
+                        TreeMap::new,
+                        Collectors.toList()
                 ));
 
+        // Calculamos min, max y descripción/icono más frecuentes por día
         List<DailyWeather> days = grouped.entrySet().stream()
                 .limit(7)
                 .map(entry -> {
@@ -84,7 +75,6 @@ public class WeatherServiceImpl implements WeatherService {
                     double min = items.stream().mapToDouble(i -> i.getMain().getTempMin()).min().orElse(0);
                     double max = items.stream().mapToDouble(i -> i.getMain().getTempMax()).max().orElse(0);
 
-                    // Icono más frecuente
                     String icon = items.stream()
                             .map(i -> i.getWeather().get(0).getIcon())
                             .collect(Collectors.groupingBy(s -> s, Collectors.counting()))
