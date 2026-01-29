@@ -84,7 +84,13 @@ football-data:
 cinema-data:
   base-url: https://api.themoviedb.org/3/movie/now_playing
   token: 4dc0a8a4bf4a1752cb0bb20bd6e26e33
-  
+
+weather:
+  api-key: 214694727966c990d5ac588e61b154ec
+  base-url: https://api.openweathermap.org/data/3.0/onecall
+  geo-url: https://api.openweathermap.org/geo/1.0/direct
+
+      
 server:
   port: 8081
   servlet:
