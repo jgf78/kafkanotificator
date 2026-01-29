@@ -2,9 +2,7 @@ package com.julian.notificator.service.impl.telegram;
 
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
-
-import jakarta.annotation.PostConstruct;
+import java.util.function.BiConsumer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,8 +15,12 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import com.julian.notificator.model.cinema.TmdbMovie;
+import com.julian.notificator.model.weather.WeeklyWeather;
 import com.julian.notificator.service.CinemaDataService;
 import com.julian.notificator.service.FootballDataService;
+import com.julian.notificator.service.WeatherService;
+
+import jakarta.annotation.PostConstruct;
 
 @Component
 public class TelegramBot extends TelegramLongPollingBot {
@@ -37,16 +39,19 @@ public class TelegramBot extends TelegramLongPollingBot {
     private final RestTemplate restTemplate;
     private final FootballDataService footballDataService;
     private final CinemaDataService cinemaDataService;
+    private final WeatherService weatherService;
 
-    private Map<String, Consumer<Long>> commandHandlers;
+    private Map<String, BiConsumer<Long, String>> commandHandlers;
 
     public TelegramBot(RestTemplate restTemplate,
                        FootballDataService footballDataService,
-                       CinemaDataService cinemaDataService) {
+                       CinemaDataService cinemaDataService,
+                       WeatherService weatherService) {
 
         this.restTemplate = restTemplate;
         this.footballDataService = footballDataService;
         this.cinemaDataService = cinemaDataService;
+        this.weatherService = weatherService;
     }
 
     // =======================
@@ -57,9 +62,10 @@ public class TelegramBot extends TelegramLongPollingBot {
     private void initCommands() {
 
         commandHandlers = Map.of(
-            "/titulares", this::handleTitulares,
-            "/realmadrid", this::handleRealMadrid,
-            "/cartelera", this::handleCartelera
+            "/titulares", (chatId, text) -> handleTitulares(chatId),
+            "/realmadrid", (chatId, text) -> handleRealMadrid(chatId),
+            "/cartelera", (chatId, text) -> handleCartelera(chatId),
+            "/tiempo", this::handleTiempo
         );
     }
 
@@ -74,18 +80,18 @@ public class TelegramBot extends TelegramLongPollingBot {
             return;
         }
 
-        String texto = update.getMessage().getText();
+        String text = update.getMessage().getText().trim();
         Long chatId = update.getMessage().getChatId();
 
-        // Elimina @BotName si viene
-        String comando = texto.split("@")[0].toLowerCase();
+        String command = text.split(" ")[0].split("@")[0].toLowerCase();
 
-        Consumer<Long> handler = commandHandlers.get(comando);
+        BiConsumer<Long, String> handler = commandHandlers.get(command);
 
         if (handler != null) {
-            handler.accept(chatId);
-        } 
+            handler.accept(chatId, text);
+        }
     }
+
 
     // =======================
     // COMMAND HANDLERS
@@ -130,6 +136,36 @@ public class TelegramBot extends TelegramLongPollingBot {
         } catch (Exception e) {
             logger.error("Error en comando /cartelera", e);
             sendText(chatId, "❌ Error al obtener la cartelera de cine.");
+        }
+    }
+    
+    private void handleTiempo(Long chatId, String text) {
+
+        sendText(chatId, "🌤️ Consultando el tiempo de tu ciudad...");
+
+        try {
+            String city = text.replaceFirst("/tiempo(@\\w+)?", "").trim();
+
+            if (city.isEmpty()) {
+                sendText(chatId, "❌ Uso correcto: /tiempo Madrid");
+                return;
+            }
+
+            WeeklyWeather weather = weatherService.getWeeklyForecast(city);
+
+            if (weather == null || weather.getDays() == null || weather.getDays().isEmpty()) {
+                sendText(chatId, "❌ No se ha podido obtener la previsión para *" + city + "*");
+                return;
+            }
+
+            String msg = weatherService.formatWeeklyWeather(weather);
+            sendText(chatId, msg);
+
+        } catch (IllegalArgumentException e) {
+            sendText(chatId, "❌ No he encontrado la ciudad indicada 😕");
+        } catch (Exception e) {
+            logger.error("Error en comando /tiempo", e);
+            sendText(chatId, "❌ Error al obtener el tiempo. Inténtalo más tarde.");
         }
     }
 
