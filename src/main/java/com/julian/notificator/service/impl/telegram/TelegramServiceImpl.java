@@ -42,6 +42,29 @@ public class TelegramServiceImpl implements NotificationService {
     public void sendMessage(String message) {
         sendTextToUserAndGroup(message);
     }
+    
+    @Override
+    public void sendPinMessage(String message) {
+
+        String chatId = chatIdGroup; 
+        try {
+            
+            Map<String, String> body = Map.of(
+                    CHAT_ID, chatId,
+                    TEXT, message
+            );
+            var response = restTemplate.postForEntity(telegramProxyUrl + "/sendMessage", body, String.class);
+            log.debug("Mensaje enviado a Telegram chat_id {}: {}", chatId, message);
+
+            String responseBody = response.getBody();
+            if (responseBody != null && responseBody.contains("message_id")) {
+                int messageId = extractMessageId(responseBody);
+                pinMessage(chatId, messageId);
+            }
+        } catch (Exception e) {
+            log.error("Error enviando y anclando mensaje en Telegram chat_id {}: {}", chatId, e.getMessage());
+        }
+    }
 
     @Override
     public void sendMessageFile(MessagePayload payload) {
@@ -161,6 +184,27 @@ public class TelegramServiceImpl implements NotificationService {
         } catch (Exception e) {
             log.error("Error enviando documento a Telegram chat_id {}: {}", chatId, e.getMessage());
         }
+    }
+    
+    private void pinMessage(String chatId, int messageId) {
+        try {
+            Map<String, Object> body = Map.of(
+                    CHAT_ID, chatId,
+                    "message_id", messageId,
+                    "disable_notification", true
+            );
+
+            restTemplate.postForEntity(telegramProxyUrl + "/pinChatMessage", body, String.class);
+            log.debug("Mensaje anclado en chat_id {} con message_id {}", chatId, messageId);
+        } catch (Exception e) {
+            log.error("Error anclando mensaje en Telegram chat_id {}: {}", chatId, e.getMessage());
+        }
+    }
+
+    private int extractMessageId(String json) throws Exception {
+        var mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+        var node = mapper.readTree(json);
+        return node.path("result").path("message_id").asInt();
     }
 
     @Override

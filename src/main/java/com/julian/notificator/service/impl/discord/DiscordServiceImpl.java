@@ -6,14 +6,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.julian.notificator.model.MessagePayload;
-import com.julian.notificator.service.NotificationService;
+import com.julian.notificator.service.AbstractNotificationService;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
-public class DiscordServiceImpl implements NotificationService {
+public class DiscordServiceImpl extends AbstractNotificationService {
 
     @Value("${discord.webhook-url}")
     private String discordWebhookUrl;
@@ -35,7 +34,4 @@ public class DiscordServiceImpl implements NotificationService {
         return "Discord";
     }
 
-    @Override
-    public void sendMessageFile(MessagePayload payload) {
-    }
 }

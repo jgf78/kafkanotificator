@@ -7,14 +7,13 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.julian.notificator.model.MessagePayload;
-import com.julian.notificator.service.NotificationService;
+import com.julian.notificator.service.AbstractNotificationService;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service("mqttServiceImpl")
-public class MqttServiceImpl implements NotificationService {
+public class MqttServiceImpl extends AbstractNotificationService {
 
     @Value("${mqtt.broker}")
     private String broker;
@@ -54,7 +53,4 @@ public class MqttServiceImpl implements NotificationService {
         return "MQTT";
     }
 
-    @Override
-    public void sendMessageFile(MessagePayload payload) {
-    }
 }

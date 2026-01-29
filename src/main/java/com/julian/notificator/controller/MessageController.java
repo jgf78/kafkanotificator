@@ -47,6 +47,14 @@ public class MessageController {
         kafkaProducerService.sendMessage(request.getMessage(), request.getDestination());
         return "Mensaje enviado a " + request.getDestination() + ": " + request.getMessage();
     }
+    
+    @Operation(summary = "Send Pin Message", operationId = "sendPinMessage", description = "Send Pin Message", tags = {
+            "Messages API", })
+    @PostMapping("/sendPin")
+    public String sendPinMessage(@RequestParam("message") String pinMessage) {
+        kafkaProducerService.sendPinMessage(pinMessage);
+        return "Mensaje enviado y anclado: " + pinMessage;
+    }
 
     @Operation(summary = "Send Telegram message with optional image", description = "Send Telegram message with optional image", tags = {
             "Messages API", })

@@ -2,14 +2,13 @@ package com.julian.notificator.service.impl.alexa;
 
 import org.springframework.stereotype.Service;
 
-import com.julian.notificator.model.MessagePayload;
-import com.julian.notificator.service.NotificationService;
+import com.julian.notificator.service.AbstractNotificationService;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service("alexaServiceImpl")
-public class AlexaServiceImpl implements NotificationService {
+public class AlexaServiceImpl extends AbstractNotificationService {
 
     private String lastMessage = "No hay mensajes nuevos";
 
@@ -26,10 +25,6 @@ public class AlexaServiceImpl implements NotificationService {
 
     public String getLastMessage() {
         return lastMessage;
-    }
-
-    @Override
-    public void sendMessageFile(MessagePayload payload) {
     }
 
 }
