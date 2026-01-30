@@ -56,7 +56,7 @@ public class MessageController {
         return "Mensaje enviado y anclado: " + pinMessage;
     }
 
-    @Operation(summary = "Send Telegram message with optional image", description = "Send Telegram message with optional image", tags = {
+    @Operation(summary = "Send Telegram message with document", description = "Send Telegram message with document", tags = {
             "Messages API", })
     @PostMapping("/sendFile")
     public String sendFile(

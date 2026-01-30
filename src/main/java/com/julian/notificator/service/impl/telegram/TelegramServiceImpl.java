@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.julian.notificator.model.MessagePayload;
 import com.julian.notificator.service.NotificationService;
 
@@ -21,11 +22,12 @@ import lombok.extern.slf4j.Slf4j;
 @Service("telegramServiceImpl")
 public class TelegramServiceImpl implements NotificationService {
 
-    private static final String DOCUMENT = "document";
-    private static final String TEXT = "text";
     private static final String CHAT_ID = "chat_id";
-    private static final String PHOTO = "photo";
+    private static final String TEXT = "text";
     private static final String CAPTION = "caption";
+    private static final String PHOTO = "photo";
+    private static final String VIDEO = "video";
+    private static final String DOCUMENT = "document";
 
     @Value("${telegram.proxy-url}")
     private String telegramProxyUrl;
@@ -37,53 +39,56 @@ public class TelegramServiceImpl implements NotificationService {
     private String chatIdGroup;
 
     private final RestTemplate restTemplate = new RestTemplate();
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
+    /* ============================================================
+       API PÚBLICA
+       ============================================================ */
 
     @Override
     public void sendMessage(String message) {
         sendTextToUserAndGroup(message);
     }
-    
+
     @Override
     public void sendPinMessage(String message) {
-
-        String chatId = chatIdGroup; 
         try {
-            
-            Map<String, String> body = Map.of(
-                    CHAT_ID, chatId,
-                    TEXT, message
-            );
-            var response = restTemplate.postForEntity(telegramProxyUrl + "/sendMessage", body, String.class);
-            log.debug("Mensaje enviado a Telegram chat_id {}: {}", chatId, message);
-
-            String responseBody = response.getBody();
-            if (responseBody != null && responseBody.contains("message_id")) {
-                int messageId = extractMessageId(responseBody);
-                pinMessage(chatId, messageId);
-            }
+            String response = sendText(chatIdGroup, message);
+            int messageId = extractMessageId(response);
+            pinMessage(chatIdGroup, messageId);
         } catch (Exception e) {
-            log.error("Error enviando y anclando mensaje en Telegram chat_id {}: {}", chatId, e.getMessage());
+            log.error("Error enviando y anclando mensaje Telegram: {}", e.getMessage(), e);
         }
     }
 
     @Override
     public void sendMessageFile(MessagePayload payload) {
-        String filename = payload.getFilename();
 
         if (payload.getFile() == null || payload.getFile().isBlank()) {
             sendTextToUserAndGroup(payload.getMessage());
             return;
         }
 
-        byte[] fileBytes = Base64.getDecoder().decode(payload.getFile());
-        boolean isImage = isImage(filename);
+        byte[] bytes = Base64.getDecoder().decode(payload.getFile());
+        String filename = payload.getFilename().toLowerCase();
 
-        sendToUserAndGroupWithFile(payload.getMessage(), fileBytes, filename, isImage);
+        FileType type = detectFileType(filename);
+
+        sendFileToUserAndGroup(
+                payload.getMessage(),
+                bytes,
+                payload.getFilename(),
+                type
+        );
     }
 
+    @Override
+    public String getChannelName() {
+        return "Telegram";
+    }
 
     /* ============================================================
-       ENVÍO A USUARIO Y GRUPO
+       ENVÍO A USER / GROUP
        ============================================================ */
 
     private void sendTextToUserAndGroup(String message) {
@@ -91,124 +96,140 @@ public class TelegramServiceImpl implements NotificationService {
         sendText(chatIdGroup, message);
     }
 
-    private void sendToUserAndGroupWithFile(String message, byte[] bytes, String filename, boolean isImage) {
-        sendToChatWithFile(chatIdUser, message, bytes, filename, isImage);
-        sendToChatWithFile(chatIdGroup, message, bytes, filename, isImage);
+    private void sendFileToUserAndGroup(String caption, byte[] bytes, String filename, FileType type) {
+        sendFile(chatIdUser, caption, bytes, filename, type);
+        sendFile(chatIdGroup, caption, bytes, filename, type);
     }
 
-    private void sendToChatWithFile(String chatId, String message, byte[] bytes, String filename, boolean isImage) {
-        try {
-            if (isImage) {
-                sendImage(chatId, message, bytes, filename);
-            } else {
-                sendDocument(chatId, message, bytes, filename);
+    /* ============================================================
+       ENVÍO BASE
+       ============================================================ */
+
+    private String sendText(String chatId, String message) {
+        Map<String, String> body = Map.of(
+                CHAT_ID, chatId,
+                TEXT, message
+        );
+
+        var response = restTemplate.postForEntity(
+                telegramProxyUrl + "/sendMessage",
+                body,
+                String.class
+        );
+
+        log.debug("Texto enviado a Telegram chat_id {}: {}", chatId, message);
+        return response.getBody();
+    }
+
+    private void sendFile(String chatId, String caption, byte[] bytes, String filename, FileType type) {
+
+        String endpoint;
+        String field;
+
+        switch (type) {
+            case IMAGE -> {
+                endpoint = "/sendPhoto";
+                field = PHOTO;
             }
-        } catch (Exception e) {
-            log.error("Error enviando archivo a Telegram chat_id {}: {}", chatId, e.getMessage());
+            case VIDEO -> {
+                endpoint = "/sendVideo";
+                field = VIDEO;
+            }
+            default -> {
+                endpoint = "/sendDocument";
+                field = DOCUMENT;
+            }
         }
-    }
 
-
-    /* ============================================================
-       DETECCIÓN DEL TIPO DE ARCHIVO
-       ============================================================ */
-
-    private boolean isImage(String filename) {
-        String lower = filename.toLowerCase();
-        return lower.endsWith(".jpg") || lower.endsWith(".jpeg") ||
-               lower.endsWith(".png") || lower.endsWith(".gif") ||
-               lower.endsWith(".bmp") || lower.endsWith(".webp");
-    }
-
-
-    /* ============================================================
-       MÉTODOS DE ENVÍO TEXT / IMAGE / DOCUMENT
-       ============================================================ */
-
-    private void sendText(String chatId, String message) {
         try {
-            Map<String, String> body = Map.of(
-                    CHAT_ID, chatId,
-                    TEXT, message
+            LinkedMultiValueMap<String, Object> form = new LinkedMultiValueMap<>();
+            form.add(CHAT_ID, chatId);
+            form.add(CAPTION, caption);
+            form.add(field, new TelegramFileResource(bytes, filename));
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+            HttpEntity<LinkedMultiValueMap<String, Object>> entity =
+                    new HttpEntity<>(form, headers);
+
+            restTemplate.postForEntity(
+                    telegramProxyUrl + endpoint,
+                    entity,
+                    String.class
             );
-            restTemplate.postForEntity(telegramProxyUrl + "/sendMessage", body, String.class);
-            log.debug("Texto enviado a Telegram chat_id {}: {}", chatId, message);
+
+            log.debug("{} enviado a Telegram chat_id {} con caption: {}", type, chatId, caption);
+
         } catch (Exception e) {
-            log.error("Error enviando texto a Telegram chat_id {}: {}", chatId, e.getMessage());
+            log.error("Error enviando {} a Telegram chat_id {}: {}", type, chatId, e.getMessage(), e);
         }
     }
 
-    private void sendImage(String chatId, String caption, byte[] imageBytes, String filename) {
-        try {
-            LinkedMultiValueMap<String, Object> form = new LinkedMultiValueMap<>();
-            form.add(CHAT_ID, chatId);
-            form.add(CAPTION, caption);
-            form.add(PHOTO, new ByteArrayResource(imageBytes) {
-                @Override
-                public String getFilename() {
-                    return filename;
-                }
-            });
+    /* ============================================================
+       PIN MESSAGE
+       ============================================================ */
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-
-            HttpEntity<LinkedMultiValueMap<String, Object>> entity = new HttpEntity<>(form, headers);
-            restTemplate.postForEntity(telegramProxyUrl + "/sendPhoto", entity, String.class);
-
-            log.debug("Imagen enviada a Telegram chat_id {} con mensaje: {}", chatId, caption);
-        } catch (Exception e) {
-            log.error("Error enviando imagen a Telegram chat_id {}: {}", chatId, e.getMessage());
-        }
-    }
-
-    private void sendDocument(String chatId, String caption, byte[] fileBytes, String filename) {
-        try {
-            LinkedMultiValueMap<String, Object> form = new LinkedMultiValueMap<>();
-            form.add(CHAT_ID, chatId);
-            form.add(CAPTION, caption);
-            form.add(DOCUMENT, new ByteArrayResource(fileBytes) {
-                @Override
-                public String getFilename() {
-                    return filename;
-                }
-            });
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-
-            HttpEntity<LinkedMultiValueMap<String, Object>> entity = new HttpEntity<>(form, headers);
-            restTemplate.postForEntity(telegramProxyUrl + "/sendDocument", entity, String.class);
-
-            log.debug("Documento enviado a Telegram chat_id {} con mensaje: {}", chatId, caption);
-        } catch (Exception e) {
-            log.error("Error enviando documento a Telegram chat_id {}: {}", chatId, e.getMessage());
-        }
-    }
-    
     private void pinMessage(String chatId, int messageId) {
-        try {
-            Map<String, Object> body = Map.of(
-                    CHAT_ID, chatId,
-                    "message_id", messageId,
-                    "disable_notification", true
-            );
+        Map<String, Object> body = Map.of(
+                CHAT_ID, chatId,
+                "message_id", messageId,
+                "disable_notification", true
+        );
 
-            restTemplate.postForEntity(telegramProxyUrl + "/pinChatMessage", body, String.class);
-            log.debug("Mensaje anclado en chat_id {} con message_id {}", chatId, messageId);
-        } catch (Exception e) {
-            log.error("Error anclando mensaje en Telegram chat_id {}: {}", chatId, e.getMessage());
-        }
+        restTemplate.postForEntity(
+                telegramProxyUrl + "/pinChatMessage",
+                body,
+                String.class
+        );
+
+        log.debug("Mensaje anclado en chat_id {} con message_id {}", chatId, messageId);
     }
+
+    /* ============================================================
+       UTILIDADES
+       ============================================================ */
 
     private int extractMessageId(String json) throws Exception {
-        var mapper = new com.fasterxml.jackson.databind.ObjectMapper();
-        var node = mapper.readTree(json);
-        return node.path("result").path("message_id").asInt();
+        return objectMapper.readTree(json)
+                .path("result")
+                .path("message_id")
+                .asInt();
     }
 
-    @Override
-    public String getChannelName() {
-        return "Telegram";
+    private FileType detectFileType(String filename) {
+
+        if (filename.matches(".*\\.(jpg|jpeg|png|gif|bmp|webp)$")) {
+            return FileType.IMAGE;
+        }
+
+        if (filename.matches(".*\\.(mp4|mov|m4v|webm|mkv|avi)$")) {
+            return FileType.VIDEO;
+        }
+
+        return FileType.DOCUMENT;
+    }
+
+    /* ============================================================
+       TIPOS Y CLASES AUXILIARES
+       ============================================================ */
+
+    private enum FileType {
+        IMAGE, VIDEO, DOCUMENT
+    }
+
+    private static class TelegramFileResource extends ByteArrayResource {
+
+        private final String filename;
+
+        TelegramFileResource(byte[] bytes, String filename) {
+            super(bytes);
+            this.filename = filename;
+        }
+
+        @Override
+        public String getFilename() {
+            return filename;
+        }
     }
 }
