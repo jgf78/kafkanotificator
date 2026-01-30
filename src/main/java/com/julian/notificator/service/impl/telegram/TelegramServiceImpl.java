@@ -1,6 +1,7 @@
 package com.julian.notificator.service.impl.telegram;
 
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -8,12 +9,14 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.julian.notificator.model.MessagePayload;
+import com.julian.notificator.model.telegram.TelegramPollRequest;
 import com.julian.notificator.service.NotificationService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +25,11 @@ import lombok.extern.slf4j.Slf4j;
 @Service("telegramServiceImpl")
 public class TelegramServiceImpl implements NotificationService {
 
+    private static final String ALLOWS_MULTIPLE_ANSWERS = "allows_multiple_answers";
+    private static final String TYPE = "type";
+    private static final String IS_ANONYMOUS = "is_anonymous";
+    private static final String OPTIONS = "options";
+    private static final String QUESTION = "question";
     private static final String CHAT_ID = "chat_id";
     private static final String TEXT = "text";
     private static final String CAPTION = "caption";
@@ -60,7 +68,37 @@ public class TelegramServiceImpl implements NotificationService {
             log.error("Error enviando y anclando mensaje Telegram: {}", e.getMessage(), e);
         }
     }
+    
+    @Override
+    public void sendPoll(TelegramPollRequest poll) {
+        try {
+            Map<String, Object> body = new HashMap<>();
 
+            body.put(CHAT_ID, chatIdGroup);
+            body.put(QUESTION, poll.getQuestion());
+            body.put(OPTIONS, poll.getOptions());
+            body.put(IS_ANONYMOUS, poll.isAnonymous());
+            body.put(ALLOWS_MULTIPLE_ANSWERS, poll.isMultipleAnswers());
+            body.put(TYPE, poll.getType());
+
+            if ("quiz".equalsIgnoreCase(poll.getType())) {
+                body.put("correct_option_id", poll.getCorrectOptionId());
+            }
+
+            ResponseEntity<String> response = restTemplate.postForEntity(
+                    telegramProxyUrl + "/sendPoll",
+                    body,
+                    String.class
+            );
+
+            log.debug("Encuesta enviada a Telegram chat_id {}: {}", chatIdGroup, poll.getQuestion());
+            log.debug("Respuesta de Telegram: {}", response.getBody());
+
+        } catch (Exception e) {
+            log.error("Error enviando encuesta a Telegram chat_id {}", chatIdGroup, e);
+        }
+    }
+    
     @Override
     public void sendMessageFile(MessagePayload payload) {
 
@@ -185,7 +223,7 @@ public class TelegramServiceImpl implements NotificationService {
 
         log.debug("Mensaje anclado en chat_id {} con message_id {}", chatId, messageId);
     }
-
+    
     /* ============================================================
        UTILIDADES
        ============================================================ */

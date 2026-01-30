@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.julian.notificator.model.DestinationType;
 import com.julian.notificator.model.MessagePayload;
+import com.julian.notificator.model.telegram.TelegramPollRequest;
 import com.julian.notificator.service.KafkaProducerService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -100,6 +101,19 @@ public class KafkaProducerServiceImpl implements KafkaProducerService {
         } catch (Exception e) {
             log.error("Error enviando mensaje anclado a Telegram: {}", e.getMessage(), e);
         }
+    }
+
+    @Override
+    public void sendPoll(TelegramPollRequest request) {
+        try {
+            String json = objectMapper.writeValueAsString(request);
+            kafkaTemplate.send(telegram, json);
+
+            log.info("KafkaProducerService - sendPoll. Encuesta enviada con la pregunta {}", request.getQuestion());
+        } catch (Exception e) {
+            log.error("Error enviando encuesta a Telegram: {}", e.getMessage(), e);
+        }
+        
     }
 
 
