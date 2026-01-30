@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.julian.notificator.model.MessageRequest;
+import com.julian.notificator.model.telegram.TelegramPollRequest;
 import com.julian.notificator.service.KafkaProducerService;
 import com.julian.notificator.service.impl.alexa.AlexaServiceImpl;
 
@@ -54,6 +55,14 @@ public class MessageController {
     public String sendPinMessage(@RequestParam("message") String pinMessage) {
         kafkaProducerService.sendPinMessage(pinMessage);
         return "Mensaje enviado y anclado: " + pinMessage;
+    }
+    
+    @Operation(summary = "Send Poll", operationId = "sendPoll", description = "Send Poll", tags = {
+            "Messages API", })
+    @PostMapping("/sendPoll")
+    public String sendPoll(@RequestBody TelegramPollRequest request) {
+        kafkaProducerService.sendPoll(request);
+        return "Encuesta enviada ✅";
     }
 
     @Operation(summary = "Send Telegram message with document", description = "Send Telegram message with document", tags = {
