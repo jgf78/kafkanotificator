@@ -25,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service("telegramServiceImpl")
 public class TelegramServiceImpl implements NotificationService {
 
+    private static final String QUIZ = "quiz";
     private static final String ALLOWS_MULTIPLE_ANSWERS = "allows_multiple_answers";
     private static final String TYPE = "type";
     private static final String IS_ANONYMOUS = "is_anonymous";
@@ -81,7 +82,7 @@ public class TelegramServiceImpl implements NotificationService {
             body.put(ALLOWS_MULTIPLE_ANSWERS, poll.isMultipleAnswers());
             body.put(TYPE, poll.getType());
 
-            if ("quiz".equalsIgnoreCase(poll.getType())) {
+            if (QUIZ.equalsIgnoreCase(poll.getType())) {
                 body.put("correct_option_id", poll.getCorrectOptionId());
             }
 
