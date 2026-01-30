@@ -98,6 +98,9 @@ public class TelegramBot extends TelegramLongPollingBot {
     // =======================
 
     private void handleTitulares(Long chatId) {
+        
+        sendText(chatId, "📰 Consultando titulares de prensa...");
+        
         try {
             String headlines = restTemplate.getForObject(backendUrl, String.class);
             sendText(chatId,
@@ -111,6 +114,9 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
 
     private void handleRealMadrid(Long chatId) {
+        
+        sendText(chatId, "⚽ Consultando información del Real Madrid...");
+        
         try {
             sendText(chatId, footballDataService.formatLiveMatchMessage());
         } catch (Exception e) {
