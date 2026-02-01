@@ -46,26 +46,34 @@ public class MailServiceImpl extends AbstractNotificationService {
 
     private String buildHtmlMessage(String message) {
         return """
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <meta charset="UTF-8">
-                </head>
-                <body style="margin:0; padding:0; background-color:#f4f4f4;">
-                    <div style="max-width:600px; margin:30px auto; background:#ffffff; border-radius:8px; padding:24px; font-family:Arial, sans-serif;">
-                        <h2 style="color:#2c3e50; margin-top:0;">📬 Nueva notificación</h2>
-                        <p style="color:#555; font-size:15px; line-height:1.6;">
-                            %s
-                        </p>
-                        <hr style="border:none; border-top:1px solid #eee; margin:30px 0;">
-                        <p style="font-size:12px; color:#999; text-align:center;">
-                            Mensaje automático · Notificator
-                        </p>
-                    </div>
-                </body>
-                </html>
-                """
-                .formatted(message.replace("\n", "<br>"));
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="UTF-8">
+            </head>
+            <body style="margin:0; padding:0; background-color:#f6f7f9;">
+                <div style="max-width:600px; margin:40px auto; background:#fafafa;
+                            border-radius:10px; padding:26px;
+                            font-family:Arial, Helvetica, sans-serif;
+                            box-shadow:0 4px 12px rgba(0,0,0,0.06);">
+                    
+                    <h2 style="color:#2f3a45; margin-top:0;">
+                        📬 Notificación
+                    </h2>
+
+                    <p style="color:#444; font-size:15px; line-height:1.7;">
+                        %s
+                    </p>
+
+                    <hr style="border:none; border-top:1px solid #e6e6e6; margin:32px 0;">
+
+                    <p style="font-size:12px; color:#8a8a8a; text-align:center;">
+                        Mensaje enviado automáticamente · Notificator
+                    </p>
+                </div>
+            </body>
+            </html>
+            """.formatted(message.replace("\n", "<br>"));
     }
 
     @Override
