@@ -2,6 +2,7 @@ package com.julian.notificator.service.impl.telegram;
 
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -15,10 +16,12 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.julian.notificator.config.TelegramProperties;
 import com.julian.notificator.model.MessagePayload;
 import com.julian.notificator.model.telegram.TelegramPollRequest;
 import com.julian.notificator.service.NotificationService;
 
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -38,17 +41,20 @@ public class TelegramServiceImpl implements NotificationService {
     private static final String VIDEO = "video";
     private static final String DOCUMENT = "document";
 
-    @Value("${telegram.proxy-url}")
-    private String telegramProxyUrl;
-
-    @Value("${telegram.chat-id}")
-    private String chatIdUser;
-
-    @Value("${telegram.chat-id-group}")
-    private String chatIdGroup;
-
+    private final TelegramProperties telegramProperties;
+    
+    public TelegramServiceImpl(TelegramProperties telegramProperties) {
+        this.telegramProperties = telegramProperties;
+    }
+    
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();
+    
+    @PostConstruct
+    public void init() {
+        log.info("Grupos Telegram cargados: {}", telegramProperties.getChatIdsGroups());
+    }
+
 
     /* ============================================================
        API PÚBLICA
@@ -56,55 +62,59 @@ public class TelegramServiceImpl implements NotificationService {
 
     @Override
     public void sendMessage(String message) {
-        sendTextToUserAndGroup(message);
+        sendTextToUserAndGroups(message);
     }
 
     @Override
     public void sendPinMessage(String message) {
-        try {
-            String response = sendText(chatIdGroup, message);
-            int messageId = extractMessageId(response);
-            pinMessage(chatIdGroup, messageId);
-        } catch (Exception e) {
-            log.error("Error enviando y anclando mensaje Telegram: {}", e.getMessage(), e);
+        for (String chatId : telegramProperties.getChatIdsGroups()) {
+            try {
+                String response = sendText(chatId, message);
+                int messageId = extractMessageId(response);
+                pinMessage(chatId, messageId);
+            } catch (Exception e) {
+                log.error("Error enviando/anclando mensaje en chat {}: {}", chatId, e.getMessage(), e);
+            }
         }
     }
-    
+
     @Override
     public void sendPoll(TelegramPollRequest poll) {
-        try {
-            Map<String, Object> body = new HashMap<>();
+        for (String chatId : telegramProperties.getChatIdsGroups()) {
+            try {
+                Map<String, Object> body = new HashMap<>();
 
-            body.put(CHAT_ID, chatIdGroup);
-            body.put(QUESTION, poll.getQuestion());
-            body.put(OPTIONS, poll.getOptions());
-            body.put(IS_ANONYMOUS, poll.isAnonymous());
-            body.put(ALLOWS_MULTIPLE_ANSWERS, poll.isMultipleAnswers());
-            body.put(TYPE, poll.getType());
+                body.put(CHAT_ID, chatId);
+                body.put(QUESTION, poll.getQuestion());
+                body.put(OPTIONS, poll.getOptions());
+                body.put(IS_ANONYMOUS, poll.isAnonymous());
+                body.put(ALLOWS_MULTIPLE_ANSWERS, poll.isMultipleAnswers());
+                body.put(TYPE, poll.getType());
 
-            if (QUIZ.equalsIgnoreCase(poll.getType())) {
-                body.put("correct_option_id", poll.getCorrectOptionId());
+                if (QUIZ.equalsIgnoreCase(poll.getType())) {
+                    body.put("correct_option_id", poll.getCorrectOptionId());
+                }
+
+                ResponseEntity<String> response = restTemplate.postForEntity(
+                        telegramProperties.getProxyUrl() + "/sendPoll",
+                        body,
+                        String.class
+                );
+
+                log.debug("Encuesta enviada a Telegram chat_id {}: {}", chatId, poll.getQuestion());
+                log.debug("Respuesta Telegram: {}", response.getBody());
+
+            } catch (Exception e) {
+                log.error("Error enviando encuesta a Telegram chat_id {}", chatId, e);
             }
-
-            ResponseEntity<String> response = restTemplate.postForEntity(
-                    telegramProxyUrl + "/sendPoll",
-                    body,
-                    String.class
-            );
-
-            log.debug("Encuesta enviada a Telegram chat_id {}: {}", chatIdGroup, poll.getQuestion());
-            log.debug("Respuesta de Telegram: {}", response.getBody());
-
-        } catch (Exception e) {
-            log.error("Error enviando encuesta a Telegram chat_id {}", chatIdGroup, e);
         }
     }
-    
+
     @Override
     public void sendMessageFile(MessagePayload payload) {
 
         if (payload.getFile() == null || payload.getFile().isBlank()) {
-            sendTextToUserAndGroup(payload.getMessage());
+            sendTextToUserAndGroups(payload.getMessage());
             return;
         }
 
@@ -113,7 +123,7 @@ public class TelegramServiceImpl implements NotificationService {
 
         FileType type = detectFileType(filename);
 
-        sendFileToUserAndGroup(
+        sendFileToUserAndGroups(
                 payload.getMessage(),
                 bytes,
                 payload.getFilename(),
@@ -127,17 +137,25 @@ public class TelegramServiceImpl implements NotificationService {
     }
 
     /* ============================================================
-       ENVÍO A USER / GROUP
+       ENVÍO A USER / GROUPS
        ============================================================ */
 
-    private void sendTextToUserAndGroup(String message) {
-        sendText(chatIdUser, message);
-        sendText(chatIdGroup, message);
+    public void sendToAllGroups(String text) {
+        for (String chatId : telegramProperties.getChatIdsGroups()) {
+            sendText(chatId, text);
+        }
     }
 
-    private void sendFileToUserAndGroup(String caption, byte[] bytes, String filename, FileType type) {
-        sendFile(chatIdUser, caption, bytes, filename, type);
-        sendFile(chatIdGroup, caption, bytes, filename, type);
+    private void sendTextToUserAndGroups(String message) {
+        sendText(telegramProperties.getChatId(), message);
+        sendToAllGroups(message);
+    }
+
+    private void sendFileToUserAndGroups(String caption, byte[] bytes, String filename, FileType type) {
+        sendFile(telegramProperties.getChatId(), caption, bytes, filename, type);
+        for (String chatId : telegramProperties.getChatIdsGroups()) {
+            sendFile(chatId, caption, bytes, filename, type);
+        }
     }
 
     /* ============================================================
@@ -151,7 +169,7 @@ public class TelegramServiceImpl implements NotificationService {
         );
 
         var response = restTemplate.postForEntity(
-                telegramProxyUrl + "/sendMessage",
+                telegramProperties.getProxyUrl() + "/sendMessage",
                 body,
                 String.class
         );
@@ -193,7 +211,7 @@ public class TelegramServiceImpl implements NotificationService {
                     new HttpEntity<>(form, headers);
 
             restTemplate.postForEntity(
-                    telegramProxyUrl + endpoint,
+                    telegramProperties.getProxyUrl() + endpoint,
                     entity,
                     String.class
             );
@@ -217,14 +235,14 @@ public class TelegramServiceImpl implements NotificationService {
         );
 
         restTemplate.postForEntity(
-                telegramProxyUrl + "/pinChatMessage",
+                telegramProperties.getProxyUrl() + "/pinChatMessage",
                 body,
                 String.class
         );
 
         log.debug("Mensaje anclado en chat_id {} con message_id {}", chatId, messageId);
     }
-    
+
     /* ============================================================
        UTILIDADES
        ============================================================ */
