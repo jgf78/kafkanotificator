@@ -31,6 +31,9 @@ telegram:
   proxy-url: ${TELEGRAM_PROXY_URL:http://192.168.1.3:8080/bot8254359368:AAEJ7mG6eU_h8aToXq9KDw4WkHuHJWgqer0}
   chat-id: ${TELEGRAM_ID_CHAT:6610892}
   chat-id-group: ${TELEGRAM_ID_GROUP:-1001236662890}
+  chat-ids-groups:
+      - ${TELEGRAM_ID_GROUP:-1001236662890}
+      - ${TELEGRAM_ID_GROUP_2:-1003359151017}
 
 mail:
   to: ${EMAIL_TO:julian_gomez_fdez@yahoo.es}
