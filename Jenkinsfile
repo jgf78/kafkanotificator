@@ -61,19 +61,16 @@ pipeline {
             }
         }
 
-        stage('Deploy with Docker Compose') {
+        stage('Deploy to Docker') {
             steps {
                 sh '''
-                    echo "🚀 Desplegando stack con Docker Compose..."
-                    DOCKER_COMPOSE_FILE="${WORKSPACE}/docker/docker-compose.yml"
-        
-                    # Intenta con el guion si el espacio falla
-                    docker-compose -f $DOCKER_COMPOSE_FILE pull
-                    docker-compose -f $DOCKER_COMPOSE_FILE up -d
+                    docker stop notificator || true
+                    docker rm notificator || true
+                    docker pull jgf78/notificator:latest
+                    docker run -d -p 8083:8081 --name notificator jgf78/notificator:latest
                 '''
             }
         }
-
     }
 
     post {
