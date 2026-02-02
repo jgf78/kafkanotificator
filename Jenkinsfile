@@ -64,13 +64,13 @@ pipeline {
         stage('Deploy with Docker Compose') {
             steps {
                 sh '''
-                    echo "🚀 Desplegando stack con Docker Compose"
+                    curl -L "https://github.com/docker/compose/releases/download/v2.21.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+                    chmod +x /usr/local/bin/docker-compose
                     docker-compose -f docker/docker-compose.yml pull
                     docker-compose -f docker/docker-compose.yml up -d
                 '''
             }
         }
-
 
     }
 
