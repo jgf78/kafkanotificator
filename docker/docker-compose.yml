@@ -1,0 +1,16 @@
+services:
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+
+  notificator:
+    image: jgf78/notificator:latest
+    container_name: notificator
+    depends_on:
+      - redis
+    environment:
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+    ports:
+      - "8083:8081"
+    restart: unless-stopped
