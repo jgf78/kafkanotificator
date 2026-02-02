@@ -64,9 +64,15 @@ pipeline {
         stage('Deploy with Docker Compose') {
             steps {
                 sh '''
-                    echo "🚀 Desplegando stack con Docker Compose"
-                    docker compose -f docker/docker-compose.yml pull
-                    docker compose -f docker/docker-compose.yml up -d
+                    echo "🚀 Desplegando stack con Docker Compose desde Jenkins container"
+        
+                    docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+                        -v $PWD/docker:/app \
+                        docker/compose:2.21.1 pull
+        
+                    docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+                        -v $PWD/docker:/app \
+                        docker/compose:2.21.1 up -d
                 '''
             }
         }
