@@ -68,11 +68,11 @@ pipeline {
         
                     docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
                         -v $PWD/docker:/app \
-                        docker/compose:2.21.1 pull
+                        docker/compose:latest pull
         
                     docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
                         -v $PWD/docker:/app \
-                        docker/compose:2.21.1 up -d
+                        docker/compose:latest up -d
                 '''
             }
         }
