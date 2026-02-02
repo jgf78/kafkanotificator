@@ -64,7 +64,12 @@ pipeline {
         stage('Deploy with Docker Compose') {
             steps {
                 sh '''
-                    curl -L "https://github.com/docker/compose/releases/download/v2.21.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+                    ARCH=$(uname -m)
+                    if [ "$ARCH" = "x86_64" ]; then
+                        curl -L "https://github.com/docker/compose/releases/download/v2.21.1/docker-compose-Linux-x86_64" -o /usr/local/bin/docker-compose
+                    elif [ "$ARCH" = "aarch64" ]; then
+                        curl -L "https://github.com/docker/compose/releases/download/v2.21.1/docker-compose-linux-aarch64" -o /usr/local/bin/docker-compose
+                    fi
                     chmod +x /usr/local/bin/docker-compose
                     docker-compose -f docker/docker-compose.yml pull
                     docker-compose -f docker/docker-compose.yml up -d
