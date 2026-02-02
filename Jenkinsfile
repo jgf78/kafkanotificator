@@ -64,15 +64,11 @@ pipeline {
         stage('Deploy with Docker Compose') {
             steps {
                 sh '''
-                    echo "🚀 Desplegando stack con Docker Compose desde Jenkins container"
+                    echo "🚀 Desplegando stack con Docker Compose en host ARM"
         
-                    docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
-                        -v $PWD/docker:/app \
-                        docker/compose:latest pull
-        
-                    docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
-                        -v $PWD/docker:/app \
-                        docker/compose:latest up -d
+                    # Ejecuta en el host (Pi)
+                    docker --context host compose -f /var/jenkins_home/workspace/notificator-multibranch_main/docker/docker-compose.yml pull
+                    docker --context host compose -f /var/jenkins_home/workspace/notificator-multibranch_main/docker/docker-compose.yml up -d
                 '''
             }
         }
