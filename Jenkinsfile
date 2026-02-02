@@ -66,9 +66,17 @@ pipeline {
                 sh '''
                     echo "🚀 Desplegando stack con Docker Compose en host ARM"
         
-                    # Ejecuta en el host (Pi)
-                    docker --context host compose -f /var/jenkins_home/workspace/notificator-multibranch_main/docker/docker-compose.yml pull
-                    docker --context host compose -f /var/jenkins_home/workspace/notificator-multibranch_main/docker/docker-compose.yml up -d
+                    docker run --rm \
+                        -v /var/run/docker.sock:/var/run/docker.sock \
+                        -v /var/jenkins_home/workspace/notificator-multibranch_main/docker:/app \
+                        --platform linux/arm64/v8 \
+                        docker/compose:2.10.2 pull
+        
+                    docker run --rm \
+                        -v /var/run/docker.sock:/var/run/docker.sock \
+                        -v /var/jenkins_home/workspace/notificator-multibranch_main/docker:/app \
+                        --platform linux/arm64/v8 \
+                        docker/compose:2.10.2 up -d
                 '''
             }
         }
