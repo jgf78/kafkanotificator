@@ -64,13 +64,12 @@ pipeline {
         stage('Deploy with Docker Compose') {
             steps {
                 sh '''
-                    echo "🚀 Desplegando stack con Docker Compose directamente en host ARM"
+                    echo "🚀 Desplegando stack con Docker Compose..."
+                    DOCKER_COMPOSE_FILE="${WORKSPACE}/docker/docker-compose.yml"
         
-                    # Usamos el Compose del host
-                    DOCKER_COMPOSE_FILE=/var/jenkins_home/workspace/notificator-multibranch_main/docker/docker-compose.yml
-        
-                    docker compose -f $DOCKER_COMPOSE_FILE pull
-                    docker compose -f $DOCKER_COMPOSE_FILE up -d
+                    # Intenta con el guion si el espacio falla
+                    docker-compose -f $DOCKER_COMPOSE_FILE pull
+                    docker-compose -f $DOCKER_COMPOSE_FILE up -d
                 '''
             }
         }
