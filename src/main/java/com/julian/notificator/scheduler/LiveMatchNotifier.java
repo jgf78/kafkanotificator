@@ -22,7 +22,8 @@ public class LiveMatchNotifier {
     private Long lastMatchId = null;
     private String lastStatus = null;
 
-    public LiveMatchNotifier(FootballDataService footballDataService,
+    public LiveMatchNotifier(
+            FootballDataService footballDataService,
             @Qualifier("telegramServiceImpl") NotificationService notificationService) {
         this.footballDataService = footballDataService;
         this.telegramService = notificationService;
@@ -30,19 +31,24 @@ public class LiveMatchNotifier {
 
     @Scheduled(fixedDelay = 30_000) // cada 30 segundos
     public void checkLiveMatch() {
-        
+
         LiveMatchResponse response = footballDataService.getLiveStatus();
         Match match = null;
-        if (response == null 
-                || response.getData() == null 
-                || response.getData().getMatches() == null 
+
+        if (response == null
+                || response.getData() == null
+                || response.getData().getMatches() == null
                 || response.getData().getMatches().isEmpty()) {
+
             response = footballDataService.getFinishedMatch();
             List<Match> matches = response.getData().getMatches();
             match = matches.get(matches.size() - 1);
         }
 
-        if(match==null) match = response.getData().getMatches().get(0);
+        if (match == null) {
+            match = response.getData().getMatches().get(0);
+        }
+
         String currentStatus = match.getStatus();
         Integer home = match.getScore().getFullTime().getHome();
         Integer away = match.getScore().getFullTime().getAway();
@@ -60,13 +66,31 @@ public class LiveMatchNotifier {
             return;
         }
 
-        // 🔄 CAMBIO DE ESTADO (IN_PLAY → PAUSED → FINISHED)
+        // 🔄 CAMBIO DE ESTADO
+        changeState(match, currentStatus);
+
+        // ⚽ GOL
+        if (!home.equals(lastHomeScore) || !away.equals(lastAwayScore)) {
+            telegramService.sendMessage(buildGoalMessage(match));
+            lastHomeScore = home;
+            lastAwayScore = away;
+        }
+    }
+
+    private void changeState(Match match, String currentStatus) {
         if (!currentStatus.equals(lastStatus)) {
 
+            // 🟡 Descanso
             if ("PAUSED".equals(currentStatus)) {
                 telegramService.sendMessage(buildHalftimeMessage(match));
             }
 
+            // 🟢 Segunda parte
+            if ("IN_PLAY".equals(currentStatus) && "PAUSED".equals(lastStatus)) {
+                telegramService.sendMessage(buildSecondtimeMessage(match));
+            }
+
+            // 🏁 Final
             if ("FINISHED".equals(currentStatus)) {
                 telegramService.sendMessage(buildFullTimeMessage(match));
                 resetState();
@@ -75,13 +99,6 @@ public class LiveMatchNotifier {
 
             lastStatus = currentStatus;
         }
-
-        // ⚽ CAMBIO DE MARCADOR (GOL)
-        if (!home.equals(lastHomeScore) || !away.equals(lastAwayScore)) {
-            telegramService.sendMessage(buildGoalMessage(match));
-            lastHomeScore = home;
-            lastAwayScore = away;
-        }   
     }
 
     private void resetState() {
@@ -100,7 +117,7 @@ public class LiveMatchNotifier {
             match.getAwayTeam().getShortName()
         );
     }
-    
+
     private String buildKickoffMessage(Match match) {
         return String.format(
             "🔔 ¡Empieza el partido!%n%n%s vs %s",
@@ -108,10 +125,20 @@ public class LiveMatchNotifier {
             match.getAwayTeam().getShortName()
         );
     }
-    
+
     private String buildHalftimeMessage(Match match) {
         return String.format(
             "🟡 Descanso%n%n%s %d - %d %s",
+            match.getHomeTeam().getShortName(),
+            match.getScore().getFullTime().getHome(),
+            match.getScore().getFullTime().getAway(),
+            match.getAwayTeam().getShortName()
+        );
+    }
+
+    private String buildSecondtimeMessage(Match match) {
+        return String.format(
+            "🟢 ¡Empieza la segunda parte!%n%n%s %d - %d %s",
             match.getHomeTeam().getShortName(),
             match.getScore().getFullTime().getHome(),
             match.getScore().getFullTime().getAway(),
@@ -128,5 +155,4 @@ public class LiveMatchNotifier {
             match.getAwayTeam().getShortName()
         );
     }
-
 }
