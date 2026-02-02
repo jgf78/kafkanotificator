@@ -64,19 +64,13 @@ pipeline {
         stage('Deploy with Docker Compose') {
             steps {
                 sh '''
-                    echo "🚀 Desplegando stack con Docker Compose en host ARM"
+                    echo "🚀 Desplegando stack con Docker Compose directamente en host ARM"
         
-                    docker run --rm \
-                        -v /var/run/docker.sock:/var/run/docker.sock \
-                        -v /var/jenkins_home/workspace/notificator-multibranch_main/docker:/app \
-                        --platform linux/arm64/v8 \
-                        docker/compose:2.10.2 pull
+                    # Usamos el Compose del host
+                    DOCKER_COMPOSE_FILE=/var/jenkins_home/workspace/notificator-multibranch_main/docker/docker-compose.yml
         
-                    docker run --rm \
-                        -v /var/run/docker.sock:/var/run/docker.sock \
-                        -v /var/jenkins_home/workspace/notificator-multibranch_main/docker:/app \
-                        --platform linux/arm64/v8 \
-                        docker/compose:2.10.2 up -d
+                    docker compose -f $DOCKER_COMPOSE_FILE pull
+                    docker compose -f $DOCKER_COMPOSE_FILE up -d
                 '''
             }
         }
