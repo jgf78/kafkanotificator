@@ -65,11 +65,12 @@ pipeline {
             steps {
                 sh '''
                     echo "🚀 Desplegando stack con Docker Compose"
-                    docker compose -f docker/docker-compose.yml pull
-                    docker compose -f docker/docker-compose.yml up -d
+                    docker-compose -f docker/docker-compose.yml pull
+                    docker-compose -f docker/docker-compose.yml up -d
                 '''
             }
         }
+
 
     }
 
