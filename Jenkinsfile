@@ -61,16 +61,16 @@ pipeline {
             }
         }
 
-        stage('Deploy to Docker') {
+        stage('Deploy with Docker Compose') {
             steps {
                 sh '''
-                    docker stop notificator || true
-                    docker rm notificator || true
-                    docker pull jgf78/notificator:latest
-                    docker run -d -p 8083:8081 --name notificator jgf78/notificator:latest
+                    echo "🚀 Desplegando stack con Docker Compose"
+                    docker compose -f docker/docker-compose.yml pull
+                    docker compose -f docker/docker-compose.yml up -d
                 '''
             }
         }
+
     }
 
     post {
