@@ -41,7 +41,7 @@ public class SeriesController {
     @GetMapping("/series")
     public List<TopSeries> getSeries( @Parameter(
             description = "Streaming platform",
-            example = "netflix"
+            example = "NETFLIX"
         )
         @RequestParam StreamingPlatform platform)  {
        return seriesService.getTopByPlatform(platform);
