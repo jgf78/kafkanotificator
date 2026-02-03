@@ -32,7 +32,7 @@ telegram:
   chat-id: ${TELEGRAM_ID_CHAT:6610892}
   chat-id-group: ${TELEGRAM_ID_GROUP:-1001236662890}
   chat-ids-groups:
-      - ${TELEGRAM_ID_GROUP:-1001236662890}
+      #- ${TELEGRAM_ID_GROUP:-1001236662890}
       - ${TELEGRAM_ID_GROUP_2:-1003359151017}
 
 mail:
