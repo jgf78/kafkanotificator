@@ -10,6 +10,5 @@ public record TopSeries(
         int rating,
         List<String> genres,
         String platform
-    ) implements Serializable {
-}
+    ) implements Serializable {}
 

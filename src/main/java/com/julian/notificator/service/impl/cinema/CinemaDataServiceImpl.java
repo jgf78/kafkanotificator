@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,7 @@ public class CinemaDataServiceImpl implements CinemaDataService {
     }
 
     @Override
+    @Cacheable(value = "top10NowPlaying")
     public List<TmdbMovie> getTop10NowPlaying() {
 
         TmdbNowPlayingResponse response = callApi();
