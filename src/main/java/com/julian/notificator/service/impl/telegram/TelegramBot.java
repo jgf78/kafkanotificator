@@ -184,7 +184,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     
     private void handleSeries(Long chatId, String text) {
 
-        sendText(chatId, "🌤️ Consultando series...");
+        sendText(chatId, "📺 Consultando series...");
 
         try {
             String platform = text.replaceFirst("/series(@\\w+)?", "").trim();
