@@ -10,7 +10,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.julian.notificator.config.DailySchedulerProperties;
+import com.julian.notificator.config.properties.DailySchedulerProperties;
 import com.julian.notificator.service.NotificationService;
 
 import lombok.extern.slf4j.Slf4j;

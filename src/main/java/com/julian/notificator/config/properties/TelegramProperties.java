@@ -1,4 +1,4 @@
-package com.julian.notificator.config;
+package com.julian.notificator.config.properties;
 
 import java.util.List;
 

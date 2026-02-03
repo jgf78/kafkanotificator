@@ -14,7 +14,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.julian.notificator.config.TelegramProperties;
+import com.julian.notificator.config.properties.TelegramProperties;
 import com.julian.notificator.model.MessagePayload;
 import com.julian.notificator.model.telegram.TelegramPollRequest;
 import com.julian.notificator.service.NotificationService;
