@@ -8,5 +8,7 @@ import com.julian.notificator.model.series.TopSeries;
 public interface SeriesService {
     
     List<TopSeries> getTopByPlatform(StreamingPlatform platform);
+
+    String buildSeriesMessage(List<TopSeries> series);
 }
 

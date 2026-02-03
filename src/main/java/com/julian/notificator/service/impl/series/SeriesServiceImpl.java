@@ -78,4 +78,43 @@ public class SeriesServiceImpl implements SeriesService {
                 platform.name()
         );
     }
+
+    @Override
+    public String buildSeriesMessage(List<TopSeries> series) {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("🎬 *Series actuales – Top 10 más populares* 🇪🇸\n");
+        sb.append("🔥 Ahora mismo en la plataforma\n\n");
+
+        int ranking = 1;
+
+        for (TopSeries s : series) {
+
+            sb.append("⭐ *").append(ranking++).append(". ").append(escapeMarkdown(s.title())).append("*\n");
+
+            sb.append("📅 Año: ").append(s.year() > 0 ? s.year() : "Desconocido")
+              .append(" | ⭐ Valoración: ").append(s.rating() >= 0 ? s.rating() + "%" : "N/A").append("\n");
+
+            if (s.genres() != null && !s.genres().isEmpty()) {
+                sb.append("🎭 Género: ").append(String.join(", ", s.genres())).append("\n");
+            }
+
+            if (s.platform() != null) {
+                sb.append("📺 Disponible en: ").append(s.platform()).append("\n");
+            }
+
+            sb.append("\n");
+        }
+
+        return sb.toString();
+    }
+
+    private String escapeMarkdown(String text) {
+        if (text == null) return "";
+        return text.replace("_", "\\_")
+                   .replace("*", "\\*")
+                   .replace("[", "\\[")
+                   .replace("]", "\\]");
+    }
+
 }
