@@ -190,7 +190,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             String platform = text.replaceFirst("/series(@\\w+)?", "").trim();
 
             if (platform.isEmpty()) {
-                sendText(chatId, "❌ Uso correcto: /series Netflix, Hbo, disney o prime");
+                sendText(chatId, "❌ Uso correcto: /series Netflix, Hbo, Disney o Prime");
                 return;
             }
 
