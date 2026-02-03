@@ -13,6 +13,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.julian.notificator.model.cinema.TmdbMovie;
+import com.julian.notificator.model.cinema.TmdbNowPlayingResponse;
 import com.julian.notificator.service.CinemaDataService;
 
 @Service
