@@ -109,6 +109,7 @@ rapidapi:
     base-url: https://streaming-availability.p.rapidapi.com
     
 tdt:
+ url: https://www.tdtchannels.com/epg/TV.xml.gz 
  national-channels:
   - La1.TV
   - La2.TV

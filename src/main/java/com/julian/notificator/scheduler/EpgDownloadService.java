@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.zip.GZIPInputStream;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -15,22 +16,23 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class EpgDownloadService {
 
-    private static final String EPG_URL = "https://www.tdtchannels.com/epg/TV.xml.gz";
-
+    @Value("${tdt.url}")
+    private String epg_url;
+    
     private InputStream lastEpgStream; 
     
     @PostConstruct
     public void init() {
-        downloadEpg(); // descarga al arrancar la app
+        downloadEpg(); 
     }
 
     @Scheduled(cron = "0 0 */2 * * *") // cada 2 horas
     //@Scheduled(fixedRate = 10000) // cada 10 segundos
     public void downloadEpg() {
-        log.info("📥 Descargando EPG desde {}", EPG_URL);
+        log.info("📥 Descargando EPG desde {}", epg_url);
 
         try {
-            InputStream gzStream = new URL(EPG_URL).openStream();
+            InputStream gzStream = new URL(epg_url).openStream();
             GZIPInputStream xmlStream = new GZIPInputStream(gzStream);
 
             lastEpgStream = xmlStream;
