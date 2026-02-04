@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.julian.notificator.model.tdt.TdtProgramme;
-import com.julian.notificator.model.tdt.TvNowResponse;
 import com.julian.notificator.service.TdtService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,20 +31,9 @@ public class TdtController {
     @Operation(summary = "Get the current TDT programming", operationId = "getTvNow", description = "Get the current TDT programming", tags = {
             "TDT API", })
     @GetMapping("/now")
-    public List<TvNowResponse> getTvNow() {
-        return tdtService.getTvNow()
-                .stream()
-                .map(this::toResponse)
-                .toList();
+    public List<TdtProgramme> getTvNow() {
+        return tdtService.getTvNow();
     }
 
-    private TvNowResponse toResponse(TdtProgramme programme) {
-        return TvNowResponse.builder()
-                .channel(programme.getChannelId())
-                .title(programme.getTitle())
-                .start(programme.getStart())
-                .stop(programme.getStop())
-                .build();
-    }
 }
 

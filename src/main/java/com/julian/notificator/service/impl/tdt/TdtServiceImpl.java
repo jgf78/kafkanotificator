@@ -3,8 +3,8 @@ package com.julian.notificator.service.impl.tdt;
 import java.io.InputStream;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
@@ -30,8 +30,13 @@ public class TdtServiceImpl implements TdtService {
     private final TdtProperties tdtProperties;
     private final EpgDownloadService epgDownloadService;
 
+    private Map<String, List<TdtProgramme>> lastParsedEpg = new HashMap<>();
+
     @Override
     public List<TdtProgramme> getTvNow() {
+
+        parseEpgStreamOnce();
+
         List<TdtProgramme> result = new ArrayList<>();
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Europe/Madrid"));
 
@@ -58,43 +63,46 @@ public class TdtServiceImpl implements TdtService {
         return result;
     }
 
-    private TdtProgramme findCurrentProgrammeForChannel(String channelId, ZonedDateTime now) {
+    private void parseEpgStreamOnce() {
         InputStream epgStream = epgDownloadService.getLastEpgStream();
         if (epgStream == null) {
             log.warn("⚠️ EPG aún no descargada");
-            return null;
+            return;
         }
 
         try {
-            XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(epgStream);
+            String xmlText = new String(epgStream.readAllBytes());
+            xmlText = xmlText.replaceAll("&(?!amp;|lt;|gt;|quot;|apos;)", "&amp;");
+
+            InputStream cleanedStream = new java.io.ByteArrayInputStream(xmlText.getBytes());
+
+            XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(cleanedStream);
+            Map<String, List<TdtProgramme>> map = new HashMap<>();
             TdtProgramme currentProgramme = null;
 
             while (reader.hasNext()) {
                 int event = reader.next();
 
                 if (event == XMLStreamConstants.START_ELEMENT) {
-
-                    if ("programme".equals(reader.getLocalName())) {
-                        String ch = reader.getAttributeValue(null, "channel");
-                        if (!channelId.equals(ch)) {
-                            currentProgramme = null;
-                            continue;
+                    switch (reader.getLocalName()) {
+                        case "programme" -> {
+                            currentProgramme = new TdtProgramme();
+                            currentProgramme.setChannelId(reader.getAttributeValue(null, "channel"));
+                            currentProgramme.setStart(parseDate(reader.getAttributeValue(null, "start")));
+                            currentProgramme.setStop(parseDate(reader.getAttributeValue(null, "stop")));
                         }
-
-                        currentProgramme = new TdtProgramme();
-                        currentProgramme.setChannelId(ch);
-                        currentProgramme.setStart(parseDate(reader.getAttributeValue(null, "start")));
-                        currentProgramme.setStop(parseDate(reader.getAttributeValue(null, "stop")));
-                    }
-
-                    if ("title".equals(reader.getLocalName()) && currentProgramme != null) {
-                        reader.next();
-                        currentProgramme.setTitle(escapeXmlEntities(reader.getText()));
-                    }
-
-                    if ("desc".equals(reader.getLocalName()) && currentProgramme != null) {
-                        reader.next();
-                        currentProgramme.setDesc(escapeXmlEntities(reader.getText()));
+                        case "title" -> {
+                            if (currentProgramme != null) {
+                                reader.next();
+                                currentProgramme.setTitle(escapeXmlEntities(reader.getText()));
+                            }
+                        }
+                        case "desc" -> {
+                            if (currentProgramme != null) {
+                                reader.next();
+                                currentProgramme.setDesc(escapeXmlEntities(reader.getText()));
+                            }
+                        }
                     }
                 }
 
@@ -102,21 +110,49 @@ public class TdtServiceImpl implements TdtService {
                         "programme".equals(reader.getLocalName()) &&
                         currentProgramme != null) {
 
-                    if (now.isAfter(currentProgramme.getStart()) &&
-                            now.isBefore(currentProgramme.getStop())) {
-                        return currentProgramme; 
-                    }
+                    map.computeIfAbsent(currentProgramme.getChannelId(), k -> new ArrayList<>())
+                            .add(currentProgramme);
 
                     currentProgramme = null;
                 }
             }
 
+            lastParsedEpg = map;
+
         } catch (Exception e) {
-            log.error("❌ Error procesando la EPG para canal {}", channelId, e);
+            log.error("❌ Error parseando EPG", e);
+        }
+    }
+
+    private TdtProgramme findCurrentProgrammeForChannel(String channelId, ZonedDateTime now) {
+        if (lastParsedEpg == null || lastParsedEpg.isEmpty()) return null;
+
+        String normalizedChannelId = normalizeChannelId(channelId);
+
+        for (Map.Entry<String, List<TdtProgramme>> entry : lastParsedEpg.entrySet()) {
+            String xmlChannel = entry.getKey();
+            String normalizedXmlChannel = normalizeChannelId(xmlChannel);
+
+            if (normalizedChannelId.equals(normalizedXmlChannel)) {
+                List<TdtProgramme> programmes = entry.getValue();
+
+                for (TdtProgramme p : programmes) {
+                    if (p.getStart() != null && p.getStop() != null &&
+                            now.isAfter(p.getStart()) && now.isBefore(p.getStop())) {
+                        return p;
+                    }
+                }
+            }
         }
 
         return null;
     }
+
+    private String normalizeChannelId(String channel) {
+        if (channel == null) return "";
+        return channel.replaceAll("\\s|\\.", "").toLowerCase();
+    }
+
 
     private String escapeXmlEntities(String text) {
         if (text == null) return null;
@@ -124,10 +160,8 @@ public class TdtServiceImpl implements TdtService {
     }
 
     private ZonedDateTime parseDate(String dateStr) {
-        // El formato viene como "20260203065000 +0000"
-        String pattern = "yyyyMMddHHmmss Z";
-        java.time.format.DateTimeFormatter formatter =
-                java.time.format.DateTimeFormatter.ofPattern(pattern);
+        // Formato ejemplo: "20260203234000 +0000"
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss Z");
         return ZonedDateTime.parse(dateStr, formatter)
                 .withZoneSameInstant(ZoneId.of("Europe/Madrid"));
     }
