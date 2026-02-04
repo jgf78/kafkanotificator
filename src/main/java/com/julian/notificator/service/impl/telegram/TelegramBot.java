@@ -166,37 +166,17 @@ public class TelegramBot extends TelegramLongPollingBot {
             List<TdtProgramme> tvNow = tdtService.getTvNow();
 
             if (tvNow.isEmpty()) {
-                sendText(chatId, "📺 No se ha podido obtener la guía de TV en este momento.");
+                sendText(chatId, "📺 No se ha podido obtener la guia de TV en este momento.");
                 return;
             }
 
-            String fullMessage = tdtService.buildTdtMessage(tvNow);
-
-            int maxLen = 4000; 
-
-            int start = 0;
-            while (start < fullMessage.length()) {
-                int end = Math.min(fullMessage.length(), start + maxLen);
-
-                if (end < fullMessage.length()) {
-                    int lastNewLine = fullMessage.lastIndexOf("\n", end);
-                    if (lastNewLine > start) {
-                        end = lastNewLine;
-                    }
-                }
-
-                String chunk = fullMessage.substring(start, end);
-                sendText(chatId, chunk);
-
-                start = end;
-            }
+            sendText(chatId, tdtService.buildTdtMessage(tvNow));
 
         } catch (Exception e) {
             logger.error("Error en comando /tdt", e);
-            sendText(chatId, "❌ Error al obtener la guía de TV.");
+            sendText(chatId, "❌ Error al obtener la guia de TV.");
         }
     }
-
     
     private void handleTiempo(Long chatId, String text) {
 

@@ -178,14 +178,9 @@ public class TdtServiceImpl implements TdtService {
 
         for (TdtProgramme programme : tvNow) {
             String title = programme.getTitle() != null ? programme.getTitle() : "Sin programación";
-            String desc = programme.getDesc() != null && !programme.getDesc().isBlank() ? programme.getDesc() : "_Sin descripción disponible_";
 
             sb.append("🌟 *").append(escapeMarkdown(title)).append("*\n");
 
-            // Mostrar la descripción acortada
-            sb.append("📝 ").append(escapeMarkdown(shorten(desc, 250))).append("\n");
-
-            // Mostrar horario si está disponible
             if (programme.getStart() != null && programme.getStop() != null) {
                 sb.append("🕒 ").append(formatTime(programme.getStart()))
                   .append(" – ").append(formatTime(programme.getStop())).append("\n");
@@ -196,11 +191,6 @@ public class TdtServiceImpl implements TdtService {
         }
 
         return sb.toString();
-    }
-
-    private String shorten(String text, int maxLength) {
-        if (text.length() <= maxLength) return text;
-        return text.substring(0, maxLength - 3) + "...";
     }
 
     private String formatTime(ZonedDateTime time) {
