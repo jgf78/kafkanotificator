@@ -4,7 +4,10 @@ import java.io.InputStream;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
@@ -165,5 +168,50 @@ public class TdtServiceImpl implements TdtService {
         return ZonedDateTime.parse(dateStr, formatter)
                 .withZoneSameInstant(ZoneId.of("Europe/Madrid"));
     }
+
+    @Override
+    public String buildTdtMessage(List<TdtProgramme> tvNow) {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("📺 *Programación actual – TV Nacional*\n");
+        sb.append("⏰ Ahora mismo en emisión:\n\n");
+
+        for (TdtProgramme programme : tvNow) {
+            String title = programme.getTitle() != null ? programme.getTitle() : "Sin programación";
+            String desc = programme.getDesc() != null && !programme.getDesc().isBlank() ? programme.getDesc() : "_Sin descripción disponible_";
+
+            sb.append("🌟 *").append(escapeMarkdown(title)).append("*\n");
+
+            // Mostrar la descripción acortada
+            sb.append("📝 ").append(escapeMarkdown(shorten(desc, 250))).append("\n");
+
+            // Mostrar horario si está disponible
+            if (programme.getStart() != null && programme.getStop() != null) {
+                sb.append("🕒 ").append(formatTime(programme.getStart()))
+                  .append(" – ").append(formatTime(programme.getStop())).append("\n");
+            }
+
+            // Separador entre programas
+            sb.append("────────────────\n");
+        }
+
+        return sb.toString();
+    }
+
+    private String shorten(String text, int maxLength) {
+        if (text.length() <= maxLength) return text;
+        return text.substring(0, maxLength - 3) + "...";
+    }
+
+    private String formatTime(ZonedDateTime time) {
+        return time.withZoneSameInstant(ZoneId.of("Europe/Madrid"))
+                   .format(DateTimeFormatter.ofPattern("HH:mm"));
+    }
+
+    private String escapeMarkdown(String text) {
+        if (text == null) return "";
+        return text.replaceAll("([_*\\[\\]()~`>#+-=|{}.!])", "\\\\$1");
+    }
+
 
 }
