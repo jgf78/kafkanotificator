@@ -17,8 +17,8 @@ public class EpgDownloadService {
 
     private InputStream lastEpgStream; // temporal en memoria, para pruebas iniciales
 
-    //@Scheduled(cron = "0 0 */6 * * *") // cada 6 horas
-    @Scheduled(fixedRate = 10000) // cada 10 segundos
+    @Scheduled(cron = "0 0 */2 * * *") // cada 2 horas
+    //@Scheduled(fixedRate = 10000) // cada 10 segundos
     public void downloadEpg() {
         log.info("📥 Descargando EPG desde {}", EPG_URL);
 
