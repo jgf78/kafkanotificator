@@ -60,6 +60,9 @@ public class TdtServiceImpl implements TdtService {
                 programme.setTitle("Sin programación");
             }
 
+            String channelName = parseChannelName(programme);
+            programme.setChannelDesc(channelName);
+            
             result.add(programme);
         }
 
@@ -178,10 +181,7 @@ public class TdtServiceImpl implements TdtService {
 
         for (TdtProgramme programme : tvNow) {
 
-            String channel = programme.getChannelId();
-            if (channel != null && channel.endsWith(".TV")) {
-                channel = channel.substring(0, channel.length() - 3); 
-            }
+            String channel = parseChannelName(programme);
             sb.append("📺 *").append(escapeMarkdown(channel)).append("*\n");
 
             String title = programme.getTitle() != null ? programme.getTitle() : "Sin programación";
@@ -196,6 +196,14 @@ public class TdtServiceImpl implements TdtService {
         }
 
         return sb.toString();
+    }
+
+    private String parseChannelName(TdtProgramme programme) {
+        String channel = programme.getChannelId();
+        if (channel != null && channel.endsWith(".TV")) {
+            channel = channel.substring(0, channel.length() - 3); 
+        }
+        return channel;
     }
 
 
