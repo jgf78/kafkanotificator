@@ -181,8 +181,7 @@ public class TdtServiceImpl implements TdtService {
 
         for (TdtProgramme programme : tvNow) {
 
-            String channel = parseChannelName(programme);
-            sb.append("📺 *").append(escapeMarkdown(channel)).append("*\n");
+            sb.append("📺 *").append(escapeMarkdown(programme.getChannelDesc())).append("*\n");
 
             String title = programme.getTitle() != null ? programme.getTitle() : "Sin programación";
             sb.append("_").append(escapeMarkdown(title)).append("_\n");
