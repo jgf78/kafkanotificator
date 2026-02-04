@@ -177,21 +177,27 @@ public class TdtServiceImpl implements TdtService {
         sb.append("⏰ Ahora mismo en emisión:\n\n");
 
         for (TdtProgramme programme : tvNow) {
-            String title = programme.getTitle() != null ? programme.getTitle() : "Sin programación";
 
-            sb.append("🌟 *").append(escapeMarkdown(title)).append("*\n");
+            String channel = programme.getChannelId();
+            if (channel != null && channel.endsWith(".TV")) {
+                channel = channel.substring(0, channel.length() - 3); 
+            }
+            sb.append("📺 *").append(escapeMarkdown(channel)).append("*\n");
+
+            String title = programme.getTitle() != null ? programme.getTitle() : "Sin programación";
+            sb.append("_").append(escapeMarkdown(title)).append("_\n");
 
             if (programme.getStart() != null && programme.getStop() != null) {
                 sb.append("🕒 ").append(formatTime(programme.getStart()))
                   .append(" – ").append(formatTime(programme.getStop())).append("\n");
             }
 
-            // Separador entre programas
             sb.append("────────────────\n");
         }
 
         return sb.toString();
     }
+
 
     private String formatTime(ZonedDateTime time) {
         return time.withZoneSameInstant(ZoneId.of("Europe/Madrid"))
