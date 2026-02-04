@@ -3,6 +3,8 @@ package com.julian.notificator.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.julian.notificator.config.properties.DailySchedulerProperties;
+
 @Configuration
 public class SchedulerCronConfig {
 

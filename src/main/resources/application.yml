@@ -107,7 +107,28 @@ rapidapi:
   key: c44630d80fmsh16dcbe7f2b83aa8p1af949jsn41af6f615f40
   streaming:
     base-url: https://streaming-availability.p.rapidapi.com
-                  
+    
+tdt:
+ national-channels:
+  - La1.TV
+  - La2.TV
+  - Cuatro.TV
+  - Telecinco.TV
+  - Telemadrid.TV
+  - LaOtra.TV
+  - TEN.TV
+  - 13.TV
+  - DKISS.TV
+  - DMax.TV
+  - TDP.TV
+  - RMTV.TV
+  - Clan.TV
+  - Boing.TV
+  - FDF.TV
+  - Energy.TV
+  - Divinity.TV
+  - Bemad.TV
+    
 server:
   port: 8081
   servlet:
