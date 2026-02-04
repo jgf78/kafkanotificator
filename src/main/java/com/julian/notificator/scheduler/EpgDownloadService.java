@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 public class EpgDownloadService {
 
     @Value("${tdt.url}")
-    private String epg_url;
+    private String epgUrl;
     
     private InputStream lastEpgStream; 
     
@@ -29,10 +29,10 @@ public class EpgDownloadService {
     @Scheduled(cron = "0 0 */2 * * *") // cada 2 horas
     //@Scheduled(fixedRate = 10000) // cada 10 segundos
     public void downloadEpg() {
-        log.info("📥 Descargando EPG desde {}", epg_url);
+        log.info("📥 Descargando EPG desde {}", epgUrl);
 
         try {
-            InputStream gzStream = new URL(epg_url).openStream();
+            InputStream gzStream = new URL(epgUrl).openStream();
             GZIPInputStream xmlStream = new GZIPInputStream(gzStream);
 
             lastEpgStream = xmlStream;
