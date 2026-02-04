@@ -15,7 +15,7 @@ public class EpgDownloadService {
 
     private static final String EPG_URL = "https://www.tdtchannels.com/epg/TV.xml.gz";
 
-    private InputStream lastEpgStream; // temporal en memoria, para pruebas iniciales
+    private InputStream lastEpgStream; 
 
     @Scheduled(cron = "0 0 */2 * * *") // cada 2 horas
     //@Scheduled(fixedRate = 10000) // cada 10 segundos
@@ -26,7 +26,6 @@ public class EpgDownloadService {
             InputStream gzStream = new URL(EPG_URL).openStream();
             GZIPInputStream xmlStream = new GZIPInputStream(gzStream);
 
-            // Guardamos temporalmente en memoria
             lastEpgStream = xmlStream;
 
             log.info("✅ EPG descargada y descomprimida correctamente");
