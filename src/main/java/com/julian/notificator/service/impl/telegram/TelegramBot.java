@@ -17,10 +17,12 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import com.julian.notificator.model.cinema.TmdbMovie;
 import com.julian.notificator.model.series.StreamingPlatform;
 import com.julian.notificator.model.series.TopSeries;
+import com.julian.notificator.model.tdt.TdtProgramme;
 import com.julian.notificator.model.weather.WeeklyWeather;
 import com.julian.notificator.service.CinemaDataService;
 import com.julian.notificator.service.FootballDataService;
 import com.julian.notificator.service.SeriesService;
+import com.julian.notificator.service.TdtService;
 import com.julian.notificator.service.WeatherService;
 
 import jakarta.annotation.PostConstruct;
@@ -44,6 +46,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     private final CinemaDataService cinemaDataService;
     private final WeatherService weatherService;
     private final SeriesService seriesService;
+    private final TdtService tdtService;
 
     private Map<String, BiConsumer<Long, String>> commandHandlers;
 
@@ -51,13 +54,15 @@ public class TelegramBot extends TelegramLongPollingBot {
                        FootballDataService footballDataService,
                        CinemaDataService cinemaDataService,
                        WeatherService weatherService,
-                       SeriesService seriesService) {
+                       SeriesService seriesService,
+                       TdtService tdtService) {
 
         this.restTemplate = restTemplate;
         this.footballDataService = footballDataService;
         this.cinemaDataService = cinemaDataService;
         this.weatherService = weatherService;
         this.seriesService = seriesService;
+        this.tdtService = tdtService;
     }
 
     // =======================
@@ -72,7 +77,8 @@ public class TelegramBot extends TelegramLongPollingBot {
             "/realmadrid", (chatId, text) -> handleRealMadrid(chatId),
             "/cartelera", (chatId, text) -> handleCartelera(chatId),
             "/tiempo", this::handleTiempo,
-            "/series", this::handleSeries
+            "/series", this::handleSeries,
+            "/tdt", (chatId, text) -> handleTdt(chatId)
         );
     }
 
@@ -149,6 +155,26 @@ public class TelegramBot extends TelegramLongPollingBot {
         } catch (Exception e) {
             logger.error("Error en comando /cartelera", e);
             sendText(chatId, "❌ Error al obtener la cartelera de cine.");
+        }
+    }
+    
+    private void handleTdt(Long chatId) {
+
+        sendText(chatId, "📺 Consultando la guia de TV actual...");
+
+        try {
+            List<TdtProgramme> tvNow = tdtService.getTvNow();
+
+            if (tvNow.isEmpty()) {
+                sendText(chatId, "📺 No se ha podido obtener la guia de TV en este momento.");
+                return;
+            }
+
+            sendText(chatId, tdtService.buildTdtMessage(tvNow));
+
+        } catch (Exception e) {
+            logger.error("Error en comando /tdt", e);
+            sendText(chatId, "❌ Error al obtener la guia de TV.");
         }
     }
     
