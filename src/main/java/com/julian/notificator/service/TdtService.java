@@ -8,4 +8,6 @@ public interface TdtService {
 
     List<TdtProgramme> getTvNow();
 
+    String buildTdtMessage(List<TdtProgramme> tvNow);
+
 }
