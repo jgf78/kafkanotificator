@@ -15,6 +15,7 @@ import com.julian.notificator.entity.TdtProgrammeEntity;
 import com.julian.notificator.model.tdt.TdtProgramme;
 import com.julian.notificator.repository.TdtProgrammeRepository;
 import com.julian.notificator.service.TdtService;
+import com.julian.notificator.service.util.tdt.UtilTdt;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +38,7 @@ public class TdtServiceImpl implements TdtService {
 
         for (String channel : tdtProperties.getNationalChannels()) {
 
-            String normalized = normalizeChannel(channel);
+            String normalized = UtilTdt.normalizeChannel(channel);
 
             List<TdtProgrammeEntity> entities = repository
                     .findByChannelNormalizedAndStartTimeLessThanEqualAndEndTimeGreaterThanEqual(normalized, now, now);
@@ -64,11 +65,6 @@ public class TdtServiceImpl implements TdtService {
         p.setStart(entity.getStartTime());
         p.setStop(entity.getEndTime());
         return p;
-    }
-
-    private String normalizeChannel(String channel) {
-        if (channel == null) return "";
-        return channel.replaceAll("\\s|\\.", "").toLowerCase();
     }
 
     private String formatTime(ZonedDateTime time) {

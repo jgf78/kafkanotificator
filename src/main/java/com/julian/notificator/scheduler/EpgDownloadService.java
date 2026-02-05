@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import com.julian.notificator.config.properties.TdtProperties;
 import com.julian.notificator.entity.TdtProgrammeEntity;
 import com.julian.notificator.service.impl.tdt.EpgPersistService;
+import com.julian.notificator.service.util.tdt.UtilTdt;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -55,7 +56,7 @@ public class EpgDownloadService {
             if (!programmes.isEmpty()) {
 
                 List<String> channelsNormalized = tdtProperties.getNationalChannels().stream()
-                        .map(this::normalizeChannel)
+                        .map(UtilTdt::normalizeChannel)
                         .toList();
 
                 persistService.save(programmes, channelsNormalized);
@@ -90,7 +91,7 @@ public class EpgDownloadService {
                         current = new TdtProgrammeEntity();
                         String channel = reader.getAttributeValue(null, "channel");
                         current.setChannelId(channel);
-                        current.setChannelNormalized(normalizeChannel(channel));
+                        current.setChannelNormalized(UtilTdt.normalizeChannel(channel));
                         current.setStartTime(parseDate(reader.getAttributeValue(null, "start"))); // UTC
                         current.setEndTime(parseDate(reader.getAttributeValue(null, "stop")));   // UTC
 
@@ -111,7 +112,7 @@ public class EpgDownloadService {
                     final TdtProgrammeEntity programmeToCheck = current; // variable final para lambda
 
                     boolean keep = tdtProperties.getNationalChannels().stream()
-                            .map(this::normalizeChannel)
+                            .map(UtilTdt::normalizeChannel)
                             .anyMatch(n -> n.equals(programmeToCheck.getChannelNormalized()));
 
                     if (keep &&
@@ -132,11 +133,6 @@ public class EpgDownloadService {
         }
 
         return batch;
-    }
-
-    private String normalizeChannel(String channel) {
-        if (channel == null) return "";
-        return channel.replaceAll("\\.TV$", "").replaceAll("\\s|\\.", "").toLowerCase();
     }
 
     private java.time.ZonedDateTime parseDate(String dateStr) {
