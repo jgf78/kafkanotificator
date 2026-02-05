@@ -7,6 +7,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.julian.notificator.config.properties.TdtProperties;
@@ -27,17 +28,17 @@ public class TdtServiceImpl implements TdtService {
     private final TdtProgrammeRepository repository;
 
     @Override
+    @Cacheable(value = "tvNow")
     public List<TdtProgramme> getTvNow() {
-        // UTC truncado a segundos, igual que en EPG
+
         ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC).withNano(0);
 
         List<TdtProgramme> result = new ArrayList<>();
 
         for (String channel : tdtProperties.getNationalChannels()) {
-            // MISMA NORMALIZACIÓN QUE EpgDownloadService
+
             String normalized = normalizeChannel(channel);
 
-            // Buscamos el programa actual usando la nueva query
             List<TdtProgrammeEntity> entities = repository
                     .findByChannelNormalizedAndStartTimeLessThanEqualAndEndTimeGreaterThanEqual(normalized, now, now);
 
@@ -67,7 +68,6 @@ public class TdtServiceImpl implements TdtService {
 
     private String normalizeChannel(String channel) {
         if (channel == null) return "";
-        // Misma normalización que EpgDownloadService
         return channel.replaceAll("\\s|\\.", "").toLowerCase();
     }
 
@@ -89,7 +89,6 @@ public class TdtServiceImpl implements TdtService {
         sb.append("⏰ Ahora mismo en emisión:\n\n");
 
         for (TdtProgramme programme : tvNow) {
-            // Mostramos el nombre normalizado en Telegram
             String channelName = programme.getChannelDesc() != null ? programme.getChannelDesc() : programme.getChannelId();
             sb.append("📺 *").append(escapeMarkdown(channelName)).append("*\n");
 

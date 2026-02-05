@@ -53,7 +53,7 @@ public class EpgDownloadService {
             List<TdtProgrammeEntity> programmes = parseAndMap(xmlStream);
 
             if (!programmes.isEmpty()) {
-                // Obtenemos canales normalizados para borrar solo los que vamos a actualizar
+
                 List<String> channelsNormalized = tdtProperties.getNationalChannels().stream()
                         .map(this::normalizeChannel)
                         .toList();
@@ -144,7 +144,7 @@ public class EpgDownloadService {
             java.time.format.DateTimeFormatter formatter =
                     java.time.format.DateTimeFormatter.ofPattern("yyyyMMddHHmmss Z");
             return java.time.ZonedDateTime.parse(dateStr, formatter)
-                    .withZoneSameInstant(ZoneOffset.UTC); // Guardamos en UTC
+                    .withZoneSameInstant(ZoneOffset.UTC); 
         } catch (Exception e) {
             log.warn("⚠️ Error parseando fecha: {}", dateStr, e);
             return null;
