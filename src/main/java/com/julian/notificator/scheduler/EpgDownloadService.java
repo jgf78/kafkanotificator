@@ -136,7 +136,7 @@ public class EpgDownloadService {
 
     private String normalizeChannel(String channel) {
         if (channel == null) return "";
-        return channel.replaceAll("\\s|\\.", "").toLowerCase();
+        return channel.replaceAll("\\.TV$", "").replaceAll("\\s|\\.", "").toLowerCase();
     }
 
     private java.time.ZonedDateTime parseDate(String dateStr) {
