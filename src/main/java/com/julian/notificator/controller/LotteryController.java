@@ -28,7 +28,7 @@ public class LotteryController {
 
     @Operation(summary = "Get the results of the different lotteries", operationId = "getLotteriesReleases", description = "Get the results of the different lotteries", tags = {
             "Lottery API", })
-    @GetMapping("/movies")
+    @GetMapping("/results")
     public ResponseEntity<LotteryResponse> getLotteriesReleases() {
         return ResponseEntity.ok(service.getLatestResults());
     }
