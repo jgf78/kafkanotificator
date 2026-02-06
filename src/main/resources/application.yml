@@ -149,7 +149,11 @@ tdt:
   - Energy.TV
   - Divinity.TV
   - Bemad.TV
-    
+
+lottery:
+  base-url: https://api.loteriasapi.com/api/v1
+  token: lat_684e2028_c569b0729a6128ced52f6f45a43f398820812bc0f75cdccf1f0a81e9c725c3aa
+      
 server:
   port: 8081
   servlet:
