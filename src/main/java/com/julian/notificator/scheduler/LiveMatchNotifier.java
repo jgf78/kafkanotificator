@@ -65,16 +65,16 @@ public class LiveMatchNotifier {
             }
             return;
         }
-
-        // 🔄 CAMBIO DE ESTADO
-        changeState(match, currentStatus);
-
+        
         // ⚽ GOL
         if (!home.equals(lastHomeScore) || !away.equals(lastAwayScore)) {
             telegramService.sendMessage(buildGoalMessage(match));
             lastHomeScore = home;
             lastAwayScore = away;
         }
+
+        // 🔄 CAMBIO DE ESTADO
+        changeState(match, currentStatus);
     }
 
     private void changeState(Match match, String currentStatus) {
