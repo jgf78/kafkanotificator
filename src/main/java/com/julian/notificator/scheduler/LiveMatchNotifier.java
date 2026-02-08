@@ -29,7 +29,7 @@ public class LiveMatchNotifier {
         this.telegramService = notificationService;
     }
 
-    @Scheduled(fixedDelay = 30_000) // cada 30 segundos
+    @Scheduled(fixedDelay = 20_000) // cada 20 segundos
     public void checkLiveMatch() {
 
         LiveMatchResponse response = footballDataService.getLiveStatus();
