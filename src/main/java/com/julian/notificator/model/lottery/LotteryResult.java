@@ -2,7 +2,6 @@ package com.julian.notificator.model.lottery;
 
 import java.util.List;
 
-import org.telegram.telegrambots.meta.api.objects.games.Game;
 
 public record LotteryResult(
         String id,

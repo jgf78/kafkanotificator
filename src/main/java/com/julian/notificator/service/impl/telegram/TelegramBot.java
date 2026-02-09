@@ -14,20 +14,26 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import com.julian.notificator.config.properties.TdtProperties;
 import com.julian.notificator.model.cinema.TmdbMovie;
+import com.julian.notificator.model.lottery.LotteryResponse;
 import com.julian.notificator.model.series.StreamingPlatform;
 import com.julian.notificator.model.series.TopSeries;
 import com.julian.notificator.model.tdt.TdtProgramme;
 import com.julian.notificator.model.weather.WeeklyWeather;
+import com.julian.notificator.repository.TdtProgrammeRepository;
 import com.julian.notificator.service.CinemaDataService;
 import com.julian.notificator.service.FootballDataService;
+import com.julian.notificator.service.LotteryService;
 import com.julian.notificator.service.SeriesService;
 import com.julian.notificator.service.TdtService;
 import com.julian.notificator.service.WeatherService;
 
 import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 
 @Component
+@RequiredArgsConstructor
 public class TelegramBot extends TelegramLongPollingBot {
 
     private static final Logger logger = LoggerFactory.getLogger(TelegramBot.class);
@@ -47,23 +53,9 @@ public class TelegramBot extends TelegramLongPollingBot {
     private final WeatherService weatherService;
     private final SeriesService seriesService;
     private final TdtService tdtService;
+    private final LotteryService lotteryService;
 
     private Map<String, BiConsumer<Long, String>> commandHandlers;
-
-    public TelegramBot(RestTemplate restTemplate,
-                       FootballDataService footballDataService,
-                       CinemaDataService cinemaDataService,
-                       WeatherService weatherService,
-                       SeriesService seriesService,
-                       TdtService tdtService) {
-
-        this.restTemplate = restTemplate;
-        this.footballDataService = footballDataService;
-        this.cinemaDataService = cinemaDataService;
-        this.weatherService = weatherService;
-        this.seriesService = seriesService;
-        this.tdtService = tdtService;
-    }
 
     // =======================
     // INIT COMMANDS
@@ -78,7 +70,8 @@ public class TelegramBot extends TelegramLongPollingBot {
             "/cartelera", (chatId, text) -> handleCartelera(chatId),
             "/tiempo", this::handleTiempo,
             "/series", this::handleSeries,
-            "/tdt", (chatId, text) -> handleTdt(chatId)
+            "/tdt", (chatId, text) -> handleTdt(chatId),
+            "/loterias", (chatId, text) -> handleLoterias(chatId)
         );
     }
 
@@ -177,6 +170,27 @@ public class TelegramBot extends TelegramLongPollingBot {
             sendText(chatId, "❌ Error al obtener la guia de TV.");
         }
     }
+    
+    private void handleLoterias(Long chatId) {
+        
+        sendText(chatId, "💰 Consultando loterias...");
+        
+        try {
+            LotteryResponse latestResults = lotteryService.getLatestResults();
+
+            if (latestResults == null) {
+                sendText(chatId, "💰 No se han podido obtener los resultados de las loterías en este momento.");
+                return;
+            }
+
+            sendText(chatId, lotteryService.buildLotteryMessage(latestResults));
+
+        } catch (Exception e) {
+            logger.error("Error en comando /loterias", e);
+            sendText(chatId, "❌ Error al obtener llos resultados de las loterías.");
+        }
+    }
+
     
     private void handleTiempo(Long chatId, String text) {
 
