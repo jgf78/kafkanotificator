@@ -32,7 +32,6 @@ public class LotteryServiceImpl implements LotteryService {
     private final RestTemplate restTemplate;
 
     @Override
-    @Cacheable(value = "lotteryNow")
     public LotteryResponse getLatestResults() {
 
         HttpHeaders headers = new HttpHeaders();
