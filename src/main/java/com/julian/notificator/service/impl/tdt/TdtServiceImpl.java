@@ -75,7 +75,7 @@ public class TdtServiceImpl implements TdtService {
     private String escapeMarkdown(String text) {
         if (text == null) return "";
         text = text.trim();
-        return text.replaceAll("([_\\*\\[\\]()~`>#+\\-=|{}.!])", "\\\\$1");
+        return text.replaceAll("([_\\*\\[\\]()~`>#+={}])", "\\\\$1");
     }
 
     @Override
