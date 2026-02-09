@@ -100,7 +100,7 @@ public class LotteryServiceImpl implements LotteryService {
 
             // Jackpot
             if (result.jackpotFormatted() != null) {
-                sb.append("💸 Jackpot: ").append(result.jackpotFormatted()).append("\n");
+                sb.append("💸 Bote: ").append(result.jackpotFormatted()).append("\n");
             }
 
             sb.append("────────────────────────────\n");
