@@ -1,9 +1,10 @@
 package com.julian.notificator.service.impl.lottery;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -16,6 +17,10 @@ import com.julian.notificator.model.lottery.LotteryResponse;
 import com.julian.notificator.model.lottery.LotteryResult;
 import com.julian.notificator.model.lottery.ResultData;
 import com.julian.notificator.service.LotteryService;
+import com.rometools.rome.feed.synd.SyndFeed;
+import com.rometools.rome.io.FeedException;
+import com.rometools.rome.io.SyndFeedInput;
+import com.rometools.rome.io.XmlReader;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,6 +33,9 @@ public class LotteryServiceImpl implements LotteryService {
     
     @Value("${lottery.token}")
     private String token;
+    
+    @Value("${rss.proxy-url2}")
+    private String rssProxyUrl;
     
     private final RestTemplate restTemplate;
 
@@ -51,7 +59,7 @@ public class LotteryServiceImpl implements LotteryService {
     }
 
     @Override
-    public String buildLotteryMessage(LotteryResponse response) {
+    public String buildLotteryMessage(LotteryResponse response) throws IllegalArgumentException, FeedException, IOException {
         if (response == null || response.data() == null || response.data().isEmpty()) {
             return "🎲 No hay resultados de loterías disponibles 😔";
         }
@@ -107,10 +115,51 @@ public class LotteryServiceImpl implements LotteryService {
             sb.append("────────────────────────────\n");
         }
 
+        sb.append(getJuegosOnce());
         return sb.toString();
     }
 
-    
+    private String getJuegosOnce() throws IllegalArgumentException, FeedException, IOException {
+
+        URL url = new URL(rssProxyUrl);
+
+        SyndFeed feed;
+        SyndFeedInput input = new SyndFeedInput();
+        try (XmlReader reader = new XmlReader(url)) {
+            feed = input.build(reader);
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("🎲 *Resultados Juegos Once*\n\n");
+
+        feed.getEntries()
+            .stream()
+            .limit(10)
+            .forEach(entry -> {
+                String title = entry.getTitle();
+                String emoji = getEmojiForTitle(title);
+
+                sb.append(emoji).append(" *").append(title).append("*\n")
+                  .append(entry.getDescription().getValue()).append("\n")
+                  .append("[Ver sorteo](").append(entry.getLink()).append(")\n\n");
+            });
+
+        return sb.toString();
+    }
+
+    private String getEmojiForTitle(String title) {
+        title = title.toLowerCase();
+
+        if (title.contains("cupón diario")) return "📅";
+        if (title.contains("triplex")) return "🎲";
+        if (title.contains("mi día")) return "⭐";
+        if (title.contains("eurojackpot")) return "💰";
+        if (title.contains("cuponazo")) return "🎯";
+        if (title.contains("super 11") || title.contains("superonce")) return "🏆";
+        if (title.contains("sueldazo")) return "💵";
+
+        return "🎲"; 
+    }
 
 
 }
