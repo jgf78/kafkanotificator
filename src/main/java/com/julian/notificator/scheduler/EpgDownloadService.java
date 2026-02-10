@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 
 import com.julian.notificator.config.properties.TdtProperties;
 import com.julian.notificator.entity.TdtProgrammeEntity;
+import com.julian.notificator.model.tdt.TdtProgramme;
+import com.julian.notificator.service.impl.tdt.AtresEpgService;
 import com.julian.notificator.service.impl.tdt.EpgPersistService;
 import com.julian.notificator.service.util.tdt.UtilTdt;
 
@@ -34,6 +36,7 @@ public class EpgDownloadService {
 
     private final TdtProperties tdtProperties;
     private final EpgPersistService persistService;
+    private final AtresEpgService atresEpgService;
 
     @PostConstruct
     public void init() {
@@ -46,18 +49,37 @@ public class EpgDownloadService {
     }
 
     public void saveEpgFromUrl() {
-        log.info("📥 Descargando EPG desde {}", epgUrl);
+        log.info("📥 Descargando EPG Atresmedia... ");
+        
+        List<TdtProgramme> atresProgrammes = atresEpgService.readAndFilter();
+        List<TdtProgrammeEntity> programmes = covertTdtProgrammeToTdtProgrammeEntity(atresProgrammes);
+        
+        log.info("📥 Descargando EPG resto de TDT desde {}", epgUrl);
 
         try (InputStream gzStream = new URL(epgUrl).openStream();
              GZIPInputStream xmlStream = new GZIPInputStream(gzStream)) {
 
-            List<TdtProgrammeEntity> programmes = parseAndMap(xmlStream);
+            List<TdtProgrammeEntity> tdtProgrammes = parseAndMap(xmlStream);
+            programmes.addAll(tdtProgrammes); 
 
             if (!programmes.isEmpty()) {
 
-                List<String> channelsNormalized = tdtProperties.getNationalChannels().stream()
+                List<String> channelsNormalized = new ArrayList<>();
+                
+                String[] mainOrder = {"La1.TV", "La2.TV", "Antena 3.es", "Cuatro.TV", "Telecinco.TV", "La Sexta.es"};
+                for (String ch : mainOrder) {
+                    channelsNormalized.add(UtilTdt.normalizeChannel(ch));
+                }
+
+                tdtProperties.getNationalChannels().stream()
                         .map(UtilTdt::normalizeChannel)
-                        .toList();
+                        .filter(ch -> !channelsNormalized.contains(ch))
+                        .forEach(channelsNormalized::add);
+
+                tdtProperties.getAtresmedia().stream()
+                        .map(UtilTdt::normalizeChannel)
+                        .filter(ch -> !channelsNormalized.contains(ch))
+                        .forEach(channelsNormalized::add);
 
                 persistService.save(programmes, channelsNormalized);
 
@@ -109,7 +131,7 @@ public class EpgDownloadService {
                     "programme".equals(reader.getLocalName()) &&
                     current != null) {
 
-                    final TdtProgrammeEntity programmeToCheck = current; // variable final para lambda
+                    final TdtProgrammeEntity programmeToCheck = current;
 
                     boolean keep = tdtProperties.getNationalChannels().stream()
                             .map(UtilTdt::normalizeChannel)
@@ -150,5 +172,25 @@ public class EpgDownloadService {
     private String cleanText(String text) {
         if (text == null) return null;
         return text.replaceAll("[\\u0000-\\u001F]", "").trim();
+    }
+    
+    private List<TdtProgrammeEntity> covertTdtProgrammeToTdtProgrammeEntity(List<TdtProgramme> atresProgrammes) {
+        List<TdtProgrammeEntity> batch = new ArrayList<>();
+        try {
+            for (TdtProgramme prog : atresProgrammes) {
+                TdtProgrammeEntity entity = new TdtProgrammeEntity();
+                entity.setChannelId(prog.getChannelId());
+                entity.setChannelNormalized(UtilTdt.normalizeChannel(prog.getChannelDesc()));
+                entity.setTitle(prog.getTitle());
+                entity.setDescription(prog.getDesc());
+                entity.setStartTime(prog.getStart());
+                entity.setEndTime(prog.getStop());
+
+                batch.add(entity);
+            }
+        } catch (Exception e) {
+            log.error("❌ Error parseando XML Atresmedia", e);
+        }
+        return batch;
     }
 }

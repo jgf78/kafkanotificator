@@ -33,10 +33,27 @@ public class TdtServiceImpl implements TdtService {
     public List<TdtProgramme> getTvNow() {
 
         ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC).withNano(0);
-
         List<TdtProgramme> result = new ArrayList<>();
 
-        for (String channel : tdtProperties.getNationalChannels()) {
+        List<String> combinedChannels = new ArrayList<>();
+        combinedChannels.add("La1.TV");
+        combinedChannels.add("La2.TV");
+        combinedChannels.add("Antena 3.es");
+        combinedChannels.add("Cuatro.TV");
+        combinedChannels.add("Telecinco.TV");
+        combinedChannels.add("La Sexta.es");
+        combinedChannels.add("Telemadrid.TV");
+        combinedChannels.add("LaOtra.TV");
+
+        tdtProperties.getAtresmedia().stream()
+                .filter(c -> !combinedChannels.contains(c))
+                .forEach(combinedChannels::add);
+
+        tdtProperties.getNationalChannels().stream()
+                .filter(c -> !combinedChannels.contains(c))
+                .forEach(combinedChannels::add);
+
+        for (String channel : combinedChannels) {
 
             String normalized = UtilTdt.normalizeChannel(channel);
 
@@ -55,6 +72,7 @@ public class TdtServiceImpl implements TdtService {
 
         return result;
     }
+
 
     private TdtProgramme mapToModel(TdtProgrammeEntity entity) {
         TdtProgramme p = new TdtProgramme();
@@ -75,7 +93,7 @@ public class TdtServiceImpl implements TdtService {
     private String escapeMarkdown(String text) {
         if (text == null) return "";
         text = text.trim();
-        return text.replaceAll("([_\\*\\[\\]()~`>#+={}])", "\\\\$1");
+        return text;
     }
 
     @Override
