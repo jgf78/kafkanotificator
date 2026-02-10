@@ -107,7 +107,9 @@ public class WeatherServiceImpl implements WeatherService {
         StringBuilder msg = new StringBuilder();
         msg.append("📍 Tiempo en *")
            .append(capitalize(weather.getCity()))
-           .append("* (7 días)\n\n");
+           .append("* (")
+           .append(weather.getDays().size())
+           .append(" días)\n\n");
 
         for (DailyWeather day : weather.getDays()) {
             String dayName = day.getDate().getDayOfWeek()
