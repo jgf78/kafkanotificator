@@ -131,6 +131,13 @@ rapidapi:
     
 tdt:
  url: https://www.tdtchannels.com/epg/TV.xml.gz 
+ atresmedia:
+  - Antena 3.es
+  - La Sexta.es
+  - Neox.es
+  - Nova.es
+  - Mega.es
+  - Atreseries.es
  national-channels:
   - La1.TV
   - La2.TV

@@ -13,6 +13,8 @@ import lombok.Data;
 public class TdtProperties {
 
     private Set<String> nationalChannels;
+    
+    private Set<String> atresmedia;
 
 }
 
