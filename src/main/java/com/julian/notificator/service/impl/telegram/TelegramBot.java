@@ -14,14 +14,12 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import com.julian.notificator.config.properties.TdtProperties;
 import com.julian.notificator.model.cinema.TmdbMovie;
 import com.julian.notificator.model.lottery.LotteryResponse;
 import com.julian.notificator.model.series.StreamingPlatform;
 import com.julian.notificator.model.series.TopSeries;
 import com.julian.notificator.model.tdt.TdtProgramme;
 import com.julian.notificator.model.weather.WeeklyWeather;
-import com.julian.notificator.repository.TdtProgrammeRepository;
 import com.julian.notificator.service.CinemaDataService;
 import com.julian.notificator.service.FootballDataService;
 import com.julian.notificator.service.LotteryService;
@@ -71,7 +69,8 @@ public class TelegramBot extends TelegramLongPollingBot {
             "/tiempo", this::handleTiempo,
             "/series", this::handleSeries,
             "/tdt", (chatId, text) -> handleTdt(chatId),
-            "/loterias", (chatId, text) -> handleLoterias(chatId)
+            "/loterias", (chatId, text) -> handleLoterias(chatId),
+            "/cafe", (chatId, text) -> handleCafe(chatId)
         );
     }
 
@@ -250,6 +249,22 @@ public class TelegramBot extends TelegramLongPollingBot {
             logger.error("Error en comando /series", e);
             sendText(chatId, "❌ Error al obtener las series. Inténtalo más tarde.");
         }
+    }
+    
+    private void handleCafe(Long chatId) {
+
+        String mensaje = """
+    ☕ ¿Te gusta el bot?
+
+    Notificador se mantiene gracias al tiempo y cariño que le dedico.
+    Si te aporta valor, puedes invitarme a un café aquí:
+
+    👉 https://paypal.me/Jgf78
+
+    ¡Mil gracias por el apoyo!
+    """;
+
+        sendText(chatId, mensaje);
     }
 
     // =======================
