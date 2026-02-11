@@ -38,7 +38,8 @@ public class NewsServiceImpl implements NewsService {
         }
 
         StringBuilder sb = new StringBuilder();
-        sb.append("📰 *Titulares del día*\n\n");
+        sb.append("📰 *Titulares del día*\n");
+        sb.append("━━━━━━━━━━━━━━━━━━\n\n");
 
         feed.getEntries().stream().limit(10).forEach(entry -> sb.append("• ").append(entry.getTitle()).append("\n"));
 
@@ -62,7 +63,7 @@ public class NewsServiceImpl implements NewsService {
 
         StringBuilder sb = new StringBuilder();
 
-        sb.append("⚽ *Noticias deportivas – MARCA*\n");
+        sb.append("⚽ *Noticias deportivas*\n");
         sb.append("━━━━━━━━━━━━━━━━━━\n\n");
 
         int count = 1;
