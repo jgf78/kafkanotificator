@@ -3,6 +3,7 @@ package com.julian.notificator.service.impl.news;
 import java.io.IOException;
 import java.net.URL;
 
+import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -72,7 +73,7 @@ public class NewsServiceImpl implements NewsService {
             .stream()
             .limit(10)
             .forEach(entry -> sb.append("• ")
-                                .append(entry.getTitle())
+                                .append(StringEscapeUtils.unescapeHtml4(entry.getTitle()))
                                 .append("\n"));
 
         return sb.toString();
