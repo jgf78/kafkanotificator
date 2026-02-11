@@ -63,7 +63,7 @@ public class NewsServiceImpl implements NewsService {
 
         StringBuilder sb = new StringBuilder();
 
-        sb.append("⚽ *Noticias Primera división*\n");
+        sb.append("⚽ *Noticias Primera División*\n");
         sb.append("━━━━━━━━━━━━━━━━━━\n\n");
 
         int count = 1;
@@ -74,10 +74,20 @@ public class NewsServiceImpl implements NewsService {
 
             String description = "";
             if (entry.getDescription() != null) {
-                description = StringEscapeUtils.unescapeHtml4(entry.getDescription().getValue());
+
+                description = entry.getDescription().getValue();
+
+                description = StringEscapeUtils.unescapeHtml4(description);
                 description = description.replaceAll("<[^>]*>", "");   
+                description = description.replace("&nbsp;", " ");     
                 description = description.replaceAll("\\s+", " ").trim();
-                description = truncate(description, 220);              
+
+                // Se quita "Leer" si aparece al final
+                if (description.endsWith("Leer")) {
+                    description = description.substring(0, description.length() - 5).trim();
+                }
+
+                description = truncate(description, 350); 
             }
 
             sb.append("*")
@@ -87,9 +97,7 @@ public class NewsServiceImpl implements NewsService {
               .append("\n");
 
             if (!description.isBlank()) {
-                sb.append("_")
-                  .append(description)
-                  .append("_\n");
+                sb.append(description).append("\n");
             }
 
             sb.append("\n");
@@ -99,6 +107,7 @@ public class NewsServiceImpl implements NewsService {
 
         return sb.toString();
     }
+
 
     private String truncate(String text, int maxLength) {
         if (text == null) return "";
