@@ -68,7 +68,7 @@ public class NewsServiceImpl implements NewsService {
 
         int count = 1;
 
-        for (var entry : feed.getEntries().stream().limit(10).toList()) {
+        for (var entry : feed.getEntries().stream().limit(5).toList()) {
 
             String title = StringEscapeUtils.unescapeHtml4(entry.getTitle());
             String description = entry.getDescription() != null ?
