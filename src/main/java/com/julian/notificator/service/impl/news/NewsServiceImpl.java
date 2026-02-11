@@ -63,7 +63,7 @@ public class NewsServiceImpl implements NewsService {
 
         StringBuilder sb = new StringBuilder();
 
-        sb.append("⚽ *Noticias deportivas*\n");
+        sb.append("⚽ *Noticias Primera división* \n");
         sb.append("━━━━━━━━━━━━━━━━━━\n\n");
 
         int count = 1;
@@ -71,6 +71,9 @@ public class NewsServiceImpl implements NewsService {
         for (var entry : feed.getEntries().stream().limit(10).toList()) {
 
             String title = StringEscapeUtils.unescapeHtml4(entry.getTitle());
+            String description = entry.getDescription() != null ?
+                StringEscapeUtils.unescapeHtml4(entry.getDescription().getValue()) : "";
+
             String link = entry.getLink();
 
             sb.append("*")
@@ -78,11 +81,18 @@ public class NewsServiceImpl implements NewsService {
               .append(".* ")
               .append("[")
               .append(title)
-              .append("]")
-              .append("(")
+              .append("](")
               .append(link)
               .append(")")
-              .append("\n\n");
+              .append("\n");
+
+            if (!description.isBlank()) {
+                sb.append("_")
+                  .append(description.replaceAll("\\s+", " "))
+                  .append("_\n");
+            }
+
+            sb.append("\n");
         }
 
         sb.append("━━━━━━━━━━━━━━━━━━");
