@@ -19,12 +19,15 @@ import lombok.extern.slf4j.Slf4j;
 public class NewsServiceImpl implements NewsService {
     
     @Value("${rss.proxy-url}")
-    private String rssProxyUrl;
+    private String rssNewsUrl;
+    
+    @Value("${rss.proxy-url4}")
+    private String rssSportUrl;
     
     @Override
     public String getHeadlines() throws IllegalArgumentException, FeedException, IOException {
 
-        URL url = new URL(rssProxyUrl);
+        URL url = new URL(rssNewsUrl);
 
         SyndFeed feed;
 
@@ -35,6 +38,35 @@ public class NewsServiceImpl implements NewsService {
 
         StringBuilder sb = new StringBuilder();
         sb.append("📰 *Titulares del día*\n\n");
+
+        feed.getEntries()
+            .stream()
+            .limit(10)
+            .forEach(entry -> sb.append("• ")
+                                .append(entry.getTitle())
+                                .append("\n"));
+
+        sb.append("\n");
+
+        sb.append(this.getSportHeadlines());
+
+        return sb.toString();
+    }
+
+    
+    private String getSportHeadlines() throws IllegalArgumentException, FeedException, IOException {
+
+        URL url = new URL(rssSportUrl);
+
+        SyndFeed feed;
+
+        SyndFeedInput input = new SyndFeedInput();
+        try (XmlReader reader = new XmlReader(url)) {
+            feed = input.build(reader);
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("⚽ *Noticias deportivas del día*\n\n");
 
         feed.getEntries()
             .stream()
