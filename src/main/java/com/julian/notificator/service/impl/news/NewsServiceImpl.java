@@ -67,14 +67,29 @@ public class NewsServiceImpl implements NewsService {
         }
 
         StringBuilder sb = new StringBuilder();
-        sb.append("⚽ *Noticias deportivas del día*\n\n");
 
-        feed.getEntries()
-            .stream()
-            .limit(10)
-            .forEach(entry -> sb.append("• ")
-                                .append(StringEscapeUtils.unescapeHtml4(entry.getTitle()))
-                                .append("\n"));
+        sb.append("⚽ *Noticias deportivas – MARCA*\n");
+        sb.append("━━━━━━━━━━━━━━━━━━\n\n");
+
+        int count = 1;
+
+        for (var entry : feed.getEntries().stream().limit(10).toList()) {
+
+            String title = StringEscapeUtils.unescapeHtml4(entry.getTitle());
+            String link = entry.getLink();
+
+            sb.append(count++)
+              .append("️⃣ ")
+              .append("[")
+              .append(title)
+              .append("]")
+              .append("(")
+              .append(link)
+              .append(")")
+              .append("\n\n");
+        }
+
+        sb.append("━━━━━━━━━━━━━━━━━━\n");
 
         return sb.toString();
     }
