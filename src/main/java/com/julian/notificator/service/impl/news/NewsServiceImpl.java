@@ -63,32 +63,32 @@ public class NewsServiceImpl implements NewsService {
 
         StringBuilder sb = new StringBuilder();
 
-        sb.append("⚽ *Noticias Primera división* \n");
+        sb.append("⚽ *Noticias Primera división*\n");
         sb.append("━━━━━━━━━━━━━━━━━━\n\n");
 
         int count = 1;
 
-        for (var entry : feed.getEntries().stream().limit(5).toList()) {
+        for (var entry : feed.getEntries().stream().limit(7).toList()) {
 
             String title = StringEscapeUtils.unescapeHtml4(entry.getTitle());
-            String description = entry.getDescription() != null ?
-                StringEscapeUtils.unescapeHtml4(entry.getDescription().getValue()) : "";
 
-            String link = entry.getLink();
+            String description = "";
+            if (entry.getDescription() != null) {
+                description = StringEscapeUtils.unescapeHtml4(entry.getDescription().getValue());
+                description = description.replaceAll("<[^>]*>", "");   
+                description = description.replaceAll("\\s+", " ").trim();
+                description = truncate(description, 220);              
+            }
 
             sb.append("*")
               .append(count++)
               .append(".* ")
-              .append("[")
               .append(title)
-              .append("](")
-              .append(link)
-              .append(")")
               .append("\n");
 
             if (!description.isBlank()) {
                 sb.append("_")
-                  .append(description.replaceAll("\\s+", " "))
+                  .append(description)
                   .append("_\n");
             }
 
@@ -99,5 +99,13 @@ public class NewsServiceImpl implements NewsService {
 
         return sb.toString();
     }
+
+    private String truncate(String text, int maxLength) {
+        if (text == null) return "";
+        return text.length() > maxLength
+                ? text.substring(0, maxLength) + "..."
+                : text;
+    }
+
 
 }
