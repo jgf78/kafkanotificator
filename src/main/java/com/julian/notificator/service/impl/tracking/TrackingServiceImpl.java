@@ -19,10 +19,13 @@ import com.julian.notificator.service.TrackingService;
 import com.julian.notificator.service.util.UtilString;
 
 import lombok.RequiredArgsConstructor;
+import java.time.format.DateTimeFormatter;
 
 @RequiredArgsConstructor
 @Service
 public class TrackingServiceImpl implements TrackingService{
+
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
     private final RestTemplate restTemplate;
     private final ObjectMapper mapper;
@@ -103,7 +106,7 @@ public class TrackingServiceImpl implements TrackingService{
               .append("\n");
 
             sb.append("📅 ")
-              .append(trackingInfo.lastEvent().date())
+              .append(trackingInfo.lastEvent().date().format(DATE_FORMATTER))
               .append("\n");
 
             sb.append("🚚 Servicio: ")
