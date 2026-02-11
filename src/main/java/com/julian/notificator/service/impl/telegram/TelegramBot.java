@@ -19,12 +19,14 @@ import com.julian.notificator.model.lottery.LotteryResponse;
 import com.julian.notificator.model.series.StreamingPlatform;
 import com.julian.notificator.model.series.TopSeries;
 import com.julian.notificator.model.tdt.TdtProgramme;
+import com.julian.notificator.model.tracking.TrackingInfo;
 import com.julian.notificator.model.weather.WeeklyWeather;
 import com.julian.notificator.service.CinemaDataService;
 import com.julian.notificator.service.FootballDataService;
 import com.julian.notificator.service.LotteryService;
 import com.julian.notificator.service.SeriesService;
 import com.julian.notificator.service.TdtService;
+import com.julian.notificator.service.TrackingService;
 import com.julian.notificator.service.WeatherService;
 
 import jakarta.annotation.PostConstruct;
@@ -52,6 +54,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     private final SeriesService seriesService;
     private final TdtService tdtService;
     private final LotteryService lotteryService;
+    private final TrackingService trackingService;
 
     private Map<String, BiConsumer<Long, String>> commandHandlers;
 
@@ -67,6 +70,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             "/realmadrid", (chatId, text) -> handleRealMadrid(chatId),
             "/cartelera", (chatId, text) -> handleCartelera(chatId),
             "/tiempo", this::handleTiempo,
+            "/track", this::handleTrack,
             "/series", this::handleSeries,
             "/tdt", (chatId, text) -> handleTdt(chatId),
             "/loterias", (chatId, text) -> handleLoterias(chatId),
@@ -248,6 +252,35 @@ public class TelegramBot extends TelegramLongPollingBot {
         } catch (Exception e) {
             logger.error("Error en comando /series", e);
             sendText(chatId, "❌ Error al obtener las series. Inténtalo más tarde.");
+        }
+    }
+    
+    private void handleTrack(Long chatId, String text) {
+
+        sendText(chatId, "📦 Consultando pedido...");
+
+        try {
+            String numOrder = text.replaceFirst("/track(@\\w+)?", "").trim();
+
+            if (numOrder.isEmpty()) {
+                sendText(chatId, "❌ Uso correcto: /track número de seguimiento");
+                return;
+            }
+
+            TrackingInfo trackingInfo = trackingService.getTracking(numOrder);          
+            
+            if (trackingInfo == null) {
+                sendText(chatId, "📦 No hemos encontrado información para ese número de seguimiento.");
+                return;
+            }
+
+            sendText(chatId, trackingService.buildTrackingMessage(trackingInfo));
+
+        } catch (IllegalArgumentException e) {
+            sendText(chatId, "❌ No he encontrado el número de seguimiento indicado 😕");
+        } catch (Exception e) {
+            logger.error("Error en comando /track", e);
+            sendText(chatId, "❌ Error al obtener el número de seguimiento. Inténtalo más tarde.");
         }
     }
     

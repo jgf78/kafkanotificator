@@ -15,6 +15,7 @@ import com.julian.notificator.model.series.ShowResponse;
 import com.julian.notificator.model.series.StreamingPlatform;
 import com.julian.notificator.model.series.TopSeries;
 import com.julian.notificator.service.SeriesService;
+import com.julian.notificator.service.util.UtilString;
 
 @Service
 public class SeriesServiceImpl implements SeriesService {
@@ -92,7 +93,7 @@ public class SeriesServiceImpl implements SeriesService {
 
         for (TopSeries s : series) {
 
-            sb.append("⭐ *").append(ranking++).append(". ").append(escapeMarkdown(s.title())).append("*\n");
+            sb.append("⭐ *").append(ranking++).append(". ").append(UtilString.escapeMarkdown(s.title())).append("*\n");
 
             sb.append("📅 Año: ").append(s.year() > 0 ? s.year() : "Desconocido")
               .append(" | ⭐ Valoración: ").append(s.rating() >= 0 ? s.rating() + "%" : "N/A").append("\n");
@@ -109,14 +110,6 @@ public class SeriesServiceImpl implements SeriesService {
         }
 
         return sb.toString();
-    }
-
-    private String escapeMarkdown(String text) {
-        if (text == null) return "";
-        return text.replace("_", "\\_")
-                   .replace("*", "\\*")
-                   .replace("[", "\\[")
-                   .replace("]", "\\]");
     }
 
 }

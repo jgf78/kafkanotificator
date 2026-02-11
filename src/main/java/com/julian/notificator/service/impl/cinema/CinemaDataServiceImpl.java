@@ -16,6 +16,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.julian.notificator.model.cinema.TmdbMovie;
 import com.julian.notificator.model.cinema.TmdbNowPlayingResponse;
 import com.julian.notificator.service.CinemaDataService;
+import com.julian.notificator.service.util.UtilString;
 
 @Service
 public class CinemaDataServiceImpl implements CinemaDataService {
@@ -77,23 +78,19 @@ public class CinemaDataServiceImpl implements CinemaDataService {
 
         for (TmdbMovie movie : movies) {
 
-            sb.append("⭐ *").append(ranking++).append(". ").append(escapeMarkdown(movie.title())).append("*\n");
+            sb.append("⭐ *").append(ranking++).append(". ").append(UtilString.escapeMarkdown(movie.title())).append("*\n");
 
             String overview = movie.overview();
             if (overview == null || overview.isBlank()) {
                 overview = "_Sinopsis no disponible_";
             }
 
-            sb.append("📖 ").append(escapeMarkdown(shorten(overview, 300))).append("\n");
+            sb.append("📖 ").append(UtilString.escapeMarkdown(shorten(overview, 300))).append("\n");
 
             sb.append("📅 Estreno: ").append(formatDate(movie.releaseDate())).append("\n\n");
         }
 
         return sb.toString();
-    }
-
-    private String escapeMarkdown(String text) {
-        return text.replace("_", "\\_").replace("*", "\\*").replace("[", "\\[").replace("]", "\\]");
     }
 
     private String formatDate(String date) {

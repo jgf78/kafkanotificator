@@ -130,6 +130,9 @@ rapidapi:
   key: c44630d80fmsh16dcbe7f2b83aa8p1af949jsn41af6f615f40
   streaming:
     base-url: https://streaming-availability.p.rapidapi.com
+  tracking:
+    base-url: https://track-global.p.rapidapi.com/search?track=
+    bearer: B_5t3g7MjnzqW1DmFbfAbNxuxtKt8Ugm  
     
 tdt:
  url: https://www.tdtchannels.com/epg/TV.xml.gz 
