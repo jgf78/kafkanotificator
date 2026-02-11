@@ -18,13 +18,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class NewsServiceImpl implements NewsService {
-    
+
     @Value("${rss.proxy-url}")
     private String rssNewsUrl;
-    
+
     @Value("${rss.proxy-url4}")
     private String rssSportUrl;
-    
+
     @Override
     public String getHeadlines() throws IllegalArgumentException, FeedException, IOException {
 
@@ -40,12 +40,7 @@ public class NewsServiceImpl implements NewsService {
         StringBuilder sb = new StringBuilder();
         sb.append("📰 *Titulares del día*\n\n");
 
-        feed.getEntries()
-            .stream()
-            .limit(10)
-            .forEach(entry -> sb.append("• ")
-                                .append(entry.getTitle())
-                                .append("\n"));
+        feed.getEntries().stream().limit(10).forEach(entry -> sb.append("• ").append(entry.getTitle()).append("\n"));
 
         sb.append("\n");
 
@@ -54,7 +49,6 @@ public class NewsServiceImpl implements NewsService {
         return sb.toString();
     }
 
-    
     private String getSportHeadlines() throws IllegalArgumentException, FeedException, IOException {
 
         URL url = new URL(rssSportUrl);
@@ -78,8 +72,9 @@ public class NewsServiceImpl implements NewsService {
             String title = StringEscapeUtils.unescapeHtml4(entry.getTitle());
             String link = entry.getLink();
 
-            sb.append(count++)
-              .append("️⃣ ")
+            sb.append("*")
+              .append(count++)
+              .append(".* ")
               .append("[")
               .append(title)
               .append("]")
@@ -89,7 +84,7 @@ public class NewsServiceImpl implements NewsService {
               .append("\n\n");
         }
 
-        sb.append("━━━━━━━━━━━━━━━━━━\n");
+        sb.append("━━━━━━━━━━━━━━━━━━");
 
         return sb.toString();
     }
