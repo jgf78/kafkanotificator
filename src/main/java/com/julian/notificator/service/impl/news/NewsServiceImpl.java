@@ -2,6 +2,7 @@ package com.julian.notificator.service.impl.news;
 
 import java.io.IOException;
 import java.net.URL;
+import java.net.URLConnection;
 
 import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,20 +29,25 @@ public class NewsServiceImpl implements NewsService {
     @Override
     public String getHeadlines() throws IllegalArgumentException, FeedException, IOException {
 
-        URL url = new URL(rssNewsUrl);
+        log.info("📰 Descargando RSS noticias generales...");
 
-        SyndFeed feed;
+        SyndFeed feed = loadFeedNoCache(rssNewsUrl);
 
-        SyndFeedInput input = new SyndFeedInput();
-        try (XmlReader reader = new XmlReader(url)) {
-            feed = input.build(reader);
+        log.info("📰 RSS noticias descargado correctamente. Entradas recibidas: {}", feed.getEntries().size());
+
+        if (!feed.getEntries().isEmpty()) {
+            log.info("📰 Primer titular general: {}", feed.getEntries().get(0).getTitle());
         }
 
         StringBuilder sb = new StringBuilder();
         sb.append("📰 *Titulares del día*\n");
         sb.append("━━━━━━━━━━━━━━━━━━\n\n");
 
-        feed.getEntries().stream().limit(10).forEach(entry -> sb.append("• ").append(entry.getTitle()).append("\n"));
+        feed.getEntries().stream()
+                .limit(10)
+                .forEach(entry -> sb.append("• ")
+                        .append(entry.getTitle())
+                        .append("\n"));
 
         sb.append("\n");
 
@@ -52,13 +58,14 @@ public class NewsServiceImpl implements NewsService {
 
     private String getSportHeadlines() throws IllegalArgumentException, FeedException, IOException {
 
-        URL url = new URL(rssSportUrl);
+        log.info("⚽ Descargando RSS noticias deportivas...");
 
-        SyndFeed feed;
+        SyndFeed feed = loadFeedNoCache(rssSportUrl);
 
-        SyndFeedInput input = new SyndFeedInput();
-        try (XmlReader reader = new XmlReader(url)) {
-            feed = input.build(reader);
+        log.info("⚽ RSS deportes descargado correctamente. Entradas recibidas: {}", feed.getEntries().size());
+
+        if (!feed.getEntries().isEmpty()) {
+            log.info("⚽ Primer titular deportivo: {}", feed.getEntries().get(0).getTitle());
         }
 
         StringBuilder sb = new StringBuilder();
@@ -78,16 +85,15 @@ public class NewsServiceImpl implements NewsService {
                 description = entry.getDescription().getValue();
 
                 description = StringEscapeUtils.unescapeHtml4(description);
-                description = description.replaceAll("<[^>]*>", "");   
-                description = description.replace("&nbsp;", " ");     
+                description = description.replaceAll("<[^>]*>", "");
+                description = description.replace("&nbsp;", " ");
                 description = description.replaceAll("\\s+", " ").trim();
 
-                // Se quita "Leer" si aparece al final
                 if (description.endsWith("Leer")) {
                     description = description.substring(0, description.length() - 5).trim();
                 }
 
-                description = truncate(description, 350); 
+                description = truncate(description, 350);
             }
 
             sb.append("*")
@@ -108,6 +114,28 @@ public class NewsServiceImpl implements NewsService {
         return sb.toString();
     }
 
+    private SyndFeed loadFeedNoCache(String baseUrl) throws IOException, FeedException {
+
+        String urlWithTimestamp = baseUrl + (baseUrl.contains("?") ? "&" : "?") 
+                + "t=" + System.currentTimeMillis();
+
+        log.info("🌐 URL solicitada: {}", urlWithTimestamp);
+
+        URL url = new URL(urlWithTimestamp);
+        URLConnection connection = url.openConnection();
+
+        connection.setUseCaches(false);
+        connection.setRequestProperty("Cache-Control", "no-cache, no-store, must-revalidate");
+        connection.setRequestProperty("Pragma", "no-cache");
+        connection.setRequestProperty("Expires", "0");
+        connection.setRequestProperty("User-Agent", "Mozilla/5.0");
+
+        SyndFeedInput input = new SyndFeedInput();
+
+        try (XmlReader reader = new XmlReader(connection.getInputStream())) {
+            return input.build(reader);
+        }
+    }
 
     private String truncate(String text, int maxLength) {
         if (text == null) return "";
@@ -115,6 +143,4 @@ public class NewsServiceImpl implements NewsService {
                 ? text.substring(0, maxLength) + "..."
                 : text;
     }
-
-
 }
