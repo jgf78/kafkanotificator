@@ -73,9 +73,9 @@ public class MessageController {
             @RequestParam(value = "file", required = false) MultipartFile file,
             @RequestParam(value = "filename", required = false) String filename,
             @Parameter(
-                    description = "Destination of the message. Allowed values: DISCORD, TELEGRAM",
+                    description = "Destination of the message. Allowed values: DISCORD, TELEGRAM, MAIL",
                     required = true,
-                    schema = @Schema(type = "string", allowableValues = {"DISCORD", "TELEGRAM"})
+                    schema = @Schema(type = "string", allowableValues = {"DISCORD", "TELEGRAM", "MAIL"})
                 )
             @RequestParam(value = "destination", required = true) String destinationStr) {
         try {
