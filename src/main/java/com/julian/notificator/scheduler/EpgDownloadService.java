@@ -64,24 +64,7 @@ public class EpgDownloadService {
 
             if (!programmes.isEmpty()) {
 
-                List<String> channelsNormalized = new ArrayList<>();
-                
-                String[] mainOrder = {"La1.TV", "La2.TV", "Antena 3.es", "Cuatro.TV", "Telecinco.TV", "La Sexta.es"};
-                for (String ch : mainOrder) {
-                    channelsNormalized.add(UtilTdt.normalizeChannel(ch));
-                }
-
-                tdtProperties.getNationalChannels().stream()
-                        .map(UtilTdt::normalizeChannel)
-                        .filter(ch -> !channelsNormalized.contains(ch))
-                        .forEach(channelsNormalized::add);
-
-                tdtProperties.getAtresmedia().stream()
-                        .map(UtilTdt::normalizeChannel)
-                        .filter(ch -> !channelsNormalized.contains(ch))
-                        .forEach(channelsNormalized::add);
-
-                persistService.save(programmes, channelsNormalized);
+                persistService.save(programmes);
 
                 log.info("✅ EPG guardada en BBDD ({} programas)", programmes.size());
             } else {
