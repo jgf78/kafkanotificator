@@ -82,6 +82,7 @@ public class KafkaProducerServiceImpl implements KafkaProducerService {
             switch (destination) {
                 case DISCORD -> kafkaTemplate.send(discord, json);
                 case TELEGRAM -> kafkaTemplate.send(telegram, json);
+                case MAIL -> kafkaTemplate.send(mail, json);
             }
 
             log.info("KafkaProducerService - sendFile. Mensaje enviado: {}", message);

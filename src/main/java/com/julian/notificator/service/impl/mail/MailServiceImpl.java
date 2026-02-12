@@ -1,19 +1,26 @@
 package com.julian.notificator.service.impl.mail;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.Base64;
+
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import com.julian.notificator.model.MessagePayload;
 import com.julian.notificator.service.AbstractNotificationService;
 
 import jakarta.mail.internet.MimeMessage;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+@RequiredArgsConstructor
 @Slf4j
 @Service
 public class MailServiceImpl extends AbstractNotificationService {
+
+    private static final String MAIL = "Mail";
 
     @Value("${mail.to}")
     private String to;
@@ -21,8 +28,7 @@ public class MailServiceImpl extends AbstractNotificationService {
     @Value("${mail.subject}")
     private String subject;
 
-    @Autowired
-    private JavaMailSender mailSender;
+    private final JavaMailSender mailSender;
 
     @Override
     public void sendMessage(String message) {
@@ -32,7 +38,7 @@ public class MailServiceImpl extends AbstractNotificationService {
 
             helper.setTo(to);
             helper.setSubject(subject);
-
+            
             String html = buildHtmlMessage(message);
             helper.setText(html, true); 
 
@@ -41,6 +47,41 @@ public class MailServiceImpl extends AbstractNotificationService {
 
         } catch (Exception e) {
             log.error("❌ Error enviando mensaje a Mail: {}", e.getMessage(), e);
+        }
+    }
+    
+    @Override
+    public void sendMessageFile(MessagePayload payload) {
+        try {
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+
+            helper.setTo(to);
+            helper.setSubject(subject);
+
+            String html = buildHtmlMessage(payload.getMessage());
+            helper.setText(html, true);
+
+            if (payload.getFile() != null && !payload.getFile().isBlank()) {
+                byte[] fileBytes = Base64.getDecoder().decode(payload.getFile());
+
+                ByteArrayResource resource = new ByteArrayResource(fileBytes) {
+                    @Override
+                    public String getFilename() {
+                        return payload.getFilename();
+                    }
+                };
+
+                helper.addAttachment(payload.getFilename(), resource);
+            }
+
+            mailSender.send(mimeMessage);
+
+            log.info("MailService - sendMessageFile ✅ Email enviado con adjunto: {}",
+                    payload.getFilename());
+
+        } catch (Exception e) {
+            log.error("❌ Error enviando mensaje con adjunto a Mail: {}", e.getMessage(), e);
         }
     }
 
@@ -78,7 +119,7 @@ public class MailServiceImpl extends AbstractNotificationService {
 
     @Override
     public String getChannelName() {
-        return "Mail";
+        return MAIL;
     }
 
 }
