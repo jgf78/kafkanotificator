@@ -9,7 +9,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
+import org.springframework.cache.annotation.Cacheable;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.julian.notificator.model.tracking.EventInfo;
@@ -38,7 +38,8 @@ public class TrackingServiceImpl implements TrackingService{
 
     @Value("${rapidapi.key}")
     private String apiKey;
-    
+
+    @Cacheable(value = "trackingOrder")
     @Override
     public TrackingInfo getTracking(String trackCode) throws Exception {
 
