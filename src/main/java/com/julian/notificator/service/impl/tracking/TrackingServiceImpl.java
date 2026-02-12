@@ -1,15 +1,19 @@
 package com.julian.notificator.service.impl.tracking;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.web.util.UriComponentsBuilder;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.julian.notificator.model.tracking.EventInfo;
@@ -19,8 +23,9 @@ import com.julian.notificator.service.TrackingService;
 import com.julian.notificator.service.util.UtilString;
 
 import lombok.RequiredArgsConstructor;
-import java.time.format.DateTimeFormatter;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class TrackingServiceImpl implements TrackingService{
@@ -39,32 +44,70 @@ public class TrackingServiceImpl implements TrackingService{
     @Value("${rapidapi.key}")
     private String apiKey;
 
-    @Cacheable(value = "trackingOrder")
+    @Cacheable(value = "trackingOrder", key = "#trackCode")
     @Override
-    public TrackingInfo getTracking(String trackCode) throws Exception {
+    public TrackingInfo getTracking(String trackCode) {
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("x-rapidapi-key", apiKey);
-        headers.set("Authorization", "Bearer " + bearer);
+        try {
+            log.info("📦 Consultando tracking para {}", trackCode);
 
-        HttpEntity<String> entity = new HttpEntity<>(headers);
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("x-rapidapi-key", apiKey);
+            headers.set("Authorization", "Bearer " + bearer);
 
-        ResponseEntity<String> response = restTemplate.exchange(baseUrl + trackCode, HttpMethod.GET, entity,
-                String.class);
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+            
+            String url = UriComponentsBuilder
+                    .fromHttpUrl(baseUrl)
+                    .queryParam("track", trackCode)
+                    .build()
+                    .toUriString();
 
-        JsonNode root = mapper.readTree(response.getBody()).path("data");
 
-        // Último evento
-        JsonNode events = root.path("result").path("events");
-        JsonNode lastEvent = events.get(events.size() - 1);
+            ResponseEntity<String> response =
+                    restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
 
-        EventInfo eventInfo = new EventInfo(lastEvent.path("action").asText(),
-                LocalDateTime.parse(lastEvent.path("date").asText().replace(" ", "T")),
-                lastEvent.path("service").asText());
+            if (!response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
+                log.warn("⚠️ Respuesta no válida de RapidAPI");
+            }
 
-        return new TrackingInfo(root.path("track").asText(), root.path("fromLocation").asText(),
-                root.path("toLocation").asText(), root.path("dimensions").path("weight").asDouble(),
-                root.path("dimensions").path("measure").asText(), root.path("status").asInt(), eventInfo);
+            JsonNode root = mapper.readTree(response.getBody()).path("data");
+
+            if (root.isMissingNode()) {
+                log.warn("No se encontraron datos para el envío");
+            }
+
+            JsonNode events = root.path("result").path("events");
+
+            EventInfo eventInfo = null;
+
+            if (events.isArray() && events.size() > 0) {
+                JsonNode lastEvent = events.get(events.size() - 1);
+
+                eventInfo = new EventInfo(
+                        lastEvent.path("action").asText(),
+                        LocalDateTime.parse(lastEvent.path("date").asText().replace(" ", "T")),
+                        lastEvent.path("service").asText()
+                );
+            }
+
+            return new TrackingInfo(
+                    root.path("track").asText(),
+                    root.path("fromLocation").asText(),
+                    root.path("toLocation").asText(),
+                    root.path("dimensions").path("weight").asDouble(),
+                    root.path("dimensions").path("measure").asText(),
+                    root.path("status").asInt(),
+                    eventInfo
+            );
+
+        } catch (ResourceAccessException e) {
+            log.error("⏱ Timeout llamando a RapidAPI", e);
+
+        } catch (Exception e) {
+            log.error("❌ Error inesperado consultando tracking", e);
+        }
+        return null;
     }
 
     @Override
