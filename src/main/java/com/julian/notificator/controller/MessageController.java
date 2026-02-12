@@ -17,6 +17,8 @@ import com.julian.notificator.service.KafkaProducerService;
 import com.julian.notificator.service.impl.alexa.AlexaServiceImpl;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
@@ -70,6 +72,11 @@ public class MessageController {
             @RequestParam("message") String message,
             @RequestParam(value = "file", required = false) MultipartFile file,
             @RequestParam(value = "filename", required = false) String filename,
+            @Parameter(
+                    description = "Destination of the message. Allowed values: DISCORD, TELEGRAM",
+                    required = true,
+                    schema = @Schema(type = "string", allowableValues = {"DISCORD", "TELEGRAM"})
+                )
             @RequestParam(value = "destination", required = true) String destinationStr) {
         try {
             DestinationType destination = DestinationType.valueOf(destinationStr.toUpperCase());
