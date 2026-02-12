@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.julian.notificator.model.DestinationType;
 import com.julian.notificator.model.MessageRequest;
 import com.julian.notificator.model.telegram.TelegramPollRequest;
 import com.julian.notificator.service.KafkaProducerService;
@@ -18,8 +19,10 @@ import com.julian.notificator.service.impl.alexa.AlexaServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+@RequiredArgsConstructor
 @Slf4j
 @RestController
 @RequestMapping("/messages")
@@ -35,11 +38,6 @@ public class MessageController {
 
     private final KafkaProducerService kafkaProducerService;
     private final AlexaServiceImpl alexaMessageService;
-
-    public MessageController(KafkaProducerService kafkaProducerService, AlexaServiceImpl alexaMessageService) {
-        this.kafkaProducerService = kafkaProducerService;
-        this.alexaMessageService = alexaMessageService;
-    }
 
     @Operation(summary = "Send Message", operationId = "sendMessage", description = "Send Message", tags = {
             "Messages API", })
@@ -65,18 +63,20 @@ public class MessageController {
         return "Encuesta enviada ✅";
     }
 
-    @Operation(summary = "Send Telegram message with document", description = "Send Telegram message with document", tags = {
+    @Operation(summary = "Send message with document", description = "Send message with document", tags = {
             "Messages API", })
     @PostMapping("/sendFile")
     public String sendFile(
             @RequestParam("message") String message,
             @RequestParam(value = "file", required = false) MultipartFile file,
-            @RequestParam(value = "filename", required = false) String filename) {
+            @RequestParam(value = "filename", required = false) String filename,
+            @RequestParam(value = "destination", required = true) String destinationStr) {
         try {
-            kafkaProducerService.sendFileToTelegram(message, file, filename);
+            DestinationType destination = DestinationType.valueOf(destinationStr.toUpperCase());
+            kafkaProducerService.sendFile(message, file, filename, destination);
             return "Mensaje enviado con éxito: " + message;
         } catch (Exception e) {
-            log.error("Error enviando mensaje a Telegram", e);
+            log.error("Error enviando mensaje: ", e);
             return "Error enviando mensaje: " + e.getMessage();
         }
     }

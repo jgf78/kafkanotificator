@@ -66,7 +66,7 @@ public class KafkaProducerServiceImpl implements KafkaProducerService {
     }
 
     @Override
-    public void sendFileToTelegram(String message, MultipartFile file, String filename) {
+    public void sendFile(String message, MultipartFile file, String filename, DestinationType destination) {
         try {
             MessagePayload payload = new MessagePayload();
             payload.setMessage(message);
@@ -79,11 +79,14 @@ public class KafkaProducerServiceImpl implements KafkaProducerService {
             }
 
             String json = objectMapper.writeValueAsString(payload);
-            kafkaTemplate.send(telegram, json);
+            switch (destination) {
+                case DISCORD -> kafkaTemplate.send(discord, json);
+                case TELEGRAM -> kafkaTemplate.send(telegram, json);
+            }
 
-            log.info("KafkaProducerService - sendFileToTelegram. Mensaje enviado: {}", message);
+            log.info("KafkaProducerService - sendFile. Mensaje enviado: {}", message);
         } catch (Exception e) {
-            log.error("Error serializando/enviando archivo a Telegram: {}", e.getMessage(), e);
+            log.error("Error serializando/enviando archivo: {}", e.getMessage(), e);
         }
     }
 
