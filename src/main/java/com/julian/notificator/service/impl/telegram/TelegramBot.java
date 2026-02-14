@@ -190,7 +190,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
         } catch (Exception e) {
             logger.error("Error en comando /loterias", e);
-            sendText(chatId, "❌ Error al obtener llos resultados de las loterías.");
+            sendText(chatId, "❌ Error al obtener los resultados de las loterías.");
         }
     }
 
