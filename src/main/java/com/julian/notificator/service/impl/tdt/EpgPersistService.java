@@ -24,13 +24,19 @@ public class EpgPersistService {
     @Transactional
     public void save(List<TdtProgrammeEntity> programmes) {
 
-        ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC);
-
-        repository.deleteByEndTimeBefore(now);
-
-        if (!programmes.isEmpty()) {
-            repository.saveAll(programmes);
+        if (programmes.isEmpty()) {
+            return;
         }
+
+        List<String> channels = programmes.stream()
+                .map(TdtProgrammeEntity::getChannelNormalized)
+                .distinct()
+                .toList();
+
+        repository.deleteAllByChannelNormalizedIn(channels);
+
+        repository.saveAll(programmes);
     }
+
 
 }
