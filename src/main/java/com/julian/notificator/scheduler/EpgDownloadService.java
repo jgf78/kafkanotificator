@@ -26,6 +26,9 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -79,10 +82,11 @@ public class EpgDownloadService {
     private List<TdtProgrammeEntity> parseAndMap(InputStream xmlStream) {
         List<TdtProgrammeEntity> batch = new ArrayList<>();
         try {
-            String xmlText = new String(xmlStream.readAllBytes());
+            String xmlText = new String(xmlStream.readAllBytes(), StandardCharsets.UTF_8);
+            xmlText = xmlText.replaceAll("(?s)<icon.*?/>", "");
             xmlText = xmlText.replaceAll("&(?!amp;|lt;|gt;|quot;|apos;)", "&amp;");
-            InputStream cleanedStream = new java.io.ByteArrayInputStream(xmlText.getBytes());
 
+            InputStream cleanedStream = new ByteArrayInputStream(xmlText.getBytes(StandardCharsets.UTF_8));
             XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(cleanedStream);
             TdtProgrammeEntity current = null;
 
