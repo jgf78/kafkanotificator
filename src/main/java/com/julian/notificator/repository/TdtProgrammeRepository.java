@@ -15,6 +15,4 @@ public interface TdtProgrammeRepository extends JpaRepository<TdtProgrammeEntity
             ZonedDateTime now2
         );
 
-    void deleteAllByChannelNormalizedIn(List<String> channels);
-
 }

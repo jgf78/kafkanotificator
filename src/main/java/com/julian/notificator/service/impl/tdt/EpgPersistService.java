@@ -1,8 +1,6 @@
 package com.julian.notificator.service.impl.tdt;
 
 
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.util.List;
 
 import org.springframework.cache.annotation.CacheEvict;
@@ -28,12 +26,7 @@ public class EpgPersistService {
             return;
         }
 
-        List<String> channels = programmes.stream()
-                .map(TdtProgrammeEntity::getChannelNormalized)
-                .distinct()
-                .toList();
-
-        repository.deleteAllByChannelNormalizedIn(channels);
+        repository.deleteAll();
 
         repository.saveAll(programmes);
     }
