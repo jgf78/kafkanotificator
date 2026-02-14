@@ -44,6 +44,14 @@ public class TdtServiceImpl implements TdtService {
         combinedChannels.add("La Sexta.es");
         combinedChannels.add("Telemadrid.TV");
         combinedChannels.add("LaOtra.TV");
+        combinedChannels.add("Movistar Plus+.es");
+        combinedChannels.add("M+ Estrenos.es");
+        combinedChannels.add("M+ Hits.es");
+        combinedChannels.add("RMTV.TV");
+        combinedChannels.add("TDP.TV");
+        combinedChannels.add("GOL.es");
+        combinedChannels.add("Eurosport 1.es");
+        combinedChannels.add("Eurosport 2.es");
 
         tdtProperties.getAtresmedia().stream()
                 .filter(c -> !combinedChannels.contains(c))
