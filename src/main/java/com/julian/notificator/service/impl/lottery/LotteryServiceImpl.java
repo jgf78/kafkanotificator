@@ -61,7 +61,7 @@ public class LotteryServiceImpl implements LotteryService {
 
         } catch (Exception e) {
             log.warn("⚠️ Error llamando a la API de Loterías. Usando fallback ONCE. Motivo: " + e.getMessage());
-            return null; 
+            return new LotteryResponse(false, null, null, null); 
         }
     }
 
