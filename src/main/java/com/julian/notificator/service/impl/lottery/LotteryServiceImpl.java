@@ -23,7 +23,9 @@ import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
+@Log4j2
 @Service
 @RequiredArgsConstructor
 public class LotteryServiceImpl implements LotteryService {
@@ -41,27 +43,34 @@ public class LotteryServiceImpl implements LotteryService {
 
     @Override
     public LotteryResponse getLatestResults() {
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setBearerAuth(token);
+            headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(token);
-        headers.setContentType(MediaType.APPLICATION_JSON);
+            HttpEntity<Void> entity = new HttpEntity<>(headers);
 
-        HttpEntity<Void> entity = new HttpEntity<>(headers);
+            ResponseEntity<LotteryResponse> response = restTemplate.exchange(
+                    baseUrl + "/results",
+                    HttpMethod.GET,
+                    entity,
+                    LotteryResponse.class
+            );
 
-        ResponseEntity<LotteryResponse> response = restTemplate.exchange(
-                baseUrl + "/results",
-                HttpMethod.GET,
-                entity,
-                LotteryResponse.class
-        );
+            return response.getBody();
 
-        return response.getBody();
+        } catch (Exception e) {
+            log.warn("⚠️ Error llamando a la API de Loterías. Usando fallback ONCE. Motivo: " + e.getMessage());
+            return null; 
+        }
     }
+
 
     @Override
     public String buildLotteryMessage(LotteryResponse response) throws IllegalArgumentException, FeedException, IOException {
+        
         if (response == null || response.data() == null || response.data().isEmpty()) {
-            return "🎲 No hay resultados de loterías disponibles 😔";
+            return getJuegosOnce();
         }
 
         StringBuilder sb = new StringBuilder();
@@ -73,50 +82,70 @@ public class LotteryServiceImpl implements LotteryService {
                     ? result.game().name()
                     : "Desconocido";
 
-            // Emoji por tipo de lotería 
-            String gameEmoji = switch (gameName.toLowerCase()) {
-                case "lototurf" -> "🟣🎯";
-                case "el quinto plus" -> "🟢🎲";
-                case "el gordo" -> "🔴💸";
-                case "bonoloto" -> "🔵🍀";
-                case "la primitiva" -> "🟡💰";
-                case "euromillones" -> "🌟💎";
-                default -> "🎲";
-            };
+            String gameEmoji = setEmoji(gameName);
 
             sb.append(gameEmoji).append(" *").append(gameName).append("*\n");
             sb.append("📅 ").append(result.drawDate()).append(" (").append(result.dayOfWeek()).append(")\n");
 
-            // Combinación
-            if (result.combination() != null && !result.combination().isEmpty()) {
-                sb.append("🔢 Combinación: ")
-                  .append(result.combination().stream().map(String::valueOf).collect(Collectors.joining(" - ")))
-                  .append("\n");
-            }
+            setCombinacion(sb, result);
 
-            // Resultados especiales
-            ResultData rd = result.resultData();
-            if (rd != null) {
-                if (rd.complementario() != null) sb.append("➕ Complementario: ").append(rd.complementario()).append("\n");
-                if (rd.reintegro() != null) sb.append("🔄 Reintegro: ").append(rd.reintegro()).append("\n");
-                if (rd.estrellas() != null && !rd.estrellas().isEmpty())
-                    sb.append("⭐ Estrellas: ")
-                      .append(rd.estrellas().stream().map(String::valueOf).collect(Collectors.joining(" - ")))
-                      .append("\n");
-                if (rd.joker() != null)
-                    sb.append("🎰 Joker: ").append(rd.joker().combinacion() != null ? rd.joker().combinacion() : "-").append("\n");
-            }
+            setResultadosEspeciales(sb, result);
 
-            // Jackpot
-            if (result.jackpotFormatted() != null) {
-                sb.append("💸 Bote: ").append(result.jackpotFormatted()).append("\n");
-            }
+            setJackpot(sb, result);
 
             sb.append("────────────────────────────\n");
         }
 
         sb.append(getJuegosOnce());
         return sb.toString();
+    }
+
+
+    private void setJackpot(StringBuilder sb, LotteryResult result) {
+        // Jackpot
+        if (result.jackpotFormatted() != null) {
+            sb.append("💸 Bote: ").append(result.jackpotFormatted()).append("\n");
+        }
+    }
+
+
+    private void setResultadosEspeciales(StringBuilder sb, LotteryResult result) {
+        // Resultados especiales
+        ResultData rd = result.resultData();
+        if (rd != null) {
+            if (rd.complementario() != null) sb.append("➕ Complementario: ").append(rd.complementario()).append("\n");
+            if (rd.reintegro() != null) sb.append("🔄 Reintegro: ").append(rd.reintegro()).append("\n");
+            if (rd.estrellas() != null && !rd.estrellas().isEmpty())
+                sb.append("⭐ Estrellas: ")
+                  .append(rd.estrellas().stream().map(String::valueOf).collect(Collectors.joining(" - ")))
+                  .append("\n");
+            if (rd.joker() != null)
+                sb.append("🎰 Joker: ").append(rd.joker().combinacion() != null ? rd.joker().combinacion() : "-").append("\n");
+        }
+    }
+
+
+    private void setCombinacion(StringBuilder sb, LotteryResult result) {
+        // Combinación
+        if (result.combination() != null && !result.combination().isEmpty()) {
+            sb.append("🔢 Combinación: ")
+              .append(result.combination().stream().map(String::valueOf).collect(Collectors.joining(" - ")))
+              .append("\n");
+        }
+    }
+
+
+    private String setEmoji(String gameName) {
+        // Emoji por tipo de lotería 
+        return switch (gameName.toLowerCase()) {
+            case "lototurf" -> "🟣🎯";
+            case "el quinto plus" -> "🟢🎲";
+            case "el gordo" -> "🔴💸";
+            case "bonoloto" -> "🔵🍀";
+            case "la primitiva" -> "🟡💰";
+            case "euromillones" -> "🌟💎";
+            default -> "🎲";
+        };
     }
 
     private String getJuegosOnce() throws IllegalArgumentException, FeedException, IOException {
