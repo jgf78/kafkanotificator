@@ -18,7 +18,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.julian.notificator.model.tracking.EventInfo;
 import com.julian.notificator.model.tracking.TrackingInfo;
-import com.julian.notificator.model.tracking.TrackingStatus;
 import com.julian.notificator.service.TrackingService;
 import com.julian.notificator.service.util.UtilString;
 
@@ -136,9 +135,9 @@ public class TrackingServiceImpl implements TrackingService{
           .append(UtilString.escapeMarkdown(trackingInfo.weightUnit()))
           .append("\n");
 
-        TrackingStatus status = TrackingStatus.fromCode(trackingInfo.status());
+        String status = trackingInfo.lastEvent().action();
         sb.append("📊 *Estado:* ")
-          .append(status.getDescription())
+          .append(status)
           .append("\n\n");
 
         if (trackingInfo.lastEvent() != null) {
