@@ -81,7 +81,7 @@ public class TrackingServiceImpl implements TrackingService{
             EventInfo eventInfo = null;
 
             if (events.isArray() && events.size() > 0) {
-                JsonNode lastEvent = events.get(events.size() - 1);
+                JsonNode lastEvent = events.get(0);
 
                 eventInfo = new EventInfo(
                         lastEvent.path("action").asText(),
