@@ -47,6 +47,8 @@ public class TdtServiceImpl implements TdtService {
         combinedChannels.add("Movistar Plus+.es");
         combinedChannels.add("M+ Estrenos.es");
         combinedChannels.add("M+ Hits.es");
+        combinedChannels.add("M+ Vamos.es");
+        combinedChannels.add("M+ Vamos 2.es");
         combinedChannels.add("RMTV.TV");
         combinedChannels.add("TDP.TV");
         combinedChannels.add("GOL.es");
