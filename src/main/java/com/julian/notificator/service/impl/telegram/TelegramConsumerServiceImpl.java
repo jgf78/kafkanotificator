@@ -9,19 +9,21 @@ import com.julian.notificator.model.MessagePayload;
 import com.julian.notificator.model.telegram.TelegramPollRequest;
 import com.julian.notificator.service.KafkaConsumerService;
 import com.julian.notificator.service.NotificationService;
+import com.julian.notificator.service.SubscriberService;
+import com.julian.notificator.service.util.Constants;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+@RequiredArgsConstructor
 @Slf4j
 @Service
 public class TelegramConsumerServiceImpl implements KafkaConsumerService {
 
+    @Qualifier("telegramServiceImpl")
     private final NotificationService telegramService;
+    private final SubscriberService subscriberService;
     private final ObjectMapper objectMapper = new ObjectMapper();
-
-    public TelegramConsumerServiceImpl(@Qualifier("telegramServiceImpl") NotificationService notificationService) {
-        this.telegramService = notificationService;
-    }
 
     @Override
     @KafkaListener(topics = "${kafka.topics.telegram}", groupId = "${kafka.group-id}")
@@ -31,6 +33,7 @@ public class TelegramConsumerServiceImpl implements KafkaConsumerService {
             if (telegramPoll != null && telegramPoll.getQuestion() != null
                     && telegramPoll.getOptions() != null && !telegramPoll.getOptions().isEmpty()) {
                 telegramService.sendPoll(telegramPoll);
+                subscriberService.notifyAllSubscribers(Constants.TELEGRAM_POLL_EVENT, telegramPoll);
                 log.debug("📥 TelegramConsumer - encuesta procesada: {}", telegramPoll.getQuestion());
                 return;
             }
@@ -45,10 +48,12 @@ public class TelegramConsumerServiceImpl implements KafkaConsumerService {
                 telegramService.sendMessageFile(payload);
             } else if (payload.isPin()) {
                 telegramService.sendPinMessage(payload.getMessage());
+                subscriberService.notifyAllSubscribers(Constants.TELEGRAM_TEXT_PIN_EVENT, payload.getMessage());
             } else {
                 telegramService.sendMessage(payload.getMessage());
+                subscriberService.notifyAllSubscribers(Constants.TELEGRAM_TEXT_EVENT, payload.getMessage());
             }
-
+            
             log.debug("📥 TelegramConsumer - mensaje procesado: {}", payload.getMessage());
 
         } catch (Exception e) {

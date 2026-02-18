@@ -11,11 +11,11 @@ import com.julian.notificator.model.football.Match;
 import com.julian.notificator.service.FootballDataService;
 import com.julian.notificator.service.NotificationService;
 import com.julian.notificator.service.SubscriberService;
+import com.julian.notificator.service.util.Constants;
 
 @Component
 public class LiveMatchNotifier {
 
-    private static final String LIVE_MATCH_EVENT = "LIVE_MATCH_EVENT";
     private final FootballDataService footballDataService;
     private final NotificationService telegramService;
     private final SubscriberService subscriberService;
@@ -112,7 +112,7 @@ public class LiveMatchNotifier {
     private void sendNotificationToAll(String message) {
         telegramService.sendMessage(message);
 
-        subscriberService.notifyAllSubscribers(LIVE_MATCH_EVENT, message);
+        subscriberService.notifyAllSubscribers(Constants.LIVE_MATCH_EVENT, message);
     }
 
     // -------------------- Mensajes --------------------
