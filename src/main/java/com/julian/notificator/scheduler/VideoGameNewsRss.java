@@ -39,11 +39,14 @@ public class VideoGameNewsRss {
     public void checkFeed() {
         try {
             RssFeed feed = RssParser.parse(proxyUrl);
+            int sentCount = 0;
 
             for (RssItem item : feed.items()) {
                 if (!sentGuids.add(item.guid())) continue; 
                 String message = formatMessage(item);
                 discordService.sendMessage(message);
+                sentCount++;
+                if (sentCount >= 5) break; // límite de 5 mensajes
             }
 
         } catch (Exception e) {
