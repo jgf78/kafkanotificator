@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.julian.notificator.entity.Subscribers;
 import com.julian.notificator.model.football.LiveMatchResponse;
 import com.julian.notificator.model.football.Match;
 import com.julian.notificator.service.FootballDataService;
@@ -106,10 +105,7 @@ public class LiveMatchNotifier {
     private void sendNotificationToAll(String message) {
         telegramService.sendMessage(message);
 
-        List<Subscribers> subscribers = subscriberService.getActiveSubscribers();
-        for (Subscribers s : subscribers) {
-            subscriberService.notifyAllSubscribers(LIVE_MATCH_EVENT, message);
-        }
+        subscriberService.notifyAllSubscribers(LIVE_MATCH_EVENT, message);
     }
 
     // -------------------- Mensajes --------------------
