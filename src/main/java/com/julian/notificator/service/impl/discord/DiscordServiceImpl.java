@@ -24,7 +24,7 @@ public class DiscordServiceImpl extends AbstractNotificationService {
 
     private static final String DISCORD = "Discord";
     
-    @Value("${discord.webhook-url}")
+    @Value("${discord.webhook-url-news}")
     private String discordWebhookUrl;
 
     @Override
