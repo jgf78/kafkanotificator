@@ -38,7 +38,7 @@ public class SubscriberController {
     private final SubscriberService subscriberService;
 
     @Operation(summary = "Create new subscription (webhook)", operationId = "subscribe", description = "Create new subscription (webhook)", tags = {
-            "Subcriber API", })
+            "Subscriber API", })
     @PostMapping("/subscribe")
     public ResponseEntity<Subscribers> subscribe(@RequestBody SubscribeRequest request) {
 
@@ -51,14 +51,14 @@ public class SubscriberController {
     }
 
     @Operation(summary = "List active subscribers", operationId = "getActiveSubscribers", description = "List active subscribers", tags = {
-            "Subcriber API", })
+            "Subscriber API", })
     @GetMapping("/active")
     public ResponseEntity<List<Subscribers>> getActiveSubscribers() {
         return ResponseEntity.ok(subscriberService.getActiveSubscribers());
     }
 
     @Operation(summary = "Manually deactivate a subscriber", operationId = "deactivate", description = "Manually deactivate a subscriber", tags = {
-            "Subcriber API", })
+            "Subscriber API", })
     @PutMapping("/{id}/deactivate")
     public ResponseEntity<Void> deactivate(@PathVariable Long id) {
         subscriberService.deactivateSubscriber(id);
@@ -66,7 +66,7 @@ public class SubscriberController {
     }
 
     @Operation(summary = "Test endpoint for sending manual notification", operationId = "sendTestNotification", description = "Test endpoint for sending manual notification", tags = {
-            "Subcriber API", })
+            "Subscriber API", })
     @PostMapping("/test-notification")
     public ResponseEntity<Void> sendTestNotification(@RequestBody TestNotificationRequest request) {
 
