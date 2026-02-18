@@ -1,5 +1,6 @@
 package com.julian.notificator.service.impl.telegram;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
@@ -15,7 +16,7 @@ import com.julian.notificator.service.util.Constants;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@RequiredArgsConstructor
+@RequiredArgsConstructor(onConstructor_ = {@Autowired})
 @Slf4j
 @Service
 public class TelegramConsumerServiceImpl implements KafkaConsumerService {
