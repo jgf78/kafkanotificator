@@ -40,6 +40,8 @@ public class SubscriberServiceImpl implements SubscriberService {
 
     @Override
     public Subscribers subscribe(String name, String callbackUrl) {
+        
+        log.debug("SubscriberService - subscribe");
 
         if (repository.existsByCallbackUrl(callbackUrl)) {
             throw new IllegalArgumentException("Callback already registered");
@@ -58,12 +60,15 @@ public class SubscriberServiceImpl implements SubscriberService {
 
     @Override
     public List<Subscribers> getActiveSubscribers() {
+        
+        log.debug("SubscriberService - getActiveSubscribers");
         return repository.findByActiveTrue();
     }
 
     @Async
     @Override
     public void notifyAllSubscribers(String eventType, Object payload) {
+        log.debug("SubscriberService - notifyAllSubscribers");
 
         List<Subscribers> subscribers = repository.findByActiveTrue();
 
@@ -153,6 +158,9 @@ public class SubscriberServiceImpl implements SubscriberService {
 
     @Override
     public void deactivateSubscriber(Long id) {
+        
+        log.debug("SubscriberService - deactivateSubscriber");
+        
         repository.findById(id).ifPresent(sub -> {
             sub.setActive(false);
             repository.save(sub);
