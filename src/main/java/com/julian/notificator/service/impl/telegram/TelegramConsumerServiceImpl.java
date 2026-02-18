@@ -1,6 +1,5 @@
 package com.julian.notificator.service.impl.telegram;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
@@ -13,18 +12,22 @@ import com.julian.notificator.service.NotificationService;
 import com.julian.notificator.service.SubscriberService;
 import com.julian.notificator.service.util.Constants;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@RequiredArgsConstructor(onConstructor_ = {@Autowired})
 @Slf4j
 @Service
 public class TelegramConsumerServiceImpl implements KafkaConsumerService {
 
-    @Qualifier("telegramServiceImpl")
     private final NotificationService telegramService;
     private final SubscriberService subscriberService;
     private final ObjectMapper objectMapper = new ObjectMapper();
+    
+    public TelegramConsumerServiceImpl(
+            @Qualifier("telegramServiceImpl") NotificationService telegramService,
+            SubscriberService subscriberService) {
+        this.telegramService = telegramService;
+        this.subscriberService = subscriberService;
+    }
 
     @Override
     @KafkaListener(topics = "${kafka.topics.telegram}", groupId = "${kafka.group-id}")
