@@ -2,6 +2,7 @@ package com.julian.notificator.scheduler;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -11,9 +12,6 @@ import com.julian.notificator.service.FootballDataService;
 import com.julian.notificator.service.NotificationService;
 import com.julian.notificator.service.SubscriberService;
 
-import lombok.RequiredArgsConstructor;
-
-@RequiredArgsConstructor
 @Component
 public class LiveMatchNotifier {
 
@@ -27,7 +25,16 @@ public class LiveMatchNotifier {
     private Long lastMatchId = null;
     private String lastStatus = null;
 
-    @Scheduled(fixedDelay = 20_000)
+    public LiveMatchNotifier(
+            FootballDataService footballDataService,
+            @Qualifier("telegramServiceImpl") NotificationService notificationService,
+            SubscriberService subscriberService) {
+        this.footballDataService = footballDataService;
+        this.telegramService = notificationService;
+        this.subscriberService = subscriberService;
+    }
+
+    @Scheduled(fixedDelay = 20_000) // cada 20 segundos
     public void checkLiveMatch() {
 
         LiveMatchResponse response = footballDataService.getLiveStatus();
