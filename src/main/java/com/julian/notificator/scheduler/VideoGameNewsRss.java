@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -24,16 +25,19 @@ import lombok.RequiredArgsConstructor;
 @Component
 public class VideoGameNewsRss {
 
+    @Value("${rss.proxy-url5}")
+    private String proxyUrl;
+    
     private final KafkaProducerService kafkaProducerService;
     private final Set<String> sentGuids = new HashSet<>();
 
     @Scheduled(cron = "0 0 */3 * * *")
     public void checkFeed() {
         try {
-            RssFeed feed = RssParser.parse("http://192.168.1.3:9002/videojuegos.xml");
+            RssFeed feed = RssParser.parse(proxyUrl);
 
             for (RssItem item : feed.items()) {
-                if (!sentGuids.add(item.guid())) continue; // evita duplicados
+                if (!sentGuids.add(item.guid())) continue; 
                 String message = formatMessage(item);
                 kafkaProducerService.sendMessage(message, DestinationType.DISCORD);
             }
