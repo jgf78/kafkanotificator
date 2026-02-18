@@ -6,7 +6,6 @@ import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -28,17 +27,15 @@ public class VideoGameNewsRss {
     private final KafkaProducerService kafkaProducerService;
     private final Set<String> sentGuids = new HashSet<>();
 
-    @Scheduled(cron = "0 0 */3 * * *") 
+    @Scheduled(cron = "0 0 */3 * * *")
     public void checkFeed() {
         try {
-            URL feedUrl = new URL("http://192.168.1.3:9002/videojuegos.xml");
-            var feed = RssParser.parse(feedUrl.toString());
+            RssFeed feed = RssParser.parse("http://192.168.1.3:9002/videojuegos.xml");
 
-            for (var item : feed.items()) {
-                if (sentGuids.contains(item.guid())) continue; // ya enviado
+            for (RssItem item : feed.items()) {
+                if (!sentGuids.add(item.guid())) continue; // evita duplicados
                 String message = formatMessage(item);
                 kafkaProducerService.sendMessage(message, DestinationType.DISCORD);
-                sentGuids.add(item.guid());
             }
 
         } catch (Exception e) {
@@ -66,24 +63,22 @@ public class VideoGameNewsRss {
                 item.link()
         );
     }
-    
-    public class RssParser {
 
+    public static class RssParser {
         public static RssFeed parse(String url) throws Exception {
-            SyndFeedInput input = new SyndFeedInput();
-            SyndFeed feed = input.build(new XmlReader(new URL(url)));
+            SyndFeed feed = new SyndFeedInput().build(new XmlReader(new URL(url)));
 
             List<RssItem> items = feed.getEntries().stream()
-                .map(entry -> new RssItem(
-                        entry.getTitle(),
-                        entry.getLink(),
-                        entry.getDescription() != null ? entry.getDescription().getValue() : "",
-                        entry.getPublishedDate() != null
-                                ? ZonedDateTime.ofInstant(entry.getPublishedDate().toInstant(), ZoneId.systemDefault())
-                                : null,
-                        entry.getUri()
-                ))
-                .collect(Collectors.toList());
+                    .map(entry -> new RssItem(
+                            entry.getTitle(),
+                            entry.getLink(),
+                            entry.getDescription() != null ? entry.getDescription().getValue() : "",
+                            entry.getPublishedDate() != null
+                                    ? ZonedDateTime.ofInstant(entry.getPublishedDate().toInstant(), ZoneId.systemDefault())
+                                    : null,
+                            entry.getUri()
+                    ))
+                    .toList();
 
             return new RssFeed(
                     feed.getTitle(),
@@ -96,6 +91,4 @@ public class VideoGameNewsRss {
             );
         }
     }
-
 }
-
