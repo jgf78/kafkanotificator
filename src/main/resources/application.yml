@@ -89,7 +89,8 @@ rss:
   proxy-url: "http://192.168.1.3:9002/elmundo.xml"  
   proxy-url2: "http://192.168.1.3:9002/juegosonce.xml"
   proxy-url3: "http://192.168.1.3:9002/atresmedia.xml"
-  proxy-url4: "http://192.168.1.3:9002/marca.xml" 
+  proxy-url4: "http://192.168.1.3:9002/marca.xml"
+  proxy-url5: "http://192.168.1.3:9002/videojuegos.xml" 
   
 mail:
   to: "julian_gomez_fdez@yahoo.es"
