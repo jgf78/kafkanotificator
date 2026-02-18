@@ -7,29 +7,33 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.julian.notificator.model.DestinationType;
 import com.julian.notificator.model.videogames.RssFeed;
 import com.julian.notificator.model.videogames.RssItem;
-import com.julian.notificator.service.KafkaProducerService;
+import com.julian.notificator.service.NotificationService;
+import com.julian.notificator.service.SubscriberService;
 import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
 
-import lombok.RequiredArgsConstructor;
-
-@RequiredArgsConstructor
 @Component
 public class VideoGameNewsRss {
 
     @Value("${rss.proxy-url5}")
     private String proxyUrl;
     
-    private final KafkaProducerService kafkaProducerService;
+    private final NotificationService discordService;
     private final Set<String> sentGuids = new HashSet<>();
+    
+    public VideoGameNewsRss(
+            @Qualifier("discordServiceImpl") NotificationService discordService,
+            SubscriberService subscriberService) {
+        this.discordService = discordService;
+    }
 
     @Scheduled(cron = "0 0 */3 * * *")
     public void checkFeed() {
@@ -39,7 +43,7 @@ public class VideoGameNewsRss {
             for (RssItem item : feed.items()) {
                 if (!sentGuids.add(item.guid())) continue; 
                 String message = formatMessage(item);
-                kafkaProducerService.sendMessage(message, DestinationType.DISCORD);
+                discordService.sendMessage(message);
             }
 
         } catch (Exception e) {
