@@ -144,7 +144,8 @@ public class SubscriberServiceImpl implements SubscriberService {
             ResponseEntity<Void> response = restTemplate.exchange(subscriber.getCallbackUrl(), HttpMethod.POST, entity,
                     Void.class);
 
-            log.setStatusCode(response.getStatusCodeValue());
+            log.setStatusCode(response.getStatusCode().value());
+
             log.setErrorMessage(null);
 
             if (!response.getStatusCode().is2xxSuccessful()) {
