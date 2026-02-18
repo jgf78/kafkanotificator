@@ -19,6 +19,9 @@ pipeline {
         }
 
         stage('Build with Maven') {
+            when {
+                branch 'main'
+            }
             agent {
                 docker {
                     image 'maven:3.9-eclipse-temurin-17'
@@ -31,6 +34,9 @@ pipeline {
         }
 
         stage('Copy Jar') {
+            when {
+                branch 'main'
+            }
             steps {
                 sh '''
                     echo "🔧 Sincronizando workspace..."
@@ -42,6 +48,9 @@ pipeline {
         }
 
         stage('Build Docker image') {
+            when {
+                branch 'main'
+            }
             steps {
                 sh '''
                     echo "🐳 Construyendo imagen Docker SIN CACHE..."
@@ -62,6 +71,9 @@ pipeline {
         }
 
         stage('Deploy to Docker') {
+            when {
+                branch 'main'
+            }
             steps {
                 sh '''
                     docker stop notificator || true
