@@ -46,10 +46,10 @@ public class VideoGameNewsRss {
 
             feed.items().stream()
                     .filter(item -> item.pubDate() != null)
-                    .filter(item -> item.pubDate().isAfter(yesterdayLimit)) // solo hoy o ayer
-                    .sorted(Comparator.comparing(RssItem::pubDate).reversed()) // más recientes primero
-                    .filter(item -> sentGuids.add(item.guid())) // evita duplicados
-                    .limit(5) // máximo 5
+                    .filter(item -> item.pubDate().isAfter(yesterdayLimit)) 
+                    .sorted(Comparator.comparing(RssItem::pubDate).reversed()) 
+                    .filter(item -> sentGuids.add(item.guid())) 
+                    .limit(5) 
                     .forEach(item -> {
                         String message = formatMessage(item);
                         discordService.sendMessage(message);
