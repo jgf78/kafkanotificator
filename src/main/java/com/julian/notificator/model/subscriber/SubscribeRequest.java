@@ -12,7 +12,8 @@ public class SubscribeRequest {
     private String callbackUrl;
     
     @Schema(
-            description = "List of event types the subscriber wants to receive"
+            description = "List of event types the subscriber wants to receive",
+            implementation = WebhookEventType.class
         )
     private List<WebhookEventType> events;
 
