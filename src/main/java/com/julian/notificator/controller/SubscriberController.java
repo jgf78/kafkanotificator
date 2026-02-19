@@ -44,7 +44,8 @@ public class SubscriberController {
 
         Subscribers subscriber = subscriberService.subscribe(
                 request.getName(),
-                request.getCallbackUrl()
+                request.getCallbackUrl(),
+                request.getEvents()
         );
 
         return ResponseEntity.ok(subscriber);
