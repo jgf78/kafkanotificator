@@ -3,6 +3,7 @@ package com.julian.notificator.scheduler;
 import java.net.URL;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -40,11 +41,18 @@ public class VideoGameNewsRss {
         try {
             RssFeed feed = RssParser.parse(proxyUrl);
 
-            for (RssItem item : feed.items()) {
-                if (!sentGuids.add(item.guid())) continue; 
-                String message = formatMessage(item);
-                discordService.sendMessage(message);
-            }
+            ZonedDateTime yesterdayLimit = ZonedDateTime.now().minusDays(1);
+
+            feed.items().stream()
+                    .filter(item -> item.pubDate() != null)
+                    .filter(item -> item.pubDate().isAfter(yesterdayLimit)) // solo hoy o ayer
+                    .sorted(Comparator.comparing(RssItem::pubDate).reversed()) // más recientes primero
+                    .filter(item -> sentGuids.add(item.guid())) // evita duplicados
+                    .limit(5) // máximo 5
+                    .forEach(item -> {
+                        String message = formatMessage(item);
+                        discordService.sendMessage(message);
+                    });
 
         } catch (Exception e) {
             e.printStackTrace();
