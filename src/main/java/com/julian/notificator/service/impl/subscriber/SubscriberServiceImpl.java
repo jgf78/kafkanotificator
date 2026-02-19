@@ -18,6 +18,7 @@ import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.julian.notificator.entity.Subscribers;
 import com.julian.notificator.entity.WebhookDeliveryLog;
+import com.julian.notificator.model.subscriber.WebhookEventType;
 import com.julian.notificator.repository.SubscriberRepository;
 import com.julian.notificator.repository.WebhookDeliveryLogRepository;
 import com.julian.notificator.service.SubscriberService;
@@ -39,9 +40,7 @@ public class SubscriberServiceImpl implements SubscriberService {
     private final ObjectMapper objectMapper;
 
     @Override
-    public Subscribers subscribe(String name, String callbackUrl) {
-        
-        log.debug("SubscriberService - subscribe");
+    public Subscribers subscribe(String name, String callbackUrl, List<WebhookEventType> events) {
 
         if (repository.existsByCallbackUrl(callbackUrl)) {
             throw new IllegalArgumentException("Callback already registered");
@@ -54,13 +53,14 @@ public class SubscriberServiceImpl implements SubscriberService {
         subscriber.setActive(true);
         subscriber.setFailureCount(0);
         subscriber.setCreatedAt(LocalDateTime.now());
+        subscriber.setEvents(events);
 
         return repository.save(subscriber);
     }
 
     @Override
     public List<Subscribers> getActiveSubscribers() {
-        
+
         log.debug("SubscriberService - getActiveSubscribers");
         return repository.findByActiveTrue();
     }
@@ -70,17 +70,17 @@ public class SubscriberServiceImpl implements SubscriberService {
     public void notifyAllSubscribers(String eventType, Object payload) {
         log.debug("SubscriberService - notifyAllSubscribers");
 
-        List<Subscribers> subscribers = repository.findByActiveTrue();
+        List<Subscribers> subscribers = repository.findByActiveTrue()
+                .stream()
+                .filter(sub -> sub.getEvents().contains(WebhookEventType.valueOf(eventType)))
+                .toList();
 
         for (Subscribers subscriber : subscribers) {
             sendWebhook(subscriber, eventType, payload, 1);
         }
     }
 
-    private void sendWebhook(Subscribers subscriber,
-                             String eventType,
-                             Object payload,
-                             int attempt) {
+    private void sendWebhook(Subscribers subscriber, String eventType, Object payload, int attempt) {
 
         WebhookDeliveryLog deliveryLog = new WebhookDeliveryLog();
         deliveryLog.setSubscriber(subscriber);
@@ -97,12 +97,8 @@ public class SubscriberServiceImpl implements SubscriberService {
 
             HttpEntity<String> entity = new HttpEntity<>(jsonPayload, headers);
 
-            ResponseEntity<Void> response = restTemplate.exchange(
-                    subscriber.getCallbackUrl(),
-                    HttpMethod.POST,
-                    entity,
-                    Void.class
-            );
+            ResponseEntity<Void> response = restTemplate.exchange(subscriber.getCallbackUrl(), HttpMethod.POST, entity,
+                    Void.class);
 
             int statusCode = response.getStatusCode().value();
             deliveryLog.setStatusCode(statusCode);
@@ -131,10 +127,7 @@ public class SubscriberServiceImpl implements SubscriberService {
         }
     }
 
-    private void retryIfPossible(Subscribers subscriber,
-                                 String eventType,
-                                 Object payload,
-                                 int attempt) {
+    private void retryIfPossible(Subscribers subscriber, String eventType, Object payload, int attempt) {
 
         if (attempt < MAX_RETRIES && subscriber.isActive()) {
             try {
@@ -158,9 +151,9 @@ public class SubscriberServiceImpl implements SubscriberService {
 
     @Override
     public void deactivateSubscriber(Long id) {
-        
+
         log.debug("SubscriberService - deactivateSubscriber");
-        
+
         repository.findById(id).ifPresent(sub -> {
             sub.setActive(false);
             repository.save(sub);
@@ -170,7 +163,7 @@ public class SubscriberServiceImpl implements SubscriberService {
     private String generateApiKey() {
         return UUID.randomUUID().toString().replace("-", "");
     }
-    
+
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     private void persistLog(WebhookDeliveryLog log) {
         logRepository.save(log);
