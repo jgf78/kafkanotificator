@@ -9,9 +9,6 @@ public enum WebhookEventType {
     TELEGRAM_TEXT_EVENT,
 
     @Schema(description = "Triggered when a live match event occurs")
-    LIVE_MATCH_EVENT,
-
-    @Schema(description = "Triggered when a user registers")
-    USER_REGISTERED_EVENT
+    LIVE_MATCH_EVENT
+    
 }
-
