@@ -102,12 +102,11 @@ public class SubscriberServiceImpl implements SubscriberService {
     @Async
     @Override
     public void notifyAllSubscribers(String eventType, Object payload) {
-        log.debug("SubscriberService - notifyAllSubscribers");
 
-        List<Subscribers> subscribers = repository.findByActiveTrue()
-                .stream()
-                .filter(sub -> sub.getEvents().contains(WebhookEventType.valueOf(eventType)))
-                .toList();
+        WebhookEventType type = WebhookEventType.valueOf(eventType);
+
+        List<Subscribers> subscribers =
+                repository.findActiveSubscribersByEvent(type);
 
         for (Subscribers subscriber : subscribers) {
             sendWebhook(subscriber, eventType, payload, 1);

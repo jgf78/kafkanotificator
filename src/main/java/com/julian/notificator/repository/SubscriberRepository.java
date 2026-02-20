@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.julian.notificator.entity.Subscribers;
+import com.julian.notificator.model.subscriber.WebhookEventType;
 
 @Repository
 public interface SubscriberRepository extends JpaRepository<Subscribers, Long> {
@@ -20,8 +21,6 @@ public interface SubscriberRepository extends JpaRepository<Subscribers, Long> {
             """)
     List<Subscribers> findActiveSubscribersWithEvents();
 
-    List<Subscribers> findByActiveTrue();
-
     Optional<Subscribers> findByApiKey(String apiKey);
 
     Optional<Subscribers> findByCallbackUrl(String callbackUrl);
@@ -33,5 +32,14 @@ public interface SubscriberRepository extends JpaRepository<Subscribers, Long> {
     boolean existsByCallbackUrl(String callbackUrl);
 
     boolean existsByApiKey(String apiKey);
+
+    @Query("""
+            SELECT DISTINCT s
+            FROM Subscribers s
+            JOIN s.events e
+            WHERE s.active = true
+            AND e = :event
+            """)
+     List<Subscribers> findActiveSubscribersByEvent(WebhookEventType event);
 
 }
