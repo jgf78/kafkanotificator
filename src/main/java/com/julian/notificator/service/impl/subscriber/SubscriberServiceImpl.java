@@ -57,6 +57,18 @@ public class SubscriberServiceImpl implements SubscriberService {
 
         return repository.save(subscriber);
     }
+    
+    @Transactional
+    @Override
+    public Subscribers updateEvents(Long subscriberId, List<WebhookEventType> events) {
+
+        Subscribers subscriber = repository.findById(subscriberId)
+                .orElseThrow(() -> new RuntimeException("Subscriber not found"));
+
+        subscriber.setEvents(events);
+
+        return repository.save(subscriber);
+    }
 
     @Override
     public List<Subscribers> getActiveSubscribers() {

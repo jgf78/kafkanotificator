@@ -15,5 +15,7 @@ public interface SubscriberService {
 
     Subscribers subscribe(String name, String callbackUrl, List<WebhookEventType> events);
 
+    Subscribers updateEvents(Long subscriberId, List<WebhookEventType> events);
+
 }
 
