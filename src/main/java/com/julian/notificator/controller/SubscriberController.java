@@ -59,6 +59,13 @@ public class SubscriberController {
         return ResponseEntity.ok(subscriberService.getActiveSubscribers());
     }
     
+    @Operation(summary = "List events", operationId = "getEvents", description = "List events", tags = {
+            "Subscriber API", })
+    @GetMapping("/events")
+    public ResponseEntity<WebhookEventType[]> getEvents() {
+        return ResponseEntity.ok(subscriberService.getEvents());
+    }
+    
     @Operation(summary = "Update a subscription (webhook)", operationId = "updateEvents", description = "Update a subscription (webhook)", tags = {
             "Subscriber API", })
     @PutMapping("/{id}/events")

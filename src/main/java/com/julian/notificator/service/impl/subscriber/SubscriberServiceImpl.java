@@ -41,6 +41,8 @@ public class SubscriberServiceImpl implements SubscriberService {
 
     @Override
     public Subscribers subscribe(String name, String callbackUrl, List<WebhookEventType> events) {
+        
+        log.debug("SubscriberService - subscribe");
 
         if (repository.existsByCallbackUrl(callbackUrl)) {
             throw new IllegalArgumentException("Callback already registered");
@@ -61,6 +63,8 @@ public class SubscriberServiceImpl implements SubscriberService {
     @Transactional
     @Override
     public Subscribers updateEvents(Long subscriberId, List<WebhookEventType> events) {
+        
+        log.debug("SubscriberService - updateEvents");
 
         Subscribers subscriber = repository.findById(subscriberId)
                 .orElseThrow(() -> new RuntimeException("Subscriber not found"));
@@ -179,6 +183,13 @@ public class SubscriberServiceImpl implements SubscriberService {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     private void persistLog(WebhookDeliveryLog log) {
         logRepository.save(log);
+    }
+
+    @Override
+    public  WebhookEventType[] getEvents() {
+        
+        log.debug("SubscriberService - getEvents");
+        return WebhookEventType.values();
     }
 
 }

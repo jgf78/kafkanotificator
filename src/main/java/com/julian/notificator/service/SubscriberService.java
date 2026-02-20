@@ -17,5 +17,7 @@ public interface SubscriberService {
 
     Subscribers updateEvents(Long subscriberId, List<WebhookEventType> events);
 
+    WebhookEventType[] getEvents();
+
 }
 
