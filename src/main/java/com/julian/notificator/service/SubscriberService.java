@@ -3,11 +3,12 @@ package com.julian.notificator.service;
 import java.util.List;
 
 import com.julian.notificator.entity.Subscribers;
+import com.julian.notificator.model.subscriber.SubscriberResponse;
 import com.julian.notificator.model.subscriber.WebhookEventType;
 
 public interface SubscriberService {
 
-    List<Subscribers> getActiveSubscribers();
+    List<SubscriberResponse> getActiveSubscribers();
 
     void notifyAllSubscribers(String eventType, Object payload);
 

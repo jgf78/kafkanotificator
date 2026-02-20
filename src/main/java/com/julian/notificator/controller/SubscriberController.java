@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.julian.notificator.entity.Subscribers;
 import com.julian.notificator.model.subscriber.SubscribeRequest;
+import com.julian.notificator.model.subscriber.SubscriberResponse;
 import com.julian.notificator.model.subscriber.TestNotificationRequest;
 import com.julian.notificator.model.subscriber.WebhookEventType;
 import com.julian.notificator.service.SubscriberService;
@@ -55,7 +56,7 @@ public class SubscriberController {
     @Operation(summary = "List active subscribers", operationId = "getActiveSubscribers", description = "List active subscribers", tags = {
             "Subscriber API", })
     @GetMapping("/active")
-    public ResponseEntity<List<Subscribers>> getActiveSubscribers() {
+    public ResponseEntity<List<SubscriberResponse>> getActiveSubscribers() {
         return ResponseEntity.ok(subscriberService.getActiveSubscribers());
     }
     

@@ -4,13 +4,21 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.julian.notificator.entity.Subscribers;
 
-
 @Repository
 public interface SubscriberRepository extends JpaRepository<Subscribers, Long> {
+
+    @Query("""
+            SELECT DISTINCT s
+            FROM Subscribers s
+            LEFT JOIN FETCH s.events
+            WHERE s.active = true
+            """)
+    List<Subscribers> findActiveSubscribersWithEvents();
 
     List<Subscribers> findByActiveTrue();
 
@@ -27,4 +35,3 @@ public interface SubscriberRepository extends JpaRepository<Subscribers, Long> {
     boolean existsByApiKey(String apiKey);
 
 }
-

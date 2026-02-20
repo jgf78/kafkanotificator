@@ -18,6 +18,7 @@ import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.julian.notificator.entity.Subscribers;
 import com.julian.notificator.entity.WebhookDeliveryLog;
+import com.julian.notificator.model.subscriber.SubscriberResponse;
 import com.julian.notificator.model.subscriber.WebhookEventType;
 import com.julian.notificator.repository.SubscriberRepository;
 import com.julian.notificator.repository.WebhookDeliveryLogRepository;
@@ -74,11 +75,28 @@ public class SubscriberServiceImpl implements SubscriberService {
         return repository.save(subscriber);
     }
 
+    @Transactional(readOnly = true)
     @Override
-    public List<Subscribers> getActiveSubscribers() {
+    public List<SubscriberResponse> getActiveSubscribers() {
 
         log.debug("SubscriberService - getActiveSubscribers");
-        return repository.findByActiveTrue();
+        
+        return repository.findActiveSubscribersWithEvents()
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+    private SubscriberResponse mapToResponse(Subscribers sub) {
+
+        SubscriberResponse response = new SubscriberResponse();
+        response.setId(sub.getId());
+        response.setName(sub.getName());
+        response.setCallbackUrl(sub.getCallbackUrl());
+        response.setActive(sub.isActive());
+        response.setEvents(sub.getEvents());
+
+        return response;
     }
 
     @Async
