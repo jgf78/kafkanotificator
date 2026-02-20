@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.julian.notificator.entity.Subscribers;
 import com.julian.notificator.model.subscriber.SubscribeRequest;
 import com.julian.notificator.model.subscriber.TestNotificationRequest;
+import com.julian.notificator.model.subscriber.WebhookEventType;
 import com.julian.notificator.service.SubscriberService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -56,6 +57,17 @@ public class SubscriberController {
     @GetMapping("/active")
     public ResponseEntity<List<Subscribers>> getActiveSubscribers() {
         return ResponseEntity.ok(subscriberService.getActiveSubscribers());
+    }
+    
+    @Operation(summary = "Update a subscription (webhook)", operationId = "updateEvents", description = "Update a subscription (webhook)", tags = {
+            "Subscriber API", })
+    @PutMapping("/{id}/events")
+    public ResponseEntity<Subscribers> updateEvents(
+            @PathVariable Long id,
+            @RequestBody List<WebhookEventType> events) {
+
+        Subscribers subscriber = subscriberService.updateEvents(id, events);
+        return ResponseEntity.ok(subscriber);
     }
 
     @Operation(summary = "Manually deactivate a subscriber", operationId = "deactivate", description = "Manually deactivate a subscriber", tags = {
