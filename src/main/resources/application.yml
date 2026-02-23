@@ -32,7 +32,8 @@ spring:
       port: 6379
                
   kafka:
-    bootstrap-servers: 192.168.1.3:9092
+    #bootstrap-servers: 192.168.1.3:9092
+    bootstrap-servers: http://jgf78japan.duckdns.org:9092
     consumer:
       group-id: discord-group
       auto-offset-reset: earliest
