@@ -5,7 +5,7 @@ spring:
     allow-bean-definition-overriding: true
 
   kafka:
-    bootstrap-servers: ${BOOTSTRAP_SERVER:http://jgf78japan.duckdns.org:9092:9092}
+    bootstrap-servers: ${BOOTSTRAP_SERVER:http://jgf78japan.duckdns.org:9092}
     topics:
       discord: ${TOPIC_DISCORD:discord-messages}
       telegram: ${TOPIC_TELEGRAM:telegram-messages}
