@@ -38,6 +38,8 @@ public class RssIpfsScheduler {
                 return;
             }
 
+            log.info("Comienza la carga de Hashes");
+            
             JsonNode root = objectMapper.readTree(jsonFile);
             LocalDateTime generated = LocalDateTime.parse(root.get("generated").asText().replace("Z", ""));
 
