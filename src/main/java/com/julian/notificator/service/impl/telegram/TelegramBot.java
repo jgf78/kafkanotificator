@@ -85,12 +85,21 @@ public class TelegramBot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
 
+        logger.info("UPDATE COMPLETO: {}", update);
+        logger.info("CHAT TYPE: {}", update.getMessage().getChat().getType());
+
         if (!update.hasMessage() || !update.getMessage().hasText()) {
             return;
         }
 
         String text = update.getMessage().getText().trim();
         Long chatId = update.getMessage().getChatId();
+
+        if (update.getMessage().getMessageThreadId() != null) {
+            logger.info("THREAD ID: {}", update.getMessage().getMessageThreadId());
+        } else {
+            logger.info("MENSAJE SIN THREAD (General)");
+        }
 
         String command = text.split(" ")[0].split("@")[0].toLowerCase();
 

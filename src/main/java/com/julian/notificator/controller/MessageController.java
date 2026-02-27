@@ -45,7 +45,7 @@ public class MessageController {
             "Messages API", })
     @PostMapping("/send")
     public String sendMessage(@RequestBody MessageRequest request) {
-        kafkaProducerService.sendMessage(request.getMessage(), request.getDestination());
+        kafkaProducerService.sendMessage(request.getMessage(), request.getDestination(), request.getThreadId());
         return "Mensaje enviado a " + request.getDestination() + ": " + request.getMessage();
     }
     

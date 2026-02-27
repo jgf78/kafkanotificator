@@ -43,11 +43,18 @@ public class KafkaProducerServiceImpl implements KafkaProducerService {
     }
 
     @Override
-    public void sendMessage(String message, DestinationType destination) {
+    public void sendMessage(String message, DestinationType destination, Long messageThreadId ) {
 
         switch (destination) {
         case DISCORD -> kafkaTemplate.send(discord, message);
-        case TELEGRAM -> kafkaTemplate.send(telegram, message);
+        case TELEGRAM -> {
+            if (messageThreadId != null) {
+                String payload = buildTelegramPayload(message, messageThreadId);
+                kafkaTemplate.send(telegram, payload);
+            } else {
+                kafkaTemplate.send(telegram, message);
+            }
+        }
         case MAIL -> kafkaTemplate.send(mail, message);
         case ALEXA -> kafkaTemplate.send(alexa, message);
         case WHATSAPP -> kafkaTemplate.send(whatsapp, message);
@@ -119,6 +126,19 @@ public class KafkaProducerServiceImpl implements KafkaProducerService {
             log.error("Error enviando encuesta a Telegram: {}", e.getMessage(), e);
         }
         
+    }
+    
+    private String buildTelegramPayload(String message, Long threadId) {
+
+        return """
+            {
+                "text": "%s",
+                "message_thread_id": %d
+            }
+            """.formatted(
+                message.replace("\"", "\\\""),
+                threadId
+        );
     }
 
 
