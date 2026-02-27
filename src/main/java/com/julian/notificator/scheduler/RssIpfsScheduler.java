@@ -34,20 +34,19 @@ public class RssIpfsScheduler {
         try {
             File jsonFile = new File(epgUrl);
             if (!jsonFile.exists()) {
-                log.info("Archivo JSON no encontrado: " + jsonFile.getAbsolutePath());
+                log.info("Archivo JSON no encontrado: {}", jsonFile.getAbsolutePath());
                 return;
             }
 
-            log.info("Comienza la carga de Hashes");
+            log.info("Comienza la carga de Hashes desde JSON: {}", jsonFile.getAbsolutePath());
             
             JsonNode root = objectMapper.readTree(jsonFile);
             LocalDateTime generated = LocalDateTime.parse(root.get("generated").asText().replace("Z", ""));
 
             JsonNode hashesNode = root.get("hashes");
             List<RssIpfsHash> hashes = new ArrayList<>();
-
+            
             for (JsonNode node : hashesNode) {
-
                 String title = node.hasNonNull("title") ? node.get("title").asText() : "N/A";
                 String group = node.hasNonNull("group") ? node.get("group").asText() : "N/A";
                 String hash = node.hasNonNull("hash") ? node.get("hash").asText() : null;
@@ -65,8 +64,19 @@ public class RssIpfsScheduler {
                 }
             }
 
-            service.refreshHashes(hashes);
-            log.info("Hashes actualizados correctamente a " + LocalDateTime.now());
+            log.info("Total de hashes leídos desde JSON: {}", hashes.size());
+            for (RssIpfsHash h : hashes) {
+                log.info("Hash a guardar: title='{}', group='{}', hash='{}', generated='{}'",
+                         h.getTitle(), h.getGroup(), h.getHash(), h.getGenerated());
+            }
+
+            if (!hashes.isEmpty()) {
+                service.refreshHashes(hashes);
+                log.info("Hashes actualizados correctamente en DB a {}", LocalDateTime.now());
+            } else {
+                log.warn("No hay hashes válidos para guardar en DB");
+            }
+
         } catch (Exception e) {
             log.error("Error actualizando hashes", e);
         }
