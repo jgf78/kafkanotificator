@@ -22,7 +22,6 @@ import com.julian.notificator.service.impl.tdt.AtresEpgService;
 import com.julian.notificator.service.impl.tdt.EpgPersistService;
 import com.julian.notificator.service.util.tdt.UtilTdt;
 
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -41,10 +40,11 @@ public class EpgDownloadService {
     private final EpgPersistService persistService;
     private final AtresEpgService atresEpgService;
 
-    @PostConstruct
-    public void init() {
-        saveEpgFromUrl();
-    }
+    // Eliminamos init para no bloquear el arranque
+    // @PostConstruct
+    // public void init() {
+    //     saveEpgFromUrl();
+    // }
 
     @Scheduled(cron = "0 0 */2 * * *")
     public void downloadEpg() {
@@ -53,10 +53,16 @@ public class EpgDownloadService {
 
     public void saveEpgFromUrl() {
         log.info("📥 Descargando EPG Atresmedia... ");
-        
-        List<TdtProgramme> atresProgrammes = atresEpgService.readAndFilter();
-        List<TdtProgrammeEntity> programmes = covertTdtProgrammeToTdtProgrammeEntity(atresProgrammes);
-        
+        List<TdtProgrammeEntity> programmes = new ArrayList<>();
+
+        // Intentamos leer Atresmedia
+        try {
+            List<TdtProgramme> atresProgrammes = atresEpgService.readAndFilter();
+            programmes.addAll(covertTdtProgrammeToTdtProgrammeEntity(atresProgrammes));
+        } catch (Exception e) {
+            log.warn("⚠️ No se pudo descargar el XML de Atresmedia (limite diario o XML inválido). Se omite este feed.", e);
+        }
+
         log.info("📥 Descargando EPG resto de TDT desde {}", epgUrl);
 
         try (InputStream gzStream = new URL(epgUrl).openStream();
@@ -66,9 +72,7 @@ public class EpgDownloadService {
             programmes.addAll(tdtProgrammes); 
 
             if (!programmes.isEmpty()) {
-
                 persistService.save(programmes);
-
                 log.info("✅ EPG guardada en BBDD ({} programas)", programmes.size());
             } else {
                 log.warn("⚠️ No se han encontrado programas para guardar");
@@ -138,7 +142,7 @@ public class EpgDownloadService {
             log.info("📺 EPG procesada y lista para guardar ({} programas filtrados)", batch.size());
 
         } catch (Exception e) {
-            log.error("❌ Error parseando y filtrando EPG", e);
+            log.error("❌ Error parseando y filtrando EPG. Probablemente XML inválido o límite diario alcanzado", e);
         }
 
         return batch;
