@@ -1,6 +1,5 @@
 package com.julian.notificator.entity;
 
-
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,7 +21,7 @@ public class RssIpfsHash {
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
+    @Column(name = "\"group\"", nullable = false) 
     private String group;
 
     @Column(nullable = false, unique = true, length = 64)
