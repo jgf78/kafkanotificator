@@ -1,6 +1,7 @@
 package com.julian.notificator.scheduler;
 
-import java.io.File;
+import java.io.InputStream;
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,14 +23,14 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @RequiredArgsConstructor
 public class RssIpfsScheduler {
-    
+
     @Value("${rss.proxy-url6}")
     private String epgUrl;
 
     private final RssIpfsHashService service;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
-    
+
     @PostConstruct
     public void init() {
         log.info("📥 Cargando hashes de inicio de aplicación...");
@@ -38,21 +39,16 @@ public class RssIpfsScheduler {
 
     @Scheduled(cron = "0 0 */3 * * *") // cada 3 horas
     public void updateHashes() {
-        try {
-            File jsonFile = new File(epgUrl);
-            if (!jsonFile.exists()) {
-                log.info("Archivo JSON no encontrado: {}", jsonFile.getAbsolutePath());
-                return;
-            }
+        try (InputStream inputStream = new URL(epgUrl).openStream()) {
 
-            log.info("Comienza la carga de Hashes desde JSON: {}", jsonFile.getAbsolutePath());
-            
-            JsonNode root = objectMapper.readTree(jsonFile);
+            log.info("Comienza la carga de Hashes desde URL: {}", epgUrl);
+
+            JsonNode root = objectMapper.readTree(inputStream);
             LocalDateTime generated = LocalDateTime.parse(root.get("generated").asText().replace("Z", ""));
 
             JsonNode hashesNode = root.get("hashes");
             List<RssIpfsHash> hashes = new ArrayList<>();
-            
+
             for (JsonNode node : hashesNode) {
                 String title = node.hasNonNull("title") ? node.get("title").asText() : "N/A";
                 String group = node.hasNonNull("group") ? node.get("group").asText() : "N/A";
@@ -85,7 +81,7 @@ public class RssIpfsScheduler {
             }
 
         } catch (Exception e) {
-            log.error("Error actualizando hashes", e);
+            log.error("Error actualizando hashes desde URL", e);
         }
     }
 }
