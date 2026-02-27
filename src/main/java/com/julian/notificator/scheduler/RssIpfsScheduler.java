@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.julian.notificator.entity.RssIpfsHash;
 import com.julian.notificator.service.RssIpfsHashService;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,6 +29,12 @@ public class RssIpfsScheduler {
     private final RssIpfsHashService service;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
+    
+    @PostConstruct
+    public void init() {
+        log.info("📥 Cargando hashes de inicio de aplicación...");
+        updateHashes();
+    }
 
     @Scheduled(cron = "0 0 */3 * * *") // cada 3 horas
     public void updateHashes() {
