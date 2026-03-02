@@ -54,8 +54,23 @@ public class TelegramConsumerServiceImpl implements KafkaConsumerService {
                 telegramService.sendPinMessage(payload.getMessage());
                 subscriberService.notifyAllSubscribers(Constants.TELEGRAM_TEXT_PIN_EVENT, payload.getMessage());
             } else {
-                telegramService.sendMessage(payload.getMessage());
-                subscriberService.notifyAllSubscribers(Constants.TELEGRAM_TEXT_EVENT, payload.getMessage());
+                String message = payload.getMessage();
+
+                if (telegramService instanceof TelegramServiceImpl telegramImpl) {
+
+                    String matchKey = telegramImpl.extractMatchKey(message);
+
+                    if (matchKey != null) {
+                        telegramImpl.sendOrUpdateMatchMessage(matchKey, message);
+                    } else {
+                        telegramImpl.sendMessage(message);
+                    }
+
+                } else {
+                    telegramService.sendMessage(message);
+                }
+
+                subscriberService.notifyAllSubscribers(Constants.TELEGRAM_TEXT_EVENT, message);
             }
             
             log.debug("📥 TelegramConsumer - mensaje procesado: {}", payload.getMessage());
