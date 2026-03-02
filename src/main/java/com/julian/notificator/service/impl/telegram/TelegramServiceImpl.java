@@ -18,6 +18,8 @@ import com.julian.notificator.config.properties.TelegramProperties;
 import com.julian.notificator.model.MessagePayload;
 import com.julian.notificator.model.telegram.TelegramPollRequest;
 import com.julian.notificator.service.NotificationService;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Pattern;
 
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service("telegramServiceImpl")
 public class TelegramServiceImpl implements NotificationService {
 
+    private static final String MESSAGE_ID = "message_id";
     private static final String QUIZ = "quiz";
     private static final String ALLOWS_MULTIPLE_ANSWERS = "allows_multiple_answers";
     private static final String TYPE = "type";
@@ -38,6 +41,11 @@ public class TelegramServiceImpl implements NotificationService {
     private static final String PHOTO = "photo";
     private static final String VIDEO = "video";
     private static final String DOCUMENT = "document";
+    
+    private final Map<String, Map<String, Integer>> matchMessageMap = new ConcurrentHashMap<>();
+
+    private static final Pattern MATCH_PATTERN =
+            Pattern.compile("(?i).+\\s(vs\\.?|v|-)+\\s.+");
 
     private final TelegramProperties telegramProperties;
     
@@ -58,6 +66,61 @@ public class TelegramServiceImpl implements NotificationService {
        API PÚBLICA
        ============================================================ */
 
+    public void sendOrUpdateMatchMessage(String matchKey, String fullMessage) {
+
+        log.info("⚽ Procesando partido: {}", matchKey);
+
+        for (String chatId : telegramProperties.getChatIdsGroups()) {
+
+            try {
+
+                Map<String, Integer> chatMessages =
+                        matchMessageMap.computeIfAbsent(matchKey, k -> new ConcurrentHashMap<>());
+
+                if (chatMessages.containsKey(chatId)) {
+
+                    int messageId = chatMessages.get(chatId);
+
+                    log.info("✏️ Editando mensaje existente chat {} messageId {}", chatId, messageId);
+
+                    editMessage(chatId, messageId, fullMessage);
+
+                } else {
+
+                    log.info("📤 Enviando nuevo mensaje partido a chat {}", chatId);
+
+                    String response = sendText(chatId, fullMessage);
+                    int messageId = extractMessageId(response);
+
+                    chatMessages.put(chatId, messageId);
+
+                    log.info("✅ Guardado messageId {} para partido {}", messageId, matchKey);
+                }
+
+            } catch (Exception e) {
+                log.error("❌ Error gestionando partido {} en chat {}",
+                        matchKey, chatId, e);
+            }
+        }
+    }
+    
+    private void editMessage(String chatId, int messageId, String newText) {
+
+        Map<String, Object> body = Map.of(
+                CHAT_ID, chatId,
+                MESSAGE_ID, messageId,
+                TEXT, newText
+        );
+
+        restTemplate.postForEntity(
+                telegramProperties.getProxyUrl() + "/editMessageText",
+                body,
+                String.class
+        );
+
+        log.debug("✏️ Mensaje editado chat {} messageId {}", chatId, messageId);
+    }
+    
     @Override
     public void sendMessage(String message) {
         sendTextToUserAndGroups(message);
@@ -228,7 +291,7 @@ public class TelegramServiceImpl implements NotificationService {
     private void pinMessage(String chatId, int messageId) {
         Map<String, Object> body = Map.of(
                 CHAT_ID, chatId,
-                "message_id", messageId,
+                MESSAGE_ID, messageId,
                 "disable_notification", true
         );
 
@@ -248,7 +311,7 @@ public class TelegramServiceImpl implements NotificationService {
     private int extractMessageId(String json) throws Exception {
         return objectMapper.readTree(json)
                 .path("result")
-                .path("message_id")
+                .path(MESSAGE_ID)
                 .asInt();
     }
 
@@ -286,5 +349,25 @@ public class TelegramServiceImpl implements NotificationService {
         public String getFilename() {
             return filename;
         }
+    }
+    
+    public String extractMatchKey(String message) {
+
+        if (message == null || message.isBlank()) return null;
+
+        String firstLine = message.split("\\R")[0].trim();
+
+        if (MATCH_PATTERN.matcher(firstLine).matches()) {
+            return normalizeMatchKey(firstLine);
+        }
+
+        return null;
+    }
+
+    private String normalizeMatchKey(String key) {
+        return key.toLowerCase()
+                .replace(".", "")
+                .replaceAll("\\s+", " ")
+                .trim();
     }
 }
