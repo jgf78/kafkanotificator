@@ -81,6 +81,8 @@ telegram:
   chat-ids-groups:
     #- "-1001236662890" #Criptolocos
     - "-1003359151017" #iptv
+  chat-ids-channels:
+    - "-1003456379950" #notificador  
   bot-token: "8254359368:AAEJ7mG6eU_h8aToXq9KDw4WkHuHJWgqer0"
   bot-username: "kafkajgf_bot"
   backend-url: "http://jgf78.duckdns.org:8083/api/news/headlines"

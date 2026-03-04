@@ -206,10 +206,17 @@ public class TelegramServiceImpl implements NotificationService {
             sendText(chatId, text);
         }
     }
+    
+    public void sendToAllChannels(String text) {
+        for (String chatId : telegramProperties.getChatIdsChannels()) {
+            sendText(chatId, text);
+        }
+    }
 
     private void sendTextToUserAndGroups(String message) {
         sendText(telegramProperties.getChatId(), message);
         sendToAllGroups(message);
+        sendToAllChannels(message);
     }
 
     private void sendFileToUserAndGroups(String caption, byte[] bytes, String filename, FileType type) {

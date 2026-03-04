@@ -15,6 +15,7 @@ public class TelegramProperties {
     private String proxyUrl;
     private String chatId;
     private List<String> chatIdsGroups;
+    private List<String> chatIdsChannels;
     private String botToken;
     private String botUsername;
     private String backendUrl;
