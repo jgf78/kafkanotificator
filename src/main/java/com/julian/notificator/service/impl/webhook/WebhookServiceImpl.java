@@ -65,7 +65,7 @@ public class WebhookServiceImpl implements WebhookService {
         sb.append("🔗 ").append(request.link()).append("\n\n");
 
         if (request.source() != null) {
-            sb.append("🏢 _Fuente: ").append(UtilString.escapeMarkdown(request.source())).append("_");
+            sb.append("🏢 *Fuente:* ").append((UtilString.escapeMarkdown(request.source())));
         }
 
         return sb.toString();
