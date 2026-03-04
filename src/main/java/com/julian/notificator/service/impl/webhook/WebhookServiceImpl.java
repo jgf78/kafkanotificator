@@ -30,9 +30,11 @@ public class WebhookServiceImpl implements WebhookService {
 
         boolean breaking = isBreakingNews(request);
 
-        String message = buildTelegramMessage(request, breaking);
+        if(breaking) {
+            String message = buildTelegramMessage(request);
+            telegramService.sendMessage(message);
+        }
 
-        telegramService.sendMessage(message);
     }
 
     private boolean isBreakingNews(NewsWebhookRequest request) {
@@ -46,16 +48,12 @@ public class WebhookServiceImpl implements WebhookService {
                 || title.toLowerCase().contains("breaking");
     }
 
-    private String buildTelegramMessage(NewsWebhookRequest request, boolean breaking) {
+    private String buildTelegramMessage(NewsWebhookRequest request) {
 
         StringBuilder sb = new StringBuilder();
 
-        if (breaking) {
-            sb.append("🚨🚨 *ÚLTIMA HORA* 🚨🚨\n\n");
-        } else {
-            sb.append("📰 *Nueva noticia*\n\n");
-        }
-
+        sb.append("🚨🚨 *ÚLTIMA HORA* 🚨🚨\n\n");
+        
         sb.append("🗞 *").append(UtilString.escapeMarkdown(request.title())).append("*\n\n");
 
         if (request.summary() != null) {
