@@ -28,9 +28,9 @@ public class WebhookServiceImpl implements WebhookService {
 
         log.info("Nueva noticia recibida: {}", request.title());
 
-        //boolean breaking = isBreakingNews(request);
+        boolean breaking = isBreakingNews(request);
 
-        String message = buildTelegramMessage(request, true);
+        String message = buildTelegramMessage(request, breaking);
 
         telegramService.sendMessage(message);
     }
@@ -71,29 +71,4 @@ public class WebhookServiceImpl implements WebhookService {
         return sb.toString();
     }
 
-    /**
-     * Muy importante para Telegram MarkdownV2
-     */
-    private String escapeMarkdown(String text) {
-        if (text == null) return "";
-        return text
-                .replace("_", "\\_")
-                .replace("*", "\\*")
-                .replace("[", "\\[")
-                .replace("]", "\\]")
-                .replace("(", "\\(")
-                .replace(")", "\\)")
-                .replace("~", "\\~")
-                .replace("`", "\\`")
-                .replace(">", "\\>")
-                .replace("#", "\\#")
-                .replace("+", "\\+")
-                .replace("-", "\\-")
-                .replace("=", "\\=")
-                .replace("|", "\\|")
-                .replace("{", "\\{")
-                .replace("}", "\\}")
-                .replace(".", "\\.")
-                .replace("!", "\\!");
-    }
 }
