@@ -15,6 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 @Service("whatsappServiceImpl")
 public class WhatsappServiceImpl extends AbstractNotificationService {
 
+    private static final String WHATSAPP = "Whatsapp";
+
     @Value("${whatsapp.apikey}")
     private String apikey;
 
@@ -46,6 +48,6 @@ public class WhatsappServiceImpl extends AbstractNotificationService {
 
     @Override
     public String getChannelName() {
-        return "Whatsapp";
+        return WHATSAPP;
     }
 }

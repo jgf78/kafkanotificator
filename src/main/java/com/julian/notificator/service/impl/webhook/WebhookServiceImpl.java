@@ -5,6 +5,7 @@ import java.util.Locale;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import com.julian.notificator.model.telegram.DestinationTelegramType;
 import com.julian.notificator.model.webhook.NewsWebhookRequest;
 import com.julian.notificator.service.NotificationService;
 import com.julian.notificator.service.WebhookService;
@@ -32,7 +33,7 @@ public class WebhookServiceImpl implements WebhookService {
 
         if(breaking) {
             String message = buildTelegramMessage(request);
-            telegramService.sendMessage(message);
+            telegramService.sendMessage(message, DestinationTelegramType.CHANNELS);
         }
 
     }
