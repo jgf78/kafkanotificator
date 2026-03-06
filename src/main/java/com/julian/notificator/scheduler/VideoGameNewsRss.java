@@ -40,7 +40,6 @@ public class VideoGameNewsRss {
     public void checkFeed() {
         try {
             RssFeed feed = RssParser.parse(proxyUrl);
-            int sentCount = 0;
 
             ZonedDateTime yesterdayLimit = ZonedDateTime.now().minusDays(1);
 
