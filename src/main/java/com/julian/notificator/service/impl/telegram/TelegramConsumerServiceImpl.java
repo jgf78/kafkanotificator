@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.julian.notificator.model.MessagePayload;
+import com.julian.notificator.model.telegram.DestinationTelegramType;
 import com.julian.notificator.model.telegram.TelegramPollRequest;
 import com.julian.notificator.service.KafkaConsumerService;
 import com.julian.notificator.service.NotificationService;
@@ -49,7 +50,7 @@ public class TelegramConsumerServiceImpl implements KafkaConsumerService {
             }
 
             if (payload.getFile() != null && !payload.getFile().isBlank()) {
-                telegramService.sendMessageFile(payload);
+                telegramService.sendMessageFile(payload, DestinationTelegramType.ALL);
             } else if (payload.isPin()) {
                 telegramService.sendPinMessage(payload.getMessage());
                 subscriberService.notifyAllSubscribers(Constants.TELEGRAM_TEXT_PIN_EVENT, payload.getMessage());
@@ -63,11 +64,11 @@ public class TelegramConsumerServiceImpl implements KafkaConsumerService {
                     if (matchKey != null) {
                         telegramImpl.sendOrUpdateMatchMessage(matchKey, message);
                     } else {
-                        telegramImpl.sendMessage(message);
+                        telegramImpl.sendMessage(message, DestinationTelegramType.ALL);
                     }
 
                 } else {
-                    telegramService.sendMessage(message);
+                    telegramService.sendMessage(message, DestinationTelegramType.ALL);
                 }
 
                 subscriberService.notifyAllSubscribers(Constants.TELEGRAM_TEXT_EVENT, message);
