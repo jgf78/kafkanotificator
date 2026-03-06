@@ -19,6 +19,7 @@ import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.julian.notificator.config.properties.TelegramProperties;
 import com.julian.notificator.model.MessagePayload;
+import com.julian.notificator.model.telegram.DestinationTelegramType;
 import com.julian.notificator.model.telegram.TelegramPollRequest;
 import com.julian.notificator.service.NotificationService;
 
@@ -138,8 +139,8 @@ public class TelegramServiceImpl implements NotificationService {
     }
     
     @Override
-    public void sendMessage(String message) {
-        sendTextToUserAndGroups(message);
+    public void sendMessage(String message, DestinationTelegramType destination) {
+        sendTextToUserAndGroups(message, destination);
     }
 
     @Override
@@ -188,10 +189,10 @@ public class TelegramServiceImpl implements NotificationService {
     }
 
     @Override
-    public void sendMessageFile(MessagePayload payload) {
+    public void sendMessageFile(MessagePayload payload, DestinationTelegramType destination) {
 
         if (payload.getFile() == null || payload.getFile().isBlank()) {
-            sendTextToUserAndGroups(payload.getMessage());
+            sendTextToUserAndGroups(payload.getMessage(), destination);
             return;
         }
 
@@ -229,10 +230,18 @@ public class TelegramServiceImpl implements NotificationService {
         }
     }
 
-    private void sendTextToUserAndGroups(String message) {
-        sendText(telegramProperties.getChatId(), message);
-        sendToAllGroups(message);
-        sendToAllChannels(message);
+    private void sendTextToUserAndGroups(String message, DestinationTelegramType destination) {
+        
+        switch (destination) {
+            case BOT -> sendText(telegramProperties.getChatId(), message);
+            case GROUPS -> sendToAllGroups(message);
+            case CHANNELS -> sendToAllChannels(message);
+            case ALL -> {
+                sendText(telegramProperties.getChatId(), message);
+                sendToAllGroups(message);
+                sendToAllChannels(message);
+                }
+            }
     }
 
     private void sendFileToUserAndGroups(String caption, byte[] bytes, String filename, FileType type) {
@@ -392,5 +401,17 @@ public class TelegramServiceImpl implements NotificationService {
                 .replace(".", "")
                 .replaceAll("\\s+", " ")
                 .trim();
+    }
+
+    @Override
+    public void sendMessageFile(MessagePayload payload) {
+        sendMessageFile(payload, DestinationTelegramType.ALL);
+        
+    }
+
+    @Override
+    public void sendMessage(String message) {
+        sendMessage(message, DestinationTelegramType.ALL);
+        
     }
 }
