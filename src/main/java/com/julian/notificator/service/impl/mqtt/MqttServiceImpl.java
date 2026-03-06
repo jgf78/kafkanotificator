@@ -15,6 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 @Service("mqttServiceImpl")
 public class MqttServiceImpl extends AbstractNotificationService {
 
+    private static final String MQTT = "MQTT";
+
     @Value("${mqtt.broker}")
     private String broker;
 
@@ -50,7 +52,7 @@ public class MqttServiceImpl extends AbstractNotificationService {
 
     @Override
     public String getChannelName() {
-        return "MQTT";
+        return MQTT;
     }
 
 }
