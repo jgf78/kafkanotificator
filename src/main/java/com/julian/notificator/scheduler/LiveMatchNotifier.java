@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import com.julian.notificator.model.football.LiveMatchResponse;
 import com.julian.notificator.model.football.Match;
+import com.julian.notificator.model.telegram.DestinationTelegramType;
 import com.julian.notificator.service.FootballDataService;
 import com.julian.notificator.service.NotificationService;
 import com.julian.notificator.service.SubscriberService;
@@ -110,7 +111,7 @@ public class LiveMatchNotifier {
     }
 
     private void sendNotificationToAll(String message) {
-        telegramService.sendMessage(message);
+        telegramService.sendMessage(message, DestinationTelegramType.ALL);
 
         subscriberService.notifyAllSubscribers(Constants.LIVE_MATCH_EVENT, message);
     }
