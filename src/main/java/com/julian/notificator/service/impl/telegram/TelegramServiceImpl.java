@@ -3,6 +3,8 @@ package com.julian.notificator.service.impl.telegram;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Pattern;
 
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpEntity;
@@ -11,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,8 +21,6 @@ import com.julian.notificator.config.properties.TelegramProperties;
 import com.julian.notificator.model.MessagePayload;
 import com.julian.notificator.model.telegram.TelegramPollRequest;
 import com.julian.notificator.service.NotificationService;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Pattern;
 
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
@@ -112,13 +113,28 @@ public class TelegramServiceImpl implements NotificationService {
                 TEXT, newText
         );
 
-        restTemplate.postForEntity(
-                telegramProperties.getProxyUrl() + "/editMessageText",
-                body,
-                String.class
-        );
+        try {
 
-        log.debug("✏️ Mensaje editado chat {} messageId {}", chatId, messageId);
+            restTemplate.postForEntity(
+                    telegramProperties.getProxyUrl() + "/editMessageText",
+                    body,
+                    String.class
+            );
+
+            log.debug("✏️ Mensaje editado chat {} messageId {}", chatId, messageId);
+
+        } catch (HttpClientErrorException e) {
+
+            String response = e.getResponseBodyAsString();
+
+            if (response != null && response.contains("message is not modified")) {
+                log.debug("⏭ Telegram indica que el mensaje no cambió, se ignora");
+                return;
+            }
+
+            log.error("❌ Error editando mensaje {} en chat {}", messageId, chatId);
+            throw e;
+        }
     }
     
     @Override
