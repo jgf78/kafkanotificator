@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.julian.notificator.model.MessagePayload;
+import com.julian.notificator.model.MessageRequest;
 import com.julian.notificator.service.KafkaConsumerService;
 import com.julian.notificator.service.NotificationService;
 
@@ -24,7 +25,8 @@ public class MailConsumerServiceImpl implements KafkaConsumerService {
 
     @Override
     @KafkaListener(topics = "${kafka.topics.mail}", groupId = "${kafka.group-id}")
-    public void consume(String messageOrJson) {
+    public void consume(MessageRequest request) {
+        String messageOrJson = request.getMessage();
         try {
             log.debug("📥 MailConsumer - mensaje recibido: {}", messageOrJson);
 

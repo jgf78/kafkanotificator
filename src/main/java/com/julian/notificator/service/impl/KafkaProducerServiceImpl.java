@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.julian.notificator.model.DestinationType;
 import com.julian.notificator.model.MessagePayload;
+import com.julian.notificator.model.MessageRequest;
 import com.julian.notificator.model.telegram.TelegramPollRequest;
 import com.julian.notificator.service.KafkaProducerService;
 
@@ -35,33 +36,33 @@ public class KafkaProducerServiceImpl implements KafkaProducerService {
     @Value("${kafka.topics.mqtt}")
     private String mqtt;
 
-    private final KafkaTemplate<String, String> kafkaTemplate;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public KafkaProducerServiceImpl(KafkaTemplate<String, String> kafkaTemplate) {
+    public KafkaProducerServiceImpl(KafkaTemplate<String, Object> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
     }
 
     @Override
-    public void sendMessage(String message, DestinationType destination) {
-
-        switch (destination) {
-        case DISCORD -> kafkaTemplate.send(discord, message);
-        case TELEGRAM -> kafkaTemplate.send(telegram, message);
-        case MAIL -> kafkaTemplate.send(mail, message);
-        case ALEXA -> kafkaTemplate.send(alexa, message);
-        case WHATSAPP -> kafkaTemplate.send(whatsapp, message);
-        case MQTT -> kafkaTemplate.send(mqtt, message);
+    public void sendMessage(MessageRequest request) {
+        
+        switch (request.getDestination()) {
+        case DISCORD -> kafkaTemplate.send(discord, request);
+        case TELEGRAM -> kafkaTemplate.send(telegram, request);
+        case MAIL -> kafkaTemplate.send(mail, request);
+        case ALEXA -> kafkaTemplate.send(alexa, request);
+        case WHATSAPP -> kafkaTemplate.send(whatsapp, request);
+        case MQTT -> kafkaTemplate.send(mqtt, request);
         case ALL -> {
-            kafkaTemplate.send(discord, message);
-            kafkaTemplate.send(telegram, message);
-            kafkaTemplate.send(mail, message);
-            kafkaTemplate.send(alexa, message);
-            kafkaTemplate.send(whatsapp, message);
-            kafkaTemplate.send(mqtt, message);
+            kafkaTemplate.send(discord, request);
+            kafkaTemplate.send(telegram, request);
+            kafkaTemplate.send(mail, request);
+            kafkaTemplate.send(alexa, request);
+            kafkaTemplate.send(whatsapp, request);
+            kafkaTemplate.send(mqtt, request);
             }
         }
-        log.info("KafkaProducerService - sendMessage. Mensaje enviado a {}: {}", destination, message);
+        log.info("KafkaProducerService - sendMessage. Mensaje enviado a {}: {}", request.getDestination(), request.getMessage());
 
     }
 

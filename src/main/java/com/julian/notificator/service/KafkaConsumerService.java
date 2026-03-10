@@ -1,5 +1,7 @@
 package com.julian.notificator.service;
 
+import com.julian.notificator.model.MessageRequest;
+
 public interface KafkaConsumerService {
-    void consume(String message);
+    void consume(MessageRequest request);
 }

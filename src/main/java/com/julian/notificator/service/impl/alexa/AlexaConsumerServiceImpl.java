@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
+import com.julian.notificator.model.MessageRequest;
 import com.julian.notificator.service.KafkaConsumerService;
 import com.julian.notificator.service.NotificationService;
 
@@ -21,10 +22,10 @@ public class AlexaConsumerServiceImpl implements KafkaConsumerService {
 
     @Override
     @KafkaListener(topics = "${kafka.topics.alexa}", groupId = "${kafka.group-id}")
-    public void consume(String message) {
+    public void consume(MessageRequest request) {
         try {
-            log.debug("📥 AlexaConsumer - mensaje recibido: {}", message);
-            alexaService.sendMessage(message);
+            log.debug("📥 AlexaConsumer - mensaje recibido: {}", request.getMessage());
+            alexaService.sendMessage(request.getMessage());
         } catch (Exception e) {
             log.error("❌ Error al procesar el mensaje: {}", e.getMessage(), e);
         }

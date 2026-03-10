@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.julian.notificator.model.MessagePayload;
+import com.julian.notificator.model.MessageRequest;
 import com.julian.notificator.service.KafkaConsumerService;
 import com.julian.notificator.service.NotificationService;
 
@@ -24,7 +25,8 @@ public class DiscordConsumerServiceImpl implements KafkaConsumerService {
 
     @Override
     @KafkaListener(topics = "${kafka.topics.discord}", groupId = "${kafka.group-id}")
-    public void consume(String messageOrJson) {
+    public void consume(MessageRequest request) {
+        String messageOrJson = request.getMessage();
         try {
             log.debug("📥 DiscordConsumer - mensaje recibido: {}", messageOrJson);
             

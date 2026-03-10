@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.julian.notificator.model.MessagePayload;
-import com.julian.notificator.model.telegram.DestinationTelegramType;
+import com.julian.notificator.model.MessageRequest;
 import com.julian.notificator.model.telegram.TelegramPollRequest;
 import com.julian.notificator.service.KafkaConsumerService;
 import com.julian.notificator.service.NotificationService;
@@ -32,7 +32,8 @@ public class TelegramConsumerServiceImpl implements KafkaConsumerService {
 
     @Override
     @KafkaListener(topics = "${kafka.topics.telegram}", groupId = "${kafka.group-id}")
-    public void consume(String messageOrJson) {
+    public void consume(MessageRequest request) {
+        String messageOrJson = request.getMessage();
         try {
             var telegramPoll = tryParse(messageOrJson, TelegramPollRequest.class);
             if (telegramPoll != null && telegramPoll.getQuestion() != null
@@ -50,7 +51,7 @@ public class TelegramConsumerServiceImpl implements KafkaConsumerService {
             }
 
             if (payload.getFile() != null && !payload.getFile().isBlank()) {
-                telegramService.sendMessageFile(payload, DestinationTelegramType.ALL);
+                telegramService.sendMessageFile(payload, request.getDestinationTelegram());
             } else if (payload.isPin()) {
                 telegramService.sendPinMessage(payload.getMessage());
                 subscriberService.notifyAllSubscribers(Constants.TELEGRAM_TEXT_PIN_EVENT, payload.getMessage());
@@ -64,11 +65,11 @@ public class TelegramConsumerServiceImpl implements KafkaConsumerService {
                     if (matchKey != null) {
                         telegramImpl.sendOrUpdateMatchMessage(matchKey, message);
                     } else {
-                        telegramImpl.sendMessage(message, DestinationTelegramType.ALL);
+                        telegramImpl.sendMessage(message, request.getDestinationTelegram());
                     }
 
                 } else {
-                    telegramService.sendMessage(message, DestinationTelegramType.ALL);
+                    telegramService.sendMessage(message, request.getDestinationTelegram());
                 }
 
                 subscriberService.notifyAllSubscribers(Constants.TELEGRAM_TEXT_EVENT, message);

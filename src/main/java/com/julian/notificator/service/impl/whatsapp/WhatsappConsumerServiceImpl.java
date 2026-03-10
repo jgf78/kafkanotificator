@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
+import com.julian.notificator.model.MessageRequest;
 import com.julian.notificator.service.KafkaConsumerService;
 import com.julian.notificator.service.NotificationService;
 
@@ -21,10 +22,10 @@ public class WhatsappConsumerServiceImpl implements KafkaConsumerService {
 
     @Override
     @KafkaListener(topics = "${kafka.topics.whatsapp}", groupId = "${kafka.group-id}")
-    public void consume(String message) {
+    public void consume(MessageRequest request) {
         try {
-            log.debug("📥 WhatsappConsumer - mensaje recibido: {}", message);
-            whatsappService.sendMessage(message);
+            log.debug("📥 WhatsappConsumer - mensaje recibido: {}", request.getMessage());
+            whatsappService.sendMessage(request.getMessage());
         } catch (Exception e) {
             log.error("❌ Error al procesar el mensaje: {}", e.getMessage(), e);
         }
