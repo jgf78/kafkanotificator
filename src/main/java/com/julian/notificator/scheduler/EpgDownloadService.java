@@ -5,6 +5,8 @@ import java.net.URL;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 
 import javax.xml.stream.XMLInputFactory;
@@ -25,9 +27,6 @@ import com.julian.notificator.service.util.tdt.UtilTdt;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.ByteArrayInputStream;
-import java.nio.charset.StandardCharsets;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -40,13 +39,7 @@ public class EpgDownloadService {
     private final EpgPersistService persistService;
     private final AtresEpgService atresEpgService;
 
-    // Eliminamos init para no bloquear el arranque
-    // @PostConstruct
-    // public void init() {
-    //     saveEpgFromUrl();
-    // }
-
-    @Scheduled(cron = "0 0 */2 * * *")
+    @Scheduled(cron = "0 0 */5 * * *")
     public void downloadEpg() {
         saveEpgFromUrl();
     }
@@ -84,37 +77,52 @@ public class EpgDownloadService {
     }
 
     private List<TdtProgrammeEntity> parseAndMap(InputStream xmlStream) {
-        List<TdtProgrammeEntity> batch = new ArrayList<>();
-        try {
-            String xmlText = new String(xmlStream.readAllBytes(), StandardCharsets.UTF_8);
-            xmlText = xmlText.replaceAll("(?s)<icon.*?/>", "");
-            xmlText = xmlText.replaceAll("&(?!amp;|lt;|gt;|quot;|apos;)", "&amp;");
 
-            InputStream cleanedStream = new ByteArrayInputStream(xmlText.getBytes(StandardCharsets.UTF_8));
-            XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(cleanedStream);
+        List<TdtProgrammeEntity> batch = new ArrayList<>();
+
+        try {
+
+            XMLInputFactory factory = XMLInputFactory.newFactory();
+            factory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false);
+            factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
+
+            XMLStreamReader reader = factory.createXMLStreamReader(xmlStream);
+
+            Set<String> allowedChannels = tdtProperties.getNationalChannels()
+                    .stream()
+                    .map(UtilTdt::normalizeChannel)
+                    .collect(Collectors.toSet());
+
             TdtProgrammeEntity current = null;
 
             while (reader.hasNext()) {
+
                 int event = reader.next();
 
                 if (event == XMLStreamConstants.START_ELEMENT) {
-                    String localName = reader.getLocalName();
 
-                    if ("programme".equals(localName)) {
+                    String name = reader.getLocalName();
+
+                    if ("programme".equals(name)) {
+
                         current = new TdtProgrammeEntity();
+
                         String channel = reader.getAttributeValue(null, "channel");
+
                         current.setChannelId(channel);
                         current.setChannelNormalized(UtilTdt.normalizeChannel(channel));
-                        current.setStartTime(parseDate(reader.getAttributeValue(null, "start"))); // UTC
-                        current.setEndTime(parseDate(reader.getAttributeValue(null, "stop")));   // UTC
+                        current.setStartTime(parseDate(reader.getAttributeValue(null, "start")));
+                        current.setEndTime(parseDate(reader.getAttributeValue(null, "stop")));
 
-                    } else if ("title".equals(localName) && current != null) {
-                        reader.next();
-                        current.setTitle(cleanText(reader.getText()));
+                    } 
+                    else if ("title".equals(name) && current != null) {
 
-                    } else if ("desc".equals(localName) && current != null) {
-                        reader.next();
-                        current.setDescription(cleanText(reader.getText()));
+                        current.setTitle(cleanText(reader.getElementText()));
+
+                    } 
+                    else if ("desc".equals(name) && current != null) {
+
+                        current.setDescription(cleanText(reader.getElementText()));
                     }
                 }
 
@@ -122,27 +130,23 @@ public class EpgDownloadService {
                     "programme".equals(reader.getLocalName()) &&
                     current != null) {
 
-                    final TdtProgrammeEntity programmeToCheck = current;
+                    if (allowedChannels.contains(current.getChannelNormalized()) &&
+                        current.getTitle() != null &&
+                        current.getStartTime() != null &&
+                        current.getEndTime() != null) {
 
-                    boolean keep = tdtProperties.getNationalChannels().stream()
-                            .map(UtilTdt::normalizeChannel)
-                            .anyMatch(n -> n.equals(programmeToCheck.getChannelNormalized()));
-
-                    if (keep &&
-                        programmeToCheck.getTitle() != null &&
-                        programmeToCheck.getStartTime() != null &&
-                        programmeToCheck.getEndTime() != null) {
-                        batch.add(programmeToCheck);
+                        batch.add(current);
                     }
 
                     current = null;
                 }
             }
 
-            log.info("📺 EPG procesada y lista para guardar ({} programas filtrados)", batch.size());
+            log.info("📺 EPG procesada y filtrada ({} programas)", batch.size());
 
         } catch (Exception e) {
-            log.error("❌ Error parseando y filtrando EPG. Probablemente XML inválido o límite diario alcanzado", e);
+
+            log.error("❌ Error parseando y filtrando EPG", e);
         }
 
         return batch;
