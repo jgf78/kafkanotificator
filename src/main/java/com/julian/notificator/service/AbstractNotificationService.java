@@ -1,19 +1,15 @@
 package com.julian.notificator.service;
 
-import com.julian.notificator.model.MessagePayload;
+import com.julian.notificator.model.MessageRequest;
 import com.julian.notificator.model.telegram.DestinationTelegramType;
 import com.julian.notificator.model.telegram.TelegramPollRequest;
 
 public abstract class AbstractNotificationService implements NotificationService {
 
     @Override
-    public void sendMessageFile(MessagePayload payload, DestinationTelegramType destination) {
+    public void sendMessageFile(MessageRequest messageRequest, DestinationTelegramType destination) {
     }
     
-    @Override
-    public void sendMessageFile(MessagePayload payload) {
-    }
-
     @Override
     public void sendPinMessage(String message) {
     }

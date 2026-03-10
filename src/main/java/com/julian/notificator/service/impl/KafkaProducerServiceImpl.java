@@ -5,11 +5,9 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.julian.notificator.model.DestinationType;
 import com.julian.notificator.model.MessagePayload;
 import com.julian.notificator.model.MessageRequest;
-import com.julian.notificator.model.telegram.TelegramPollRequest;
 import com.julian.notificator.service.KafkaProducerService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +35,6 @@ public class KafkaProducerServiceImpl implements KafkaProducerService {
     private String mqtt;
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public KafkaProducerServiceImpl(KafkaTemplate<String, Object> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
@@ -69,21 +66,23 @@ public class KafkaProducerServiceImpl implements KafkaProducerService {
     @Override
     public void sendFile(String message, MultipartFile file, String filename, DestinationType destination) {
         try {
-            MessagePayload payload = new MessagePayload();
-            payload.setMessage(message);
-
+            MessageRequest messageRequest = new MessageRequest();
+            messageRequest.setMessage(message);
+            messageRequest.setDestination(destination);
+            MessagePayload messagePayload = new MessagePayload();
+            messageRequest.setMessagePayload(messagePayload);
+            
             if (file != null && !file.isEmpty()) {
                 byte[] bytes = file.getBytes();
                 String base64 = java.util.Base64.getEncoder().encodeToString(bytes);
-                payload.setFile(base64);
-                payload.setFilename(filename);
+                messagePayload.setFile(base64);
+                messagePayload.setFilename(filename);
             }
 
-            String json = objectMapper.writeValueAsString(payload);
             switch (destination) {
-                case DISCORD -> kafkaTemplate.send(discord, json);
-                case TELEGRAM -> kafkaTemplate.send(telegram, json);
-                case MAIL -> kafkaTemplate.send(mail, json);
+                case DISCORD -> kafkaTemplate.send(discord, messageRequest);
+                case TELEGRAM -> kafkaTemplate.send(telegram, messageRequest);
+                case MAIL -> kafkaTemplate.send(mail, messageRequest);
                 default -> log.warn("Destino {} no implementado, mensaje ignorado", destination);
             }
 
@@ -96,12 +95,13 @@ public class KafkaProducerServiceImpl implements KafkaProducerService {
     @Override
     public void sendPinMessage(String pinMessage) {
         try {
+            MessageRequest messageRequest = new MessageRequest();
+            messageRequest.setMessage(pinMessage);
             MessagePayload payload = new MessagePayload();
-            payload.setMessage(pinMessage);
             payload.setPin(true); 
+            messageRequest.setMessagePayload(payload);
 
-            String json = objectMapper.writeValueAsString(payload);
-            kafkaTemplate.send(telegram, json);
+            kafkaTemplate.send(telegram, messageRequest);
 
             log.info("KafkaProducerService - sendPinMessage. Mensaje anclado enviado {}", pinMessage);
         } catch (Exception e) {
@@ -110,12 +110,12 @@ public class KafkaProducerServiceImpl implements KafkaProducerService {
     }
 
     @Override
-    public void sendPoll(TelegramPollRequest request) {
+    public void sendPoll(MessageRequest messageRequest) {
+        messageRequest.setDestination(DestinationType.TELEGRAM);
         try {
-            String json = objectMapper.writeValueAsString(request);
-            kafkaTemplate.send(telegram, json);
+            kafkaTemplate.send(telegram, messageRequest);
 
-            log.info("KafkaProducerService - sendPoll. Encuesta enviada con la pregunta {}", request.getQuestion());
+            log.info("KafkaProducerService - sendPoll. Encuesta enviada con la pregunta {}", messageRequest.getTelegramPollRequest().getQuestion());
         } catch (Exception e) {
             log.error("Error enviando encuesta a Telegram: {}", e.getMessage(), e);
         }

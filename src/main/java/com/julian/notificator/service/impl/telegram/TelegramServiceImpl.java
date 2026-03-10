@@ -19,6 +19,7 @@ import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.julian.notificator.config.properties.TelegramProperties;
 import com.julian.notificator.model.MessagePayload;
+import com.julian.notificator.model.MessageRequest;
 import com.julian.notificator.model.telegram.DestinationTelegramType;
 import com.julian.notificator.model.telegram.TelegramPollRequest;
 import com.julian.notificator.service.NotificationService;
@@ -189,10 +190,12 @@ public class TelegramServiceImpl implements NotificationService {
     }
 
     @Override
-    public void sendMessageFile(MessagePayload payload, DestinationTelegramType destination) {
+    public void sendMessageFile(MessageRequest messageRequest, DestinationTelegramType destination) {
 
+        MessagePayload payload = messageRequest.getMessagePayload();
+        
         if (payload.getFile() == null || payload.getFile().isBlank()) {
-            sendTextToUserAndGroups(payload.getMessage(), destination);
+            sendTextToUserAndGroups(messageRequest.getMessage(), destination);
             return;
         }
 
@@ -202,7 +205,7 @@ public class TelegramServiceImpl implements NotificationService {
         FileType type = detectFileType(filename);
 
         sendFileToUserAndGroups(
-                payload.getMessage(),
+                messageRequest.getMessage(),
                 bytes,
                 payload.getFilename(),
                 type
@@ -401,12 +404,6 @@ public class TelegramServiceImpl implements NotificationService {
                 .replace(".", "")
                 .replaceAll("\\s+", " ")
                 .trim();
-    }
-
-    @Override
-    public void sendMessageFile(MessagePayload payload) {
-        sendMessageFile(payload, DestinationTelegramType.ALL);
-        
     }
 
     @Override

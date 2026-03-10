@@ -13,7 +13,8 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import com.julian.notificator.model.MessagePayload;
+import com.julian.notificator.model.MessageRequest;
+import com.julian.notificator.model.telegram.DestinationTelegramType;
 import com.julian.notificator.service.AbstractNotificationService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -40,18 +41,18 @@ public class DiscordServiceImpl extends AbstractNotificationService {
     }
     
     @Override
-    public void sendMessageFile(MessagePayload payload) {
+    public void sendMessageFile(MessageRequest messageRequest, DestinationTelegramType destination) {
         try {
-            byte[] fileBytes = Base64.getDecoder().decode(payload.getFile());
+            byte[] fileBytes = Base64.getDecoder().decode(messageRequest.getMessagePayload().getFile());
             ByteArrayResource resource = new ByteArrayResource(fileBytes) {
                 @Override
                 public String getFilename() {
-                    return payload.getFilename();
+                    return messageRequest.getMessagePayload().getFilename();
                 }
             };
 
             MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-            body.add("content", payload.getMessage());
+            body.add("content", messageRequest.getMessage());
             body.add("file", resource);
 
             HttpHeaders headers = new HttpHeaders();
@@ -60,7 +61,7 @@ public class DiscordServiceImpl extends AbstractNotificationService {
             HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(body, headers);
             RestTemplate restTemplate = new RestTemplate();
             restTemplate.postForEntity(discordWebhookUrl, request, String.class);
-            log.info("DiscordService - sendMessageFile, ✅ Mensaje + archivo enviado a Discord: {}", payload.getFilename());
+            log.info("DiscordService - sendMessageFile, ✅ Mensaje + archivo enviado a Discord: {}", messageRequest.getMessagePayload().getFilename());
 
         } catch (Exception e) {
             log.error("❌ Error enviando archivo a Discord: {}", e.getMessage(), e);
