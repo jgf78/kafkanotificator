@@ -48,7 +48,6 @@ public class EpgDownloadService {
         log.info("📥 Descargando EPG Atresmedia... ");
         List<TdtProgrammeEntity> programmes = new ArrayList<>();
 
-        // Intentamos leer Atresmedia
         try {
             List<TdtProgramme> atresProgrammes = atresEpgService.readAndFilter();
             programmes.addAll(covertTdtProgrammeToTdtProgrammeEntity(atresProgrammes));
