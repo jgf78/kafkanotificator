@@ -61,7 +61,9 @@ public class MessageController {
             "Messages API", })
     @PostMapping("/sendPoll")
     public String sendPoll(@RequestBody TelegramPollRequest request) {
-        kafkaProducerService.sendPoll(request);
+        MessageRequest messageRequest = new MessageRequest();
+        messageRequest.setTelegramPollRequest(request);
+        kafkaProducerService.sendPoll(messageRequest);
         return "Encuesta enviada ✅";
     }
 

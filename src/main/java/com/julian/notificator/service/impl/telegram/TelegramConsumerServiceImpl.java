@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.julian.notificator.model.MessagePayload;
 import com.julian.notificator.model.MessageRequest;
 import com.julian.notificator.model.telegram.TelegramPollRequest;
@@ -21,8 +20,7 @@ public class TelegramConsumerServiceImpl implements KafkaConsumerService {
 
     private final NotificationService telegramService;
     private final SubscriberService subscriberService;
-    private final ObjectMapper objectMapper = new ObjectMapper();
-    
+
     public TelegramConsumerServiceImpl(
             @Qualifier("telegramServiceImpl") NotificationService telegramService,
             SubscriberService subscriberService) {
@@ -33,60 +31,77 @@ public class TelegramConsumerServiceImpl implements KafkaConsumerService {
     @Override
     @KafkaListener(topics = "${kafka.topics.telegram}", groupId = "${kafka.group-id}")
     public void consume(MessageRequest request) {
-        String messageOrJson = request.getMessage();
+
         try {
-            var telegramPoll = tryParse(messageOrJson, TelegramPollRequest.class);
-            if (telegramPoll != null && telegramPoll.getQuestion() != null
-                    && telegramPoll.getOptions() != null && !telegramPoll.getOptions().isEmpty()) {
-                telegramService.sendPoll(telegramPoll);
-                subscriberService.notifyAllSubscribers(Constants.TELEGRAM_POLL_EVENT, telegramPoll);
-                log.debug("📥 TelegramConsumer - encuesta procesada: {}", telegramPoll.getQuestion());
+
+            String message = request.getMessage();
+            TelegramPollRequest poll = request.getTelegramPollRequest();
+            MessagePayload payload = request.getMessagePayload();
+
+            // 1️⃣ Encuesta
+            if (poll != null 
+                    && poll.getQuestion() != null 
+                    && poll.getOptions() != null 
+                    && !poll.getOptions().isEmpty()) {
+
+                telegramService.sendPoll(poll);
+
+                subscriberService.notifyAllSubscribers(
+                        Constants.TELEGRAM_POLL_EVENT,
+                        poll
+                );
+
+                log.debug("📥 TelegramConsumer - encuesta procesada: {}", poll.getQuestion());
                 return;
             }
 
-            var payload = tryParse(messageOrJson, MessagePayload.class);
-            if (payload == null) {
-                payload = new MessagePayload();
-                payload.setMessage(messageOrJson);
+            // 2️⃣ Archivo
+            if (payload != null && payload.getFile() != null && !payload.getFile().isBlank()) {
+
+                telegramService.sendMessageFile(request, request.getDestinationTelegram());
+
+                log.debug("📥 TelegramConsumer - archivo enviado: {}", payload.getFilename());
+                return;
             }
 
-            if (payload.getFile() != null && !payload.getFile().isBlank()) {
-                telegramService.sendMessageFile(payload, request.getDestinationTelegram());
-            } else if (payload.isPin()) {
-                telegramService.sendPinMessage(payload.getMessage());
-                subscriberService.notifyAllSubscribers(Constants.TELEGRAM_TEXT_PIN_EVENT, payload.getMessage());
-            } else {
-                String message = payload.getMessage();
+            // 3️⃣ Mensaje anclado
+            if (payload != null && payload.isPin()) {
 
-                if (telegramService instanceof TelegramServiceImpl telegramImpl) {
+                telegramService.sendPinMessage(message);
 
-                    String matchKey = telegramImpl.extractMatchKey(message);
+                subscriberService.notifyAllSubscribers(
+                        Constants.TELEGRAM_TEXT_PIN_EVENT,
+                        message
+                );
 
-                    if (matchKey != null) {
-                        telegramImpl.sendOrUpdateMatchMessage(matchKey, message);
-                    } else {
-                        telegramImpl.sendMessage(message, request.getDestinationTelegram());
-                    }
+                log.debug("📥 TelegramConsumer - mensaje anclado: {}", message);
+                return;
+            }
 
+            // 4️⃣ Mensaje normal o actualización de partido
+            if (telegramService instanceof TelegramServiceImpl telegramImpl) {
+
+                String matchKey = telegramImpl.extractMatchKey(message);
+
+                if (matchKey != null) {
+                    telegramImpl.sendOrUpdateMatchMessage(matchKey, message);
                 } else {
-                    telegramService.sendMessage(message, request.getDestinationTelegram());
+                    telegramImpl.sendMessage(message, request.getDestinationTelegram());
                 }
 
-                subscriberService.notifyAllSubscribers(Constants.TELEGRAM_TEXT_EVENT, message);
+            } else {
+                telegramService.sendMessage(message, request.getDestinationTelegram());
             }
-            
-            log.debug("📥 TelegramConsumer - mensaje procesado: {}", payload.getMessage());
+
+            subscriberService.notifyAllSubscribers(
+                    Constants.TELEGRAM_TEXT_EVENT,
+                    message
+            );
+
+            log.debug("📥 TelegramConsumer - mensaje procesado: {}", message);
 
         } catch (Exception e) {
             log.error("❌ Error procesando mensaje Telegram: {}", e.getMessage(), e);
-        }
-    }
-
-    private <T> T tryParse(String json, Class<T> clazz) {
-        try {
-            return objectMapper.readValue(json, clazz);
-        } catch (Exception ignored) {
-            return null;
         }
     }
 

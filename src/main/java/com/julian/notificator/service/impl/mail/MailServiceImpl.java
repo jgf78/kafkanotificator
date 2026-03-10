@@ -8,7 +8,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import com.julian.notificator.model.MessagePayload;
+import com.julian.notificator.model.MessageRequest;
+import com.julian.notificator.model.telegram.DestinationTelegramType;
 import com.julian.notificator.service.AbstractNotificationService;
 
 import jakarta.mail.internet.MimeMessage;
@@ -51,7 +52,7 @@ public class MailServiceImpl extends AbstractNotificationService {
     }
     
     @Override
-    public void sendMessageFile(MessagePayload payload) {
+    public void sendMessageFile(MessageRequest messageRequest, DestinationTelegramType destination) {
         try {
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
@@ -59,26 +60,26 @@ public class MailServiceImpl extends AbstractNotificationService {
             helper.setTo(to);
             helper.setSubject(subject);
 
-            String html = buildHtmlMessage(payload.getMessage());
+            String html = buildHtmlMessage(messageRequest.getMessage());
             helper.setText(html, true);
 
-            if (payload.getFile() != null && !payload.getFile().isBlank()) {
-                byte[] fileBytes = Base64.getDecoder().decode(payload.getFile());
+            if (messageRequest.getMessagePayload().getFile() != null && !messageRequest.getMessagePayload().getFile().isBlank()) {
+                byte[] fileBytes = Base64.getDecoder().decode(messageRequest.getMessagePayload().getFile());
 
                 ByteArrayResource resource = new ByteArrayResource(fileBytes) {
                     @Override
                     public String getFilename() {
-                        return payload.getFilename();
+                        return messageRequest.getMessagePayload().getFilename();
                     }
                 };
 
-                helper.addAttachment(payload.getFilename(), resource);
+                helper.addAttachment(messageRequest.getMessagePayload().getFilename(), resource);
             }
 
             mailSender.send(mimeMessage);
 
             log.info("MailService - sendMessageFile ✅ Email enviado con adjunto: {}",
-                    payload.getFilename());
+                    messageRequest.getMessagePayload().getFilename());
 
         } catch (Exception e) {
             log.error("❌ Error enviando mensaje con adjunto a Mail: {}", e.getMessage(), e);

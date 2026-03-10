@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.julian.notificator.model.MessagePayload;
 import com.julian.notificator.model.MessageRequest;
 import com.julian.notificator.service.KafkaConsumerService;
@@ -17,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 public class MailConsumerServiceImpl implements KafkaConsumerService {
 
     private final NotificationService mailService;
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public MailConsumerServiceImpl(@Qualifier("mailServiceImpl") NotificationService notificationService) {
         this.mailService = notificationService;
@@ -26,32 +24,34 @@ public class MailConsumerServiceImpl implements KafkaConsumerService {
     @Override
     @KafkaListener(topics = "${kafka.topics.mail}", groupId = "${kafka.group-id}")
     public void consume(MessageRequest request) {
-        String messageOrJson = request.getMessage();
+
         try {
-            log.debug("📥 MailConsumer - mensaje recibido: {}", messageOrJson);
 
-            var payload = tryParse(messageOrJson, MessagePayload.class);
-            if (payload == null) {
-                payload = new MessagePayload();
-                payload.setMessage(messageOrJson);
+            String message = request.getMessage();
+            MessagePayload payload = request.getMessagePayload();
+
+            log.debug("📥 MailConsumer - mensaje recibido: {}", message);
+
+            // 1️⃣ Envío con archivo
+            if (payload != null && payload.getFile() != null && !payload.getFile().isBlank()) {
+
+                mailService.sendMessageFile(request, null);
+
+                log.debug("📎 MailConsumer - archivo enviado: {}", payload.getFilename());
+
             }
+            // 2️⃣ Mensaje normal
+            else {
 
-            if (payload.getFile() != null && !payload.getFile().isBlank()) {
-                mailService.sendMessageFile(payload);
-            } else {
-                mailService.sendMessage(payload.getMessage());
+                mailService.sendMessage(message);
+
+                log.debug("✉️ MailConsumer - mensaje enviado");
+
             }
 
         } catch (Exception e) {
-            log.error("❌ Error al procesar el mensaje: {}", e.getMessage(), e);
+            log.error("❌ Error al procesar el mensaje Mail: {}", e.getMessage(), e);
         }
     }
 
-    private <T> T tryParse(String json, Class<T> clazz) {
-        try {
-            return objectMapper.readValue(json, clazz);
-        } catch (Exception ignored) {
-            return null;
-        }
-    }
 }
