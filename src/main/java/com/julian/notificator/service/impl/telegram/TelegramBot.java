@@ -141,7 +141,6 @@ public class TelegramBot extends TelegramLongPollingBot {
         if (handler != null) {
             handler.accept(chatId, text);
         } else if ("/transportes".equals(command)) {
-            // En caso de que el usuario escriba /transportes sin GPS
             sendText(chatId, "📍 Activa tu ubicación y vuelve a usar /transportes para buscar paradas cercanas.");
         }
     }

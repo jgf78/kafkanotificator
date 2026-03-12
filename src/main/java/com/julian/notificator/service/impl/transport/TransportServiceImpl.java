@@ -132,7 +132,7 @@ public class TransportServiceImpl implements TransportService {
                       .append("\n\n");
                 });
 
-        sb.append("ℹ️ Mostrando las 5 paradas más cercanas.");
+        sb.append("ℹ️ Mostrando las paradas más cercanas.");
 
         return sb.toString();
     }
