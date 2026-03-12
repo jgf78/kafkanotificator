@@ -107,7 +107,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             double lon = update.getMessage().getLocation().getLongitude();
 
             try {
-                String url = backendUrl + "/transports/nearby?latitude=" + lat + "&longitude=" + lon;
+                String url = backendUrl + "/api/transports/nearby?latitude=" + lat + "&longitude=" + lon;
 
                 TelegramStop[] stops = restTemplate.getForObject(url, TelegramStop[].class);
 
