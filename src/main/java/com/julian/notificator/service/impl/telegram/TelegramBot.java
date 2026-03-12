@@ -12,6 +12,9 @@ import org.springframework.web.client.RestTemplate;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import com.julian.notificator.model.cinema.TmdbMovie;
@@ -20,6 +23,7 @@ import com.julian.notificator.model.series.StreamingPlatform;
 import com.julian.notificator.model.series.TopSeries;
 import com.julian.notificator.model.tdt.TdtProgramme;
 import com.julian.notificator.model.tracking.TrackingInfo;
+import com.julian.notificator.model.transport.TelegramStop;
 import com.julian.notificator.model.weather.WeeklyWeather;
 import com.julian.notificator.service.CinemaDataService;
 import com.julian.notificator.service.FootballDataService;
@@ -27,6 +31,7 @@ import com.julian.notificator.service.LotteryService;
 import com.julian.notificator.service.SeriesService;
 import com.julian.notificator.service.TdtService;
 import com.julian.notificator.service.TrackingService;
+import com.julian.notificator.service.TransportService;
 import com.julian.notificator.service.WeatherService;
 
 import jakarta.annotation.PostConstruct;
@@ -55,6 +60,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     private final TdtService tdtService;
     private final LotteryService lotteryService;
     private final TrackingService trackingService;
+    private final TransportService transportService;
 
     private Map<String, BiConsumer<Long, String>> commandHandlers;
 
@@ -74,6 +80,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             "/series", this::handleSeries,
             "/tdt", (chatId, text) -> handleTdt(chatId),
             "/loterias", (chatId, text) -> handleLoterias(chatId),
+            "/transportes",  this::handleTransportes,
             "/cafe", (chatId, text) -> handleCafe(chatId)
         );
     }
@@ -85,22 +92,59 @@ public class TelegramBot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
 
-        if (!update.hasMessage() || !update.getMessage().hasText()) {
+        if (!update.hasMessage()) {
+            return;
+        }
+
+        Long chatId = update.getMessage().getChatId();
+
+        // =============================
+        // Si el usuario envía ubicación
+        // =============================
+        if (update.getMessage().hasLocation()) {
+
+            double lat = update.getMessage().getLocation().getLatitude();
+            double lon = update.getMessage().getLocation().getLongitude();
+
+            try {
+                String url = backendUrl + "/transports/nearby?latitude=" + lat + "&longitude=" + lon;
+
+                TelegramStop[] stops = restTemplate.getForObject(url, TelegramStop[].class);
+
+                if (stops == null || stops.length == 0) {
+                    sendText(chatId, "🚫 No se encontraron transportes cerca.");
+                } else {
+                    String message = transportService.buildTransportMessage(List.of(stops));
+                    sendText(chatId, message);
+                }
+
+            } catch (Exception e) {
+                logger.error("Error obteniendo transportes", e);
+                sendText(chatId, "❌ Error al consultar transportes cercanos.");
+            }
+
+            return; // ya procesamos ubicación, no procesamos comando
+        }
+
+        // =============================
+        // Si el usuario envía texto/comando
+        // =============================
+        if (!update.getMessage().hasText()) {
             return;
         }
 
         String text = update.getMessage().getText().trim();
-        Long chatId = update.getMessage().getChatId();
-
         String command = text.split(" ")[0].split("@")[0].toLowerCase();
 
         BiConsumer<Long, String> handler = commandHandlers.get(command);
 
         if (handler != null) {
             handler.accept(chatId, text);
+        } else if ("/transportes".equals(command)) {
+            // En caso de que el usuario escriba /transportes sin GPS
+            sendText(chatId, "📍 Activa tu ubicación y vuelve a usar /transportes para buscar paradas cercanas.");
         }
     }
-
 
     // =======================
     // COMMAND HANDLERS
@@ -281,6 +325,38 @@ public class TelegramBot extends TelegramLongPollingBot {
         } catch (Exception e) {
             logger.error("Error en comando /track", e);
             sendText(chatId, "❌ Error al obtener el número de seguimiento. Inténtalo más tarde.");
+        }
+    }
+    
+    private void handleTransportes(Long chatId, String text) {
+
+        sendText(chatId, "🚏 Buscando transportes cerca de ti...");
+        requestLocation(chatId);
+    }
+    
+    private void requestLocation(Long chatId) {
+
+        SendMessage message = new SendMessage();
+        message.setChatId(chatId.toString());
+        message.setText("📍 Envíame tu ubicación para buscar transportes cercanos");
+
+        KeyboardButton locationButton = new KeyboardButton("📍 Enviar ubicación");
+        locationButton.setRequestLocation(true);
+
+        KeyboardRow row = new KeyboardRow();
+        row.add(locationButton);
+
+        ReplyKeyboardMarkup keyboard = new ReplyKeyboardMarkup();
+        keyboard.setResizeKeyboard(true);
+        keyboard.setOneTimeKeyboard(true);
+        keyboard.setKeyboard(List.of(row));
+
+        message.setReplyMarkup(keyboard);
+
+        try {
+            execute(message);
+        } catch (TelegramApiException e) {
+            logger.error("Error solicitando ubicación", e);
         }
     }
     
