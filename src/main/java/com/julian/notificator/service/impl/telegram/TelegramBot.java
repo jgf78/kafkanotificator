@@ -155,7 +155,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         sendText(chatId, "📰 Consultando titulares de prensa...");
         
         try {
-            String headlines = restTemplate.getForObject(backendUrl, String.class);
+            String headlines = restTemplate.getForObject(backendUrl + "/api/news/headlines", String.class);
             sendText(chatId,
                     headlines != null
                             ? headlines
