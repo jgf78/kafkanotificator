@@ -71,18 +71,11 @@ public class TelegramBot extends TelegramLongPollingBot {
     @PostConstruct
     private void initCommands() {
 
-        commandHandlers = Map.of(
-            "/titulares", (chatId, text) -> handleTitulares(chatId),
-            "/realmadrid", (chatId, text) -> handleRealMadrid(chatId),
-            "/cartelera", (chatId, text) -> handleCartelera(chatId),
-            "/tiempo", this::handleTiempo,
-            "/track", this::handleTrack,
-            "/series", this::handleSeries,
-            "/tdt", (chatId, text) -> handleTdt(chatId),
-            "/loterias", (chatId, text) -> handleLoterias(chatId),
-            "/transportes",  this::handleTransportes,
-            "/cafe", (chatId, text) -> handleCafe(chatId)
-        );
+        commandHandlers = Map.of("/titulares", (chatId, text) -> handleTitulares(chatId), "/realmadrid",
+                (chatId, text) -> handleRealMadrid(chatId), "/cartelera", (chatId, text) -> handleCartelera(chatId),
+                "/tiempo", this::handleTiempo, "/track", this::handleTrack, "/series", this::handleSeries, "/tdt",
+                (chatId, text) -> handleTdt(chatId), "/loterias", (chatId, text) -> handleLoterias(chatId),
+                "/transportes", this::handleTransportes, "/cafe", (chatId, text) -> handleCafe(chatId));
     }
 
     // =======================
@@ -102,7 +95,6 @@ public class TelegramBot extends TelegramLongPollingBot {
         // Si el usuario envía ubicación
         // =============================
         if (update.getMessage().hasLocation()) {
-
             double lat = update.getMessage().getLocation().getLatitude();
             double lon = update.getMessage().getLocation().getLongitude();
 
@@ -123,25 +115,26 @@ public class TelegramBot extends TelegramLongPollingBot {
                 sendText(chatId, "❌ Error al consultar transportes cercanos.");
             }
 
-            return; 
+            return;
         }
 
         // =============================
         // Si el usuario envía texto/comando
         // =============================
-        if (!update.getMessage().hasText()) {
-            return;
-        }
+        if (update.getMessage().hasText()) {
+            String text = update.getMessage().getText().trim();
+            String command = text.split(" ")[0].split("@")[0].toLowerCase(); // Ignora la mención al bot
 
-        String text = update.getMessage().getText().trim();
-        String command = text.split(" ")[0].split("@")[0].toLowerCase();
+            BiConsumer<Long, String> handler = commandHandlers.get(command);
 
-        BiConsumer<Long, String> handler = commandHandlers.get(command);
-
-        if (handler != null) {
-            handler.accept(chatId, text);
-        } else if ("/transportes".equals(command)) {
-            sendText(chatId, "📍 Activa tu ubicación y vuelve a usar /transportes para buscar paradas cercanas.");
+            if (handler != null) {
+                handler.accept(chatId, text);
+            }
+            // Comando /transportes sin ubicación
+            else if (command.equals("/transportes")) {
+                sendText(chatId, "📍 Para buscar transportes cercanos necesitas activar tu ubicación "
+                        + "y luego usar /transportes en el chat.");
+            }
         }
     }
 
@@ -150,15 +143,12 @@ public class TelegramBot extends TelegramLongPollingBot {
     // =======================
 
     private void handleTitulares(Long chatId) {
-        
+
         sendText(chatId, "📰 Consultando titulares de prensa...");
-        
+
         try {
             String headlines = restTemplate.getForObject(backendUrl + "/api/news/headlines", String.class);
-            sendText(chatId,
-                    headlines != null
-                            ? headlines
-                            : "📰 No se han podido obtener los titulares.");
+            sendText(chatId, headlines != null ? headlines : "📰 No se han podido obtener los titulares.");
         } catch (Exception e) {
             logger.error("Error en comando /titulares", e);
             sendText(chatId, "❌ Error al obtener los titulares.");
@@ -166,9 +156,9 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
 
     private void handleRealMadrid(Long chatId) {
-        
+
         sendText(chatId, "⚽ Consultando información del Real Madrid...");
-        
+
         try {
             sendText(chatId, footballDataService.formatLiveMatchMessage());
         } catch (Exception e) {
@@ -196,7 +186,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             sendText(chatId, "❌ Error al obtener la cartelera de cine.");
         }
     }
-    
+
     private void handleTdt(Long chatId) {
 
         sendText(chatId, "📺 Consultando la guía de TV actual...");
@@ -216,11 +206,11 @@ public class TelegramBot extends TelegramLongPollingBot {
             sendText(chatId, "❌ Error al obtener la guia de TV.");
         }
     }
-    
+
     private void handleLoterias(Long chatId) {
-        
+
         sendText(chatId, "💰 Consultando loterias...");
-        
+
         try {
             LotteryResponse latestResults = lotteryService.getLatestResults();
 
@@ -237,7 +227,6 @@ public class TelegramBot extends TelegramLongPollingBot {
         }
     }
 
-    
     private void handleTiempo(Long chatId, String text) {
 
         sendText(chatId, "🌤️ Consultando el tiempo de tu ciudad...");
@@ -267,7 +256,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             sendText(chatId, "❌ Error al obtener el tiempo. Inténtalo más tarde.");
         }
     }
-    
+
     private void handleSeries(Long chatId, String text) {
 
         sendText(chatId, "📺 Consultando series...");
@@ -281,8 +270,8 @@ public class TelegramBot extends TelegramLongPollingBot {
             }
 
             StreamingPlatform platformMatched = StreamingPlatform.from(platform.trim().toLowerCase());
-            List<TopSeries> series = seriesService.getTopByPlatform(platformMatched);           
-            
+            List<TopSeries> series = seriesService.getTopByPlatform(platformMatched);
+
             if (series.isEmpty()) {
                 sendText(chatId, "🎬 No se ha podido obtener el top de las series en este momento.");
                 return;
@@ -297,7 +286,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             sendText(chatId, "❌ Error al obtener las series. Inténtalo más tarde.");
         }
     }
-    
+
     private void handleTrack(Long chatId, String text) {
 
         sendText(chatId, "📦 Consultando pedido...");
@@ -310,8 +299,8 @@ public class TelegramBot extends TelegramLongPollingBot {
                 return;
             }
 
-            TrackingInfo trackingInfo = trackingService.getTracking(numOrder);          
-            
+            TrackingInfo trackingInfo = trackingService.getTracking(numOrder);
+
             if (trackingInfo == null) {
                 sendText(chatId, "📦 No hemos encontrado información para ese número de seguimiento.");
                 return;
@@ -326,13 +315,13 @@ public class TelegramBot extends TelegramLongPollingBot {
             sendText(chatId, "❌ Error al obtener el número de seguimiento. Inténtalo más tarde.");
         }
     }
-    
+
     private void handleTransportes(Long chatId, String text) {
 
         sendText(chatId, "🚏 Buscando transportes cerca de ti...");
         requestLocation(chatId);
     }
-    
+
     private void requestLocation(Long chatId) {
 
         SendMessage message = new SendMessage();
@@ -358,19 +347,19 @@ public class TelegramBot extends TelegramLongPollingBot {
             logger.error("Error solicitando ubicación", e);
         }
     }
-    
+
     private void handleCafe(Long chatId) {
 
         String mensaje = """
-    ☕ ¿Te gusta el bot?
+                ☕ ¿Te gusta el bot?
 
-    Notificador se mantiene gracias al tiempo y cariño que le dedico.
-    Si te aporta valor, puedes invitarme a un café aquí:
+                Notificador se mantiene gracias al tiempo y cariño que le dedico.
+                Si te aporta valor, puedes invitarme a un café aquí:
 
-    👉 https://paypal.me/Jgf78
+                👉 https://paypal.me/Jgf78
 
-    ¡Mil gracias por el apoyo!
-    """;
+                ¡Mil gracias por el apoyo!
+                """;
 
         sendText(chatId, mensaje);
     }
