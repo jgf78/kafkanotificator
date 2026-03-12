@@ -109,7 +109,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             try {
                 String url = backendUrl + "/api/transports/nearby?latitude=" + lat + "&longitude=" + lon;
 
-                TelegramStop[] stops = restTemplate.getForObject(url, TelegramStop[].class);
+                TelegramStop[] stops = restTemplate.postForObject(url, null, TelegramStop[].class);
 
                 if (stops == null || stops.length == 0) {
                     sendText(chatId, "🚫 No se encontraron transportes cerca.");
