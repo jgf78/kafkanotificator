@@ -114,7 +114,7 @@ public class TransportServiceImpl implements TransportService {
         for (TelegramStop s : metroStations) {
             sb.append("🚆 *").append(UtilString.escapeMarkdown(s.displayName())).append("*\n");
             sb.append("📍 Lat: ").append(s.lat()).append(", Lon: ").append(s.lon()).append("\n");
-            sb.append("♿ Accesible: ").append(s.accessibility()).append("\n");
+            sb.append("♿ Accesible: ").append(getAccessibleText(s.accessibility())).append("\n");
             if (s.ref() != null) sb.append("🔖 Ref: ").append(s.ref()).append("\n");
             if (s.website() != null) sb.append("🌐 ").append(s.website()).append("\n");
             sb.append("\n");
@@ -126,7 +126,7 @@ public class TransportServiceImpl implements TransportService {
             TelegramStop s = busStops.get(i);
             sb.append("🚌 *").append(UtilString.escapeMarkdown(s.displayName())).append("*\n");
             sb.append("📍 Lat: ").append(s.lat()).append(", Lon: ").append(s.lon()).append("\n");
-            sb.append("♿ Accesible: ").append(s.accessibility()).append("\n");
+            sb.append("♿ Accesible: ").append(getAccessibleText(s.accessibility())).append("\n");
             if (s.ref() != null) sb.append("🔖 Ref: ").append(s.ref()).append("\n");
             if (s.website() != null) sb.append("🌐 ").append(s.website()).append("\n");
             sb.append("\n");
@@ -138,6 +138,10 @@ public class TransportServiceImpl implements TransportService {
         }
 
         return sb.toString();
+    }
+    
+    private static String getAccessibleText(String accessibility) {
+        return "yes".equalsIgnoreCase(accessibility) ? "sí" : "no";
     }
     
 }
