@@ -93,58 +93,51 @@ public class TransportServiceImpl implements TransportService {
         }
     }
     
-    @Override
     public String buildTransportMessage(List<TelegramStop> stops) {
 
         StringBuilder sb = new StringBuilder();
-
-        sb.append("🚏 *Transportes cercanos*\n");
+        sb.append("🚌🚆 *Transportes cercanos*\n");
         sb.append("━━━━━━━━━━━━━━━━━━\n\n");
 
-        if (stops == null || stops.isEmpty()) {
-            sb.append("🚫 No se encontraron paradas cerca.");
-            return sb.toString();
+        // Filtrar estaciones de metro/cercanías y buses
+        List<TelegramStop> metroStations = stops.stream()
+                .filter(s -> s.type().equalsIgnoreCase("subway_entrance")
+                          || s.type().equalsIgnoreCase("railway")
+                          || s.type().equalsIgnoreCase("tram_stop"))
+                .toList();
+
+        List<TelegramStop> busStops = stops.stream()
+                .filter(s -> s.type().equalsIgnoreCase("bus_stop"))
+                .toList();
+
+        // Mostrar primero metro/cercanías
+        for (TelegramStop s : metroStations) {
+            sb.append("🚆 *").append(UtilString.escapeMarkdown(s.displayName())).append("*\n");
+            sb.append("📍 Lat: ").append(s.lat()).append(", Lon: ").append(s.lon()).append("\n");
+            sb.append("♿ Accesible: ").append(s.accessibility()).append("\n");
+            if (s.ref() != null) sb.append("🔖 Ref: ").append(s.ref()).append("\n");
+            if (s.website() != null) sb.append("🌐 ").append(s.website()).append("\n");
+            sb.append("\n");
         }
 
-        stops.stream()
-                .limit(10)
-                .forEach(stop -> {
+        // Luego hasta 5 buses
+        int busesToShow = Math.min(busStops.size(), 5);
+        for (int i = 0; i < busesToShow; i++) {
+            TelegramStop s = busStops.get(i);
+            sb.append("🚌 *").append(UtilString.escapeMarkdown(s.displayName())).append("*\n");
+            sb.append("📍 Lat: ").append(s.lat()).append(", Lon: ").append(s.lon()).append("\n");
+            sb.append("♿ Accesible: ").append(s.accessibility()).append("\n");
+            if (s.ref() != null) sb.append("🔖 Ref: ").append(s.ref()).append("\n");
+            if (s.website() != null) sb.append("🌐 ").append(s.website()).append("\n");
+            sb.append("\n");
+        }
 
-                    sb.append(getEmoji(stop.type()))
-                      .append(" *")
-                      .append(UtilString.escapeMarkdown(stop.displayName()))
-                      .append("*\n");
-
-                    if (stop.ref() != null) {
-                        sb.append("📍 Parada: ")
-                          .append(UtilString.escapeMarkdown(stop.ref()))
-                          .append("\n");
-                    }
-
-                    sb.append("♿ Accesible: ")
-                      .append("yes".equalsIgnoreCase(stop.accessibility()) ? "♿" : "❌")
-                      .append("\n");
-
-                    sb.append("📌 Ubicación: ")
-                      .append(stop.lat())
-                      .append(", ")
-                      .append(stop.lon())
-                      .append("\n\n");
-                });
-
-        sb.append("ℹ️ Mostrando las paradas más cercanas.");
+        // Aviso si hay más buses que no se muestran
+        if (busStops.size() > 5) {
+            sb.append("…y ").append(busStops.size() - 5).append(" paradas de bus más cercanas\n");
+        }
 
         return sb.toString();
     }
     
-    private static String getEmoji(String type) {
-
-        return switch (type) {
-            case "bus_stop" -> "🚌";
-            case "subway_entrance" -> "🚇";
-            case "station" -> "🚆";
-            case "tram_stop" -> "🚊";
-            default -> "🚏";
-        };
-    }
 }
