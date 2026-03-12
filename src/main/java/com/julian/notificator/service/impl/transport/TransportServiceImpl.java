@@ -107,7 +107,7 @@ public class TransportServiceImpl implements TransportService {
         }
 
         stops.stream()
-                .limit(5)
+                .limit(10)
                 .forEach(stop -> {
 
                     sb.append(getEmoji(stop.type()))
