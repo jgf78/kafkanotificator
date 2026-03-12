@@ -123,7 +123,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 sendText(chatId, "❌ Error al consultar transportes cercanos.");
             }
 
-            return; // ya procesamos ubicación, no procesamos comando
+            return; 
         }
 
         // =============================
