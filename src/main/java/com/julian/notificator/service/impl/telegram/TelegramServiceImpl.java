@@ -73,7 +73,7 @@ public class TelegramServiceImpl implements NotificationService {
 
         log.info("⚽ Procesando partido: {}", matchKey);
 
-        for (String chatId : telegramProperties.getChatIdsGroups()) {
+        for (String chatId : telegramProperties.getChatIdsChannels()) {
 
             try {
 
