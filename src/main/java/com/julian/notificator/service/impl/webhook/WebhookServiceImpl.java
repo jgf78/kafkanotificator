@@ -45,8 +45,8 @@ public class WebhookServiceImpl implements WebhookService {
                 : "";
 
         return title.toLowerCase().contains("última hora")
-                || title.toLowerCase().contains("urgente")
-                || title.toLowerCase().contains("breaking");
+                || title.toLowerCase().contains(" urgente ")
+                || title.toLowerCase().contains("breaking news");
     }
 
     private String buildTelegramMessage(NewsWebhookRequest request) {
