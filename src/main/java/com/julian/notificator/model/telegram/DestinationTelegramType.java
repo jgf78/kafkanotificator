@@ -27,4 +27,13 @@ public enum DestinationTelegramType {
     public String toValue() {
         return this.name().toLowerCase(); 
     }
+    
+    public boolean isValidDestination(String value) {
+        try {
+            DestinationTelegramType.fromString(value);
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+    }
 }

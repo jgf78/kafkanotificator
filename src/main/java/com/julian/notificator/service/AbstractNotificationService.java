@@ -2,7 +2,6 @@ package com.julian.notificator.service;
 
 import com.julian.notificator.model.MessageRequest;
 import com.julian.notificator.model.telegram.DestinationTelegramType;
-import com.julian.notificator.model.telegram.TelegramPollRequest;
 
 public abstract class AbstractNotificationService implements NotificationService {
 
@@ -15,7 +14,7 @@ public abstract class AbstractNotificationService implements NotificationService
     }
     
     @Override
-    public void sendPoll(TelegramPollRequest telegramPoll) {
+    public void sendPoll(MessageRequest request) {
     }
     
     @Override

@@ -1,7 +1,10 @@
 package com.julian.notificator.service.impl.telegram;
 
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
@@ -158,8 +161,18 @@ public class TelegramServiceImpl implements NotificationService {
     }
 
     @Override
-    public void sendPoll(TelegramPollRequest poll) {
-        for (String chatId : telegramProperties.getChatIdsGroups()) {
+    public void sendPoll(MessageRequest request) {
+        
+        List<String> chatIds = resolveChatIds(request);
+        
+        if (chatIds == null || chatIds.isEmpty()) {
+            log.warn("No hay chatIds para enviar la encuesta");
+            return;
+        }
+        
+        TelegramPollRequest poll = request.getTelegramPollRequest();
+        
+        for (String chatId : chatIds) {
             try {
                 Map<String, Object> body = new HashMap<>();
 
@@ -410,5 +423,27 @@ public class TelegramServiceImpl implements NotificationService {
     public void sendMessage(String message) {
         sendMessage(message, DestinationTelegramType.ALL);
         
+    }
+    
+    private List<String> resolveChatIds(MessageRequest request) { 
+        switch (request.getDestinationTelegram()) {
+            case CHANNELS:
+                return telegramProperties.getChatIdsChannels();
+
+            case GROUPS:
+                return telegramProperties.getChatIdsGroups();
+
+            case ALL:
+                return new ArrayList<>(
+                    new HashSet<>() {{
+                        addAll(telegramProperties.getChatIdsChannels());
+                        addAll(telegramProperties.getChatIdsGroups());
+                    }}
+                );
+
+            case BOT:
+            default:
+                return telegramProperties.getChatIdsGroups(); 
+        }
     }
 }

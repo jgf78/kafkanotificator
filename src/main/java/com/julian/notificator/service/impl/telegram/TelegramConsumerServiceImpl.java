@@ -44,7 +44,7 @@ public class TelegramConsumerServiceImpl implements KafkaConsumerService {
                     && poll.getOptions() != null 
                     && !poll.getOptions().isEmpty()) {
 
-                telegramService.sendPoll(poll);
+                telegramService.sendPoll(request);
 
                 subscriberService.notifyAllSubscribers(
                         Constants.TELEGRAM_POLL_EVENT,
