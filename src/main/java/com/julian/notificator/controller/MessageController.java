@@ -52,7 +52,7 @@ public class MessageController {
     @Operation(summary = "Send Pin Message", operationId = "sendPinMessage", description = "Send Pin Message", tags = {
             "Messages API", })
     @PostMapping("/sendPin")
-    public String sendPinMessage(@RequestParam("message") MessageRequest messageRequest) {
+    public String sendPinMessage(@RequestBody MessageRequest messageRequest) {
         kafkaProducerService.sendPinMessage(messageRequest);
         return "Mensaje enviado y anclado: " + messageRequest.getMessage();
     }
