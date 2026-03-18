@@ -10,7 +10,7 @@ public abstract class AbstractNotificationService implements NotificationService
     }
     
     @Override
-    public void sendPinMessage(String message) {
+    public void sendPinMessage(MessageRequest request) {
     }
     
     @Override

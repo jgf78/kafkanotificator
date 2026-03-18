@@ -148,10 +148,18 @@ public class TelegramServiceImpl implements NotificationService {
     }
 
     @Override
-    public void sendPinMessage(String message) {
-        for (String chatId : telegramProperties.getChatIdsGroups()) {
+    public void sendPinMessage(MessageRequest request) {
+        
+        List<String> chatIds = resolveChatIds(request);
+        
+        if (chatIds == null || chatIds.isEmpty()) {
+            log.warn("No hay chatIds para enviar la encuesta");
+            return;
+        }
+        
+        for (String chatId : chatIds) {
             try {
-                String response = sendText(chatId, message);
+                String response = sendText(chatId, request.getMessage());
                 int messageId = extractMessageId(response);
                 pinMessage(chatId, messageId);
             } catch (Exception e) {

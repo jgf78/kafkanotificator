@@ -7,8 +7,6 @@ public interface NotificationService {
     
     String getChannelName();
     
-    void sendPinMessage(String message);
-    
     void sendMessage(String message);
     
     void sendMessage(String message, DestinationTelegramType destination);
@@ -16,5 +14,7 @@ public interface NotificationService {
     void sendMessageFile(MessageRequest messageRequest, DestinationTelegramType destination);
 
     void sendPoll(MessageRequest request);
+
+    void sendPinMessage(MessageRequest request);
     
 }

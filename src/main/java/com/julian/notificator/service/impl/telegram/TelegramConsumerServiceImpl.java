@@ -46,11 +46,6 @@ public class TelegramConsumerServiceImpl implements KafkaConsumerService {
 
                 telegramService.sendPoll(request);
 
-                subscriberService.notifyAllSubscribers(
-                        Constants.TELEGRAM_POLL_EVENT,
-                        poll
-                );
-
                 log.debug("📥 TelegramConsumer - encuesta procesada: {}", poll.getQuestion());
                 return;
             }
@@ -67,12 +62,7 @@ public class TelegramConsumerServiceImpl implements KafkaConsumerService {
             // 3️⃣ Mensaje anclado
             if (payload != null && payload.isPin()) {
 
-                telegramService.sendPinMessage(message);
-
-                subscriberService.notifyAllSubscribers(
-                        Constants.TELEGRAM_TEXT_PIN_EVENT,
-                        message
-                );
+                telegramService.sendPinMessage(request);
 
                 log.debug("📥 TelegramConsumer - mensaje anclado: {}", message);
                 return;
