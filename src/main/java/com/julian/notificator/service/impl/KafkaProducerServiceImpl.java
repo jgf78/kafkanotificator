@@ -93,17 +93,15 @@ public class KafkaProducerServiceImpl implements KafkaProducerService {
     }
 
     @Override
-    public void sendPinMessage(String pinMessage) {
+    public void sendPinMessage(MessageRequest messageRequest) {
         try {
-            MessageRequest messageRequest = new MessageRequest();
-            messageRequest.setMessage(pinMessage);
             MessagePayload payload = new MessagePayload();
             payload.setPin(true); 
             messageRequest.setMessagePayload(payload);
 
             kafkaTemplate.send(telegram, messageRequest);
 
-            log.info("KafkaProducerService - sendPinMessage. Mensaje anclado enviado {}", pinMessage);
+            log.info("KafkaProducerService - sendPinMessage. Mensaje anclado enviado {}", messageRequest.getMessage());
         } catch (Exception e) {
             log.error("Error enviando mensaje anclado a Telegram: {}", e.getMessage(), e);
         }
