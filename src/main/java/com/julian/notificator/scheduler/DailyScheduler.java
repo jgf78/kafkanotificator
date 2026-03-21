@@ -92,7 +92,7 @@ public class DailyScheduler {
 
         log.info("Enviando mensaje diario:\n{}", finalMessage);
 
-        service.sendMessage(finalMessage, DestinationTelegramType.ALL);
+        service.sendMessage(finalMessage, DestinationTelegramType.GROUPS);
     }
 
 }
