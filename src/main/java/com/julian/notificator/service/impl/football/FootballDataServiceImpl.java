@@ -11,6 +11,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import com.julian.notificator.model.football.FootballData;
@@ -18,6 +20,9 @@ import com.julian.notificator.model.football.LiveMatchResponse;
 import com.julian.notificator.model.football.Match;
 import com.julian.notificator.service.FootballDataService;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class FootballDataServiceImpl implements FootballDataService {
 
@@ -130,10 +135,23 @@ public class FootballDataServiceImpl implements FootballDataService {
 
         HttpEntity<Void> entity = new HttpEntity<>(headers);
 
-        ResponseEntity<FootballData> response = restTemplate.exchange(url, HttpMethod.GET, entity, FootballData.class);
+        try {
+            ResponseEntity<FootballData> response =
+                    restTemplate.exchange(url, HttpMethod.GET, entity, FootballData.class);
 
-        FootballData body = response.getBody();
-        return body;
+            return response.getBody();
+
+        } catch (ResourceAccessException e) {
+            log.error("Timeout al llamar a la API: {}", url, e);
+            
+        } catch (HttpStatusCodeException e) {
+            log.error("Error HTTP: {} - body: {}", e.getStatusCode(), e.getResponseBodyAsString());
+            
+        } catch (Exception e) {
+            log.error("Error inesperado al llamar a la API", e);
+        }
+
+        return null; 
     }
 
     private String getMatchState(Match match) {

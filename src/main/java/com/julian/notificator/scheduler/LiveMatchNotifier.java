@@ -96,6 +96,7 @@ public class LiveMatchNotifier {
             if ("FINISHED".equals(currentStatus)) {
                 sendNotificationToAll(buildFullTimeMessage(match));
                 resetState();
+                sendNotificationToAll(footballDataService.formatLiveMatchMessage());
                 return;
             }
 
