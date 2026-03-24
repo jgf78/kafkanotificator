@@ -18,6 +18,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import com.julian.notificator.model.cinema.TmdbMovie;
+import com.julian.notificator.model.crypto.CryptoRecord;
 import com.julian.notificator.model.lottery.LotteryResponse;
 import com.julian.notificator.model.series.StreamingPlatform;
 import com.julian.notificator.model.series.TopSeries;
@@ -26,6 +27,7 @@ import com.julian.notificator.model.tracking.TrackingInfo;
 import com.julian.notificator.model.transport.TelegramStop;
 import com.julian.notificator.model.weather.WeeklyWeather;
 import com.julian.notificator.service.CinemaDataService;
+import com.julian.notificator.service.CryptoService;
 import com.julian.notificator.service.FootballDataService;
 import com.julian.notificator.service.LotteryService;
 import com.julian.notificator.service.SeriesService;
@@ -61,6 +63,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     private final LotteryService lotteryService;
     private final TrackingService trackingService;
     private final TransportService transportService;
+    private final CryptoService cryptoService;
 
     private Map<String, BiConsumer<Long, String>> commandHandlers;
 
@@ -71,11 +74,19 @@ public class TelegramBot extends TelegramLongPollingBot {
     @PostConstruct
     private void initCommands() {
 
-        commandHandlers = Map.of("/titulares", (chatId, text) -> handleTitulares(chatId), "/realmadrid",
-                (chatId, text) -> handleRealMadrid(chatId), "/cartelera", (chatId, text) -> handleCartelera(chatId),
-                "/tiempo", this::handleTiempo, "/track", this::handleTrack, "/series", this::handleSeries, "/tdt",
-                (chatId, text) -> handleTdt(chatId), "/loterias", (chatId, text) -> handleLoterias(chatId),
-                "/transportes", this::handleTransportes, "/cafe", (chatId, text) -> handleCafe(chatId));
+        commandHandlers = Map.ofEntries(
+                Map.entry("/titulares", (chatId, text) -> handleTitulares(chatId)),
+                Map.entry("/realmadrid", (chatId, text) -> handleRealMadrid(chatId)),
+                Map.entry("/cartelera", (chatId, text) -> handleCartelera(chatId)),
+                Map.entry("/crypto", (chatId, text) -> handleCrypto(chatId)), 
+                Map.entry("/tiempo", this::handleTiempo),
+                Map.entry("/track", this::handleTrack),
+                Map.entry("/series", this::handleSeries),
+                Map.entry("/tdt", (chatId, text) -> handleTdt(chatId)),
+                Map.entry("/loterias", (chatId, text) -> handleLoterias(chatId)),
+                Map.entry("/transportes", this::handleTransportes),
+                Map.entry("/cafe", (chatId, text) -> handleCafe(chatId))
+        );
     }
 
     // =======================
@@ -186,6 +197,26 @@ public class TelegramBot extends TelegramLongPollingBot {
             sendText(chatId, "❌ Error al obtener la cartelera de cine.");
         }
     }
+    
+    private void handleCrypto(Long chatId) {
+
+        sendText(chatId, "🚀 Consultando Top 5 crypto actual...");
+
+        try {
+            List<CryptoRecord> cryptos = cryptoService.getTop5Cryptos();
+
+            if (cryptos.isEmpty()) {
+                sendText(chatId, "🚀 No se ha podido obtener el top 5 crypto en este momento.");
+                return;
+            }
+
+            sendText(chatId, cryptoService.buildTelegramMessage(cryptos));
+
+        } catch (Exception e) {
+            logger.error("Error en comando /crypto", e);
+            sendText(chatId, "❌ Error al obtener el top 5 crypto.");
+        }
+    }    
 
     private void handleTdt(Long chatId) {
 
