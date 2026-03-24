@@ -56,13 +56,25 @@ public class FootballDataServiceImpl implements FootballDataService {
     @Override
     public LiveMatchResponse getFinishedMatch() {
         FootballData body = callAPI(FINISHED_MATCH);
+
         LiveMatchResponse result = new LiveMatchResponse();
         result.setPlaying(false);
+
+        if (body == null || body.getMatches() == null || body.getMatches().isEmpty()) {
+            log.warn("No hay datos de partidos (API caída o sin resultados)");
+            result.setData(null);
+            result.setMessage("Sin datos disponibles"); 
+            return result;
+        }
+
         result.setData(body);
-        List<Match> matches = result.getData().getMatches();
+
+        List<Match> matches = body.getMatches();
         Match match = matches.get(matches.size() - 1);
+
         StringBuilder msg = getFinalMessage(match);
         result.setMessage(msg.toString());
+
         return result;
     }
 
