@@ -48,6 +48,10 @@ public class FootballDataServiceImpl implements FootballDataService {
     @Override
     public String getNextMatch() {
         FootballData body = callAPI(NEXT_MATCH);
+        if (body == null || body.getMatches() == null || body.getMatches().isEmpty()) {
+            log.warn("No hay datos de partidos (API caída o sin resultados)");
+            return "Sin datos disponibles"; 
+        }
         Match match = body.getMatches().get(0);
         StringBuilder msg = getFinalMessage(match);
         return msg.toString();
