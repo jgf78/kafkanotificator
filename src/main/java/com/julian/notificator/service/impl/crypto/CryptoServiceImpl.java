@@ -2,6 +2,7 @@ package com.julian.notificator.service.impl.crypto;
 
 import java.text.DecimalFormat;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -83,7 +84,7 @@ public class CryptoServiceImpl implements CryptoService {
 
         sb.append("━━━━━━━━━━━━━━\n");
         sb.append("⏱ Actualizado: ")
-          .append(LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm")));
+          .append(LocalTime.now(ZoneId.of("Europe/Madrid")).format(DateTimeFormatter.ofPattern("HH:mm")));
 
         return sb.toString();
     }
