@@ -110,8 +110,11 @@ public class LiveMatchNotifier {
             sendNotificationToAll(buildSecondtimeMessage(match));
         }
 
-        // 🔔 Inicio REAL del partido (extra seguridad)
-        if ("IN_PLAY".equals(currentStatus) && !"IN_PLAY".equals(lastStatus)) {
+        // 🔔 Inicio REAL del partido 
+        if ("IN_PLAY".equals(currentStatus)
+                && ("SCHEDULED".equals(lastStatus)
+                || "TIMED".equals(lastStatus))) {
+
             sendNotificationToAll(buildKickoffMessage(match));
         }
 
