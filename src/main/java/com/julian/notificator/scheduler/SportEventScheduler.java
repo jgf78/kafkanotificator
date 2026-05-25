@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class SportEventScheduler {
 
-    private static final String URL = "https://deportes-live.vercel.app/index.html";
+    private static final String URL = "https://deporteslive.onrender.com/";
 
     private final SportEventService sportEventService;
 
