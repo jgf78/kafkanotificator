@@ -120,7 +120,7 @@ Aplicación disponible en:
 | `TOPIC_MAIL` | Tópico Kafka para email | `mail-messages` |
 | `SMTP_SERVER` | Servidor SMTP | `smtp.gmail.com` |
 | `SMTP_PORT` | Puerto SMTP | `587` |
-| `EMAIL_USERNAME` | Usuario del correo | `julian.rss.android@gmail.com` |
+| `EMAIL_USERNAME` | Usuario del correo | `xxxx@xxxx.xxx` |
 | `EMAIL_PASSWORD` | Contraseña o token de aplicación | `xxxxxxxxx` |
 | `DISCORD_WEBHOOK_URL` | URL del webhook de Discord | *(Requerido)* |
 | `TELEGRAM_PROXY_URL` | URL proxy/bot de Telegram | `http://192.168.1.3:8080/...` |
