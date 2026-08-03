@@ -121,14 +121,14 @@ Aplicación disponible en:
 | `SMTP_SERVER` | Servidor SMTP | `smtp.gmail.com` |
 | `SMTP_PORT` | Puerto SMTP | `587` |
 | `EMAIL_USERNAME` | Usuario del correo | `julian.rss.android@gmail.com` |
-| `EMAIL_PASSWORD` | Contraseña o token de aplicación | `eqcu jplq okul xqzz` |
+| `EMAIL_PASSWORD` | Contraseña o token de aplicación | `xxxxxxxxx` |
 | `DISCORD_WEBHOOK_URL` | URL del webhook de Discord | *(Requerido)* |
 | `TELEGRAM_PROXY_URL` | URL proxy/bot de Telegram | `http://192.168.1.3:8080/...` |
-| `TELEGRAM_ID_CHAT` | ID del chat de Telegram | `6610892` |
-| `TELEGRAM_ID_GROUP` | ID del grupo de Telegram | `-1001236662890` |
-| `EMAIL_TO` | Correo destino de las notificaciones | `julian_gomez_fdez@yahoo.es` |
+| `TELEGRAM_ID_CHAT` | ID del chat de Telegram | `xxxxxxx` |
+| `TELEGRAM_ID_GROUP` | ID del grupo de Telegram | `-xxxxxx` |
+| `EMAIL_TO` | Correo destino de las notificaciones | `xxxxx@xxxc.xxx` |
 | `EMAIL_SUBJECT` | Asunto del correo | `Notificación por email` |
-| `WHATSAPP_APIKEY` | Apikey | `XfuU9jEgea2MRrB0` |
+| `WHATSAPP_APIKEY` | Apikey | `xxxxx` |
 | `WHATSAPP_TYPE` | Tipo de mensaje | `alarm_notification` |
 | `MQTT_BROKER` | Broker MQTT | `tcp://broker.hivemq.com:1883` |
 | `MQTT_TOPIC` | Topic MQTT | `notificator/alerts` |
