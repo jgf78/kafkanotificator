@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class SportEventScheduler {
 
-    private static final String URL = "https://deporteslive.onrender.com/";
+    private static final String URL = "http://mistreamt.duckdns.org:8091/deportesLIVE/";
 
     private final SportEventService sportEventService;
 
