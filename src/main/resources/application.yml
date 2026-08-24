@@ -1,15 +1,17 @@
 spring:
+
   jackson:
     time-zone: Europe/Madrid
+
   datasource:
-    url: jdbc:postgresql://192.168.1.3:5432/notificator
-    username: 1234
-    password: 1234
+    url: ${DB_URL:jdbc:postgresql://192.168.1.3:5432/notificator}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
-  
+
   jpa:
     hibernate:
-      ddl-auto: none   
+      ddl-auto: none
     show-sql: false
     open-in-view: false
     properties:
@@ -17,58 +19,64 @@ spring:
         format_sql: true
         jdbc:
           time_zone: UTC
-  
+
   sql:
     init:
       mode: never
 
   application:
-      name: notificator
+    name: notificator
+
   servlet:
-      multipart:
-        max-file-size: 500MB
-        max-request-size: 500MB   
+    multipart:
+      max-file-size: 500MB
+      max-request-size: 500MB
+
   data:
     redis:
-      host: 192.168.1.3
-      port: 6379
-               
+      host: ${REDIS_HOST:192.168.1.3}
+      port: ${REDIS_PORT:6379}
+
   kafka:
-    bootstrap-servers: 192.168.1.3:9092
-    #bootstrap-servers: http://jgf78japan.duckdns.org:9092
+    bootstrap-servers: ${BOOTSTRAP_SERVER:192.168.1.3:9092}
+
     consumer:
       group-id: notificator-group
       auto-offset-reset: latest
       enable-auto-commit: true
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-      
       properties:
         spring.json.trusted.packages: "*"
         spring.json.value.default.type: com.julian.notificator.model.MessageRequest
-              
+
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:
         max.request.size: 524288000
+
     listener:
       ack-mode: record
       retry:
         topic:
           enabled: false
+
   mail:
-    host: smtp.gmail.com
-    port: 587
-    username: julian.rss.android@gmail.com
-    password: eqcu jplq okul xqzz
+    host: ${SMTP_SERVER:smtp.gmail.com}
+    port: ${SMTP_PORT:587}
+    username: ${EMAIL_USERNAME}
+    password: ${EMAIL_PASSWORD}
+
     properties:
       mail:
-       smtp:
-         auth: true
-         starttls:
+        smtp:
+          auth: true
+          starttls:
             enable: true
             required: true
+
+
 kafka:
   topics:
     discord: discord-messages
@@ -77,81 +85,102 @@ kafka:
     alexa: alexa-messages
     whatsapp: whatsapp-messages
     mqtt: mqtt-messages
+
   group-id: notificator-group
-              
+
+
 discord:
-  webhook-url: "https://discord.com/api/webhooks/1434849038586609758/Iru_TKLtmXNXyaheORsntKlBDYb7_35j_GpcG7BdoN3smld4dAPqNbExX5XJSwVcDGY-"
-  webhook-url-news: "https://discord.com/api/webhooks/1473761568159301877/AtH3ggef_UNURzKkRLx1aj-bCIa7Xo76rVsyiX-YqmxhZL84FotKdi4-wEW1hFQShq9U"
-  
+  webhook-url: ${DISCORD_WEBHOOK_URL}
+  webhook-url-news: ${DISCORD_WEBHOOK_URL_NEWS}
+
+
 telegram:
-  proxy-url: "http://192.168.1.3:8080/bot8254359368:AAEJ7mG6eU_h8aToXq9KDw4WkHuHJWgqer0"
-  chat-id: "6610892"
+  proxy-url: ${TELEGRAM_PROXY_URL}
+  chat-id: ${TELEGRAM_ID_CHAT}
+  
   chat-ids-groups:
-    #- "-1001236662890" #Criptolocos
-    - "-1003359151017" #iptv
+    - ${TELEGRAM_ID_GROUP}
+    - ${TELEGRAM_ID_GROUP_2}
+
   chat-ids-channels:
-    - "-1003456379950" #notificador  
-  bot-token: "8254359368:AAEJ7mG6eU_h8aToXq9KDw4WkHuHJWgqer0"
-  bot-username: "kafkajgf_bot"
-  backend-url: "http://192.168.1.3:8083"
-  backend-url2: "http://192.168.1.3:8083/api/football/live"
+    - ${TELEGRAM_ID_CHANNEL}
+
+  bot-token: ${TELEGRAM_BOT_TOKEN}
+  bot-username: ${TELEGRAM_BOT_USERNAME:kafkajgf_bot}
+
+  backend-url: ${TELEGRAM_BACKEND_URL:http://192.168.1.3:8083}
+  backend-url2: ${TELEGRAM_BACKEND_URL2:http://192.168.1.3:8083/api/football/live}
+
 
 rss:
-  proxy-url: "http://192.168.1.3:9002/elmundo.xml"  
-  proxy-url2: "http://192.168.1.3:9002/juegosonce.xml"
-  proxy-url3: "http://192.168.1.3:9002/atresmedia.xml"
-  proxy-url4: "http://192.168.1.3:9002/marca.xml"
-  proxy-url5: "http://192.168.1.3:9002/videojuegos.xml"
-  proxy-url6: "http://192.168.1.3:9002/enlaces.json"  
-  
+  proxy-url: ${RSS_PROXY_URL:http://192.168.1.3:9002/elmundo.xml}
+  proxy-url2: ${RSS_PROXY_URL2:http://192.168.1.3:9002/juegosonce.xml}
+  proxy-url3: ${RSS_PROXY_URL3:http://192.168.1.3:9002/atresmedia.xml}
+  proxy-url4: ${RSS_PROXY_URL4:http://192.168.1.3:9002/marca.xml}
+  proxy-url5: ${RSS_PROXY_URL5:http://192.168.1.3:9002/videojuegos.xml}
+  proxy-url6: ${RSS_PROXY_URL6:http://192.168.1.3:9002/enlaces.json}
+
+
 mail:
-  to: "julian_gomez_fdez@yahoo.es"
-  subject: "Notificación por email"  
-  
+  to: ${EMAIL_TO}
+  subject: ${EMAIL_SUBJECT:Notificación por email}
+
+
 whatsapp:
-  apikey: "XfuU9jEgea2MRrB0"
-  type: alarm_notification
+  apikey: ${WHATSAPP_APIKEY}
+  type: ${WHATSAPP_TYPE:alarm_notification}
+
 
 mqtt:
-  broker: tcp://broker.hivemq.com:1883
-  topic: notificator/alertas
-  clientId: notificator-app
-  qos: 1
+  broker: ${MQTT_BROKER:tcp://broker.hivemq.com:1883}
+  topic: ${MQTT_TOPIC:notificator/alertas}
+  clientId: ${MQTT_CLIENT_ID:notificator-app}
+  qos: ${MQTT_QOS:1}
+
 
 scheduler:
   daily:
-    enabled: true
-    message: "Buenos días, "
-    hour: 07
-    minute: 00
-    zone: "Europe/Madrid"
-    service: "telegramServiceImpl"  
+    enabled: ${SCHEDULER_ENABLED:true}
+    message: ${SCHEDULER_MESSAGE:Buenos días, }
+    hour: ${SCHEDULER_HOUR:07}
+    minute: ${SCHEDULER_MINUTE:00}
+    zone: ${SCHEDULER_ZONE:Europe/Madrid}
+    service: ${SCHEDULER_SERVICE:telegramServiceImpl}
+
 
 football-data:
-  base-url: https://api.football-data.org/v4
-  token: 5a2156b9c53f4998b008a0beac552f3c
-  team-id: 86 #Real Madrid
+  base-url: ${FOOTBALL_DATA_BASE_URL:https://api.football-data.org/v4}
+  token: ${FOOTBALL_DATA_TOKEN}
+  team-id: ${FOOTBALL_DATA_TEAM_ID:86}
+
 
 cinema-data:
-  base-url: https://api.themoviedb.org/3/movie/now_playing
-  token: 4dc0a8a4bf4a1752cb0bb20bd6e26e33
+  base-url: ${CINEMA_DATA_BASE_URL:https://api.themoviedb.org/3/movie/now_playing}
+  token: ${CINEMA_DATA_TOKEN}
+
 
 weather:
-  api-key: 214694727966c990d5ac588e61b154ec
-  base-url: https://api.openweathermap.org/data/2.5/forecast
-  geo-url: https://api.openweathermap.org/geo/1.0/direct
+  api-key: ${WEATHER_API_KEY}
+  base-url: ${WEATHER_BASE_URL:https://api.openweathermap.org/data/2.5/forecast}
+  geo-url: ${WEATHER_GEO_URL:https://api.openweathermap.org/geo/1.0/direct}
+
 
 rapidapi:
-  key: c44630d80fmsh16dcbe7f2b83aa8p1af949jsn41af6f615f40
+  key: ${RAPIDAPI_KEY}
+
   streaming:
-    base-url: https://streaming-availability.p.rapidapi.com
+    base-url: ${RAPIDAPI_STREAMING_BASE_URL:https://streaming-availability.p.rapidapi.com}
+
   tracking:
-    base-url: https://track-global.p.rapidapi.com/search?track=
-    bearer: B_5t3g7MjnzqW1DmFbfAbNxuxtKt8Ugm  
-    
+    base-url: ${RAPIDAPI_TRACKING_BASE_URL:https://track-global.p.rapidapi.com/search?track=}
+    bearer: ${RAPIDAPI_TRACKING_BEARER}
+
+
 tdt:
- url: https://www.tdtchannels.com/epg/TV.xml.gz 
- atresmedia:
+  url: ${TDT_URL:https://www.tdtchannels.com/epg/TV.xml.gz}
+
+
+atresmedia:
   - Antena 3.es
   - La Sexta.es
   - Neox.es
@@ -167,7 +196,9 @@ tdt:
   - Eurosport 2.es
   - M+ Estrenos.es
   - M+ Hits.es
- national-channels:
+
+
+national-channels:
   - La1.TV
   - La2.TV
   - Cuatro.TV
@@ -187,29 +218,35 @@ tdt:
   - Divinity.TV
   - Bemad.TV
 
+
 lottery:
-  base-url: https://api.loteriasapi.com/api/v1
-  token: lat_684e2028_c569b0729a6128ced52f6f45a43f398820812bc0f75cdccf1f0a81e9c725c3aa
+  base-url: ${LOTTERY_BASE_URL:https://api.loteriasapi.com/api/v1}
+  token: ${LOTTERY_TOKEN}
+
 
 webhook:
-  secret: Anliju78+
-          
+  secret: ${WEBHOOK_SECRET}
+
+
 server:
-  port: 8081
+  port: ${SERVER_PORT:8081}
+
   servlet:
-    context-path: /api
-    
+    context-path: ${SERVER_CONTEXT_PATH:/api}
+
+
 logging:
   file:
-    path: ./target/
+    path: ${LOG_PATH:./target/}
     name: ${spring.application.name}
-    level:
-      com.julian: DEBUG
-      org.springframework.boot: INFO
-      org.springframework.web: INFO
+
+  level:
+    com.julian: ${LOG_LEVEL_APP:DEBUG}
+    org.springframework.boot: ${LOG_LEVEL_SPRING_BOOT:INFO}
+    org.springframework.web: ${LOG_LEVEL_SPRING_WEB:INFO}
+
 
 springdoc:
-   swagger-ui:
-     operationsSorter: alpha
-     tagsSorter: alpha
-          
+  swagger-ui:
+    operationsSorter: alpha
+    tagsSorter: alpha
