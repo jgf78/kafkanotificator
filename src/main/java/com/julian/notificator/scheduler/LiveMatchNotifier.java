@@ -33,7 +33,7 @@ public class LiveMatchNotifier {
         this.subscriberService = subscriberService;
     }
 
-    @Scheduled(fixedDelay = 10_000)
+    @Scheduled(fixedDelay = 15_000)
     public void checkLiveMatch() {
 
         LiveMatchResponse response = footballDataService.getLiveStatus();
