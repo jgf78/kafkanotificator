@@ -79,7 +79,7 @@ pipeline {
                     docker stop notificator || true
                     docker rm notificator || true
                     docker pull jgf78/notificator:latest
-                    docker run -d --restart unless-stopped -p 8083:8081 -e SPRING_DATA_REDIS_HOST=redis-cache -e SPRING_DATA_REDIS_PORT=6379 --network notificator-net --name notificator jgf78/notificator:latest
+                    docker run -d --restart unless-stopped -p 8083:8081 --env-file /home/jgf78/notificator/.env -e SPRING_DATA_REDIS_HOST=redis-cache -e SPRING_DATA_REDIS_PORT=6379 --network notificator-net --name notificator jgf78/notificator:latest
                 '''
             }
         }
