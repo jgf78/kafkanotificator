@@ -178,46 +178,41 @@ rapidapi:
 
 tdt:
   url: ${TDT_URL:https://www.tdtchannels.com/epg/TV.xml.gz}
-
-
-atresmedia:
-  - Antena 3.es
-  - La Sexta.es
-  - Neox.es
-  - Nova.es
-  - Mega.es
-  - Atreseries.es
-  - Movistar Plus.es
-  - M+ Vamos.es
-  - M+ Vamos 2.es
-  - M+ Vamos 3.es
-  - GOL.es
-  - Eurosport 1.es
-  - Eurosport 2.es
-  - M+ Estrenos.es
-  - M+ Hits.es
-
-
-national-channels:
-  - La1.TV
-  - La2.TV
-  - Cuatro.TV
-  - Telecinco.TV
-  - Telemadrid.TV
-  - LaOtra.TV
-  - TEN.TV
-  - 13.TV
-  - DKISS.TV
-  - DMax.TV
-  - TDP.TV
-  - RMTV.TV
-  - Clan.TV
-  - Boing.TV
-  - FDF.TV
-  - Energy.TV
-  - Divinity.TV
-  - Bemad.TV
-
+  atresmedia:
+   - Antena 3.es
+   - La Sexta.es
+   - Neox.es
+   - Nova.es
+   - Mega.es
+   - Atreseries.es
+   - Movistar Plus.es
+   - M+ Vamos.es
+   - M+ Vamos 2.es
+   - M+ Vamos 3.es
+   - GOL.es
+   - Eurosport 1.es
+   - Eurosport 2.es
+   - M+ Estrenos.es
+   - M+ Hits.es
+  national-channels:
+   - La1.TV
+   - La2.TV
+   - Cuatro.TV
+   - Telecinco.TV
+   - Telemadrid.TV
+   - LaOtra.TV
+   - TEN.TV
+   - 13.TV
+   - DKISS.TV
+   - DMax.TV
+   - TDP.TV
+   - RMTV.TV
+   - Clan.TV
+   - Boing.TV
+   - FDF.TV
+   - Energy.TV
+   - Divinity.TV
+   - Bemad.TV
 
 lottery:
   base-url: ${LOTTERY_BASE_URL:https://api.loteriasapi.com/api/v1}
