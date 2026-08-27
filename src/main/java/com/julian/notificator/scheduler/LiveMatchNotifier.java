@@ -85,9 +85,9 @@ public class LiveMatchNotifier {
 
         // ⚽ GOL
         if (!home.equals(lastHomeScore) || !away.equals(lastAwayScore)) {
-            sendNotificationToAll(buildGoalMessage(match));
             lastHomeScore = home;
             lastAwayScore = away;
+            sendNotificationToAll(buildGoalMessage(match));
         }
 
         // 🔄 CAMBIO DE ESTADO
