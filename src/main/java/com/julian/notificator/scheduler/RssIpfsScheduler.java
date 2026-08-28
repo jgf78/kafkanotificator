@@ -37,7 +37,7 @@ public class RssIpfsScheduler {
         updateHashes();
     }
 
-    //@Scheduled(cron = "0 0 */3 * * *") // cada 3 horas
+    @Scheduled(cron = "0 0 */3 * * *") // cada 3 horas
     public void updateHashes() {
         try (InputStream inputStream = new URL(epgUrl).openStream()) {
 
