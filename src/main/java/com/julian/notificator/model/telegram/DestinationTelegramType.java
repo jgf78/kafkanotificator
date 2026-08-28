@@ -18,7 +18,7 @@ public enum DestinationTelegramType {
             return DestinationTelegramType.valueOf(value.trim().toUpperCase());
         } catch (IllegalArgumentException ex) {
             throw new IllegalArgumentException(
-                    "Valor inválido para 'destination'. Valores válidos: CHANNELS, BOT, GROUPS, ALL"
+                    "Valor inválido para 'destinationTelegram'. Valores válidos: CHANNELS, BOT, GROUPS, ALL"
                 );
         }
     }
