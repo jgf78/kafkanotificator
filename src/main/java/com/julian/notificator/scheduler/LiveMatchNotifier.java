@@ -61,6 +61,7 @@ public class LiveMatchNotifier {
             if ("IN_PLAY".equals(currentStatus)) {
                 sendNotificationToAll(buildKickoffMessage(match));
             }
+
             return;
         }
 
@@ -80,13 +81,23 @@ public class LiveMatchNotifier {
             if ("IN_PLAY".equals(currentStatus)) {
                 sendNotificationToAll(buildKickoffMessage(match));
             }
+
             return;
         }
 
         // ⚽ GOL
         if (!home.equals(lastHomeScore) || !away.equals(lastAwayScore)) {
+
+            /*
+             * Actualizamos el marcador ANTES de enviar la notificación.
+             *
+             * Si Telegram, Kafka u otro servicio lanza una excepción,
+             * el mismo gol no volverá a detectarse en la siguiente
+             * ejecución del scheduler.
+             */
             lastHomeScore = home;
             lastAwayScore = away;
+
             sendNotificationToAll(buildGoalMessage(match));
         }
 
@@ -100,20 +111,31 @@ public class LiveMatchNotifier {
             return;
         }
 
+        /*
+         * IMPORTANTE:
+         * Actualizamos el estado ANTES de enviar cualquier notificación.
+         *
+         * Si el envío falla con una excepción (por ejemplo,
+         * "chat not found"), el siguiente ciclo no volverá a
+         * detectar el mismo cambio de estado.
+         */
+        String previousStatus = lastStatus;
+        lastStatus = currentStatus;
+
         // 🟡 Descanso
         if ("PAUSED".equals(currentStatus)) {
             sendNotificationToAll(buildHalftimeMessage(match));
         }
 
         // 🟢 Segunda parte
-        if ("IN_PLAY".equals(currentStatus) && "PAUSED".equals(lastStatus)) {
+        if ("IN_PLAY".equals(currentStatus) && "PAUSED".equals(previousStatus)) {
             sendNotificationToAll(buildSecondtimeMessage(match));
         }
 
-        // 🔔 Inicio REAL del partido 
+        // 🔔 Inicio REAL del partido
         if ("IN_PLAY".equals(currentStatus)
-                && ("SCHEDULED".equals(lastStatus)
-                || "TIMED".equals(lastStatus))) {
+                && ("SCHEDULED".equals(previousStatus)
+                || "TIMED".equals(previousStatus))) {
 
             sendNotificationToAll(buildKickoffMessage(match));
         }
@@ -122,8 +144,6 @@ public class LiveMatchNotifier {
         if ("FINISHED".equals(currentStatus)) {
             sendNotificationToAll(buildFullTimeMessage(match));
         }
-
-        lastStatus = currentStatus;
     }
 
     private void sendNotificationToAll(String message) {
@@ -181,3 +201,4 @@ public class LiveMatchNotifier {
         );
     }
 }
+
