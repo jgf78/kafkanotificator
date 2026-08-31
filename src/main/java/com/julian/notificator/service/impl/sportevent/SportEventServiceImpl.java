@@ -29,6 +29,7 @@ public class SportEventServiceImpl implements SportEventService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<SportEventDTO> getAllHashes() {
         return repository.findAll().stream()
                 .map(entity -> new SportEventDTO(
