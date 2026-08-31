@@ -38,10 +38,13 @@ public class LiveMatchNotifier {
 
         LiveMatchResponse response = footballDataService.getLiveStatus();
 
-        // ❌ Si la API falla o no hay partidos → no hacemos nada
+        // ❌ Si la API falla o no hay partidos en juego,
+        // comprobamos si el último partido acaba de finalizar.
         if (response == null || response.getData() == null
                 || response.getData().getMatches() == null
                 || response.getData().getMatches().isEmpty()) {
+
+            checkFinishedMatch();
             return;
         }
 
@@ -53,6 +56,7 @@ public class LiveMatchNotifier {
 
         // 🧠 Primera ejecución
         if (lastMatchId == null) {
+
             lastMatchId = match.getId();
             lastHomeScore = home;
             lastAwayScore = away;
@@ -88,6 +92,8 @@ public class LiveMatchNotifier {
         // ⚽ GOL
         if (!home.equals(lastHomeScore) || !away.equals(lastAwayScore)) {
 
+            // Actualizamos el estado ANTES de enviar la notificación.
+            // Si el envío falla, no se volverá a detectar el mismo gol.
             lastHomeScore = home;
             lastAwayScore = away;
 
@@ -98,14 +104,51 @@ public class LiveMatchNotifier {
         changeState(match, currentStatus);
     }
 
+    private void checkFinishedMatch() {
+
+        // Si no estábamos siguiendo ningún partido, no hacemos nada.
+        if (lastMatchId == null) {
+            return;
+        }
+
+        LiveMatchResponse finishedResponse = footballDataService.getFinishedMatch();
+
+        if (finishedResponse == null
+                || finishedResponse.getData() == null
+                || finishedResponse.getData().getMatches() == null
+                || finishedResponse.getData().getMatches().isEmpty()) {
+            return;
+        }
+
+        Match finishedMatch = finishedResponse.getData().getMatches()
+                .get(finishedResponse.getData().getMatches().size() - 1);
+
+        // Solo nos interesa el partido que estábamos siguiendo.
+        if (!lastMatchId.equals(finishedMatch.getId())) {
+            return;
+        }
+
+        // Si ya estaba marcado como FINISHED, no hacemos nada.
+        if ("FINISHED".equals(lastStatus)) {
+            return;
+        }
+
+        lastHomeScore = finishedMatch.getScore().getFullTime().getHome();
+        lastAwayScore = finishedMatch.getScore().getFullTime().getAway();
+        lastStatus = "FINISHED";
+
+        // 🏁 Final
+        sendNotificationToAll(buildFullTimeMessage(finishedMatch));
+    }
+
     private void changeState(Match match, String currentStatus) {
 
         if (lastStatus == null || currentStatus.equals(lastStatus)) {
             return;
         }
 
-
         String previousStatus = lastStatus;
+
         lastStatus = currentStatus;
 
         // 🟡 Descanso
@@ -114,7 +157,9 @@ public class LiveMatchNotifier {
         }
 
         // 🟢 Segunda parte
-        if ("IN_PLAY".equals(currentStatus) && "PAUSED".equals(previousStatus)) {
+        if ("IN_PLAY".equals(currentStatus)
+                && "PAUSED".equals(previousStatus)) {
+
             sendNotificationToAll(buildSecondtimeMessage(match));
         }
 
@@ -133,13 +178,18 @@ public class LiveMatchNotifier {
     }
 
     private void sendNotificationToAll(String message) {
+
         telegramService.sendMessage(message, DestinationTelegramType.ALL);
-        subscriberService.notifyAllSubscribers(Constants.LIVE_MATCH_EVENT, message);
+
+        subscriberService.notifyAllSubscribers(
+                Constants.LIVE_MATCH_EVENT,
+                message);
     }
 
     // -------------------- Mensajes --------------------
 
     private String buildGoalMessage(Match match) {
+
         return String.format(
                 "⚽ ¡Gol en el partido!%n%n%s %d - %d %s",
                 match.getHomeTeam().getShortName(),
@@ -150,6 +200,7 @@ public class LiveMatchNotifier {
     }
 
     private String buildKickoffMessage(Match match) {
+
         return String.format(
                 "🔔 ¡Empieza el partido!%n%n%s vs %s",
                 match.getHomeTeam().getShortName(),
@@ -158,6 +209,7 @@ public class LiveMatchNotifier {
     }
 
     private String buildHalftimeMessage(Match match) {
+
         return String.format(
                 "🟡 Descanso%n%n%s %d - %d %s",
                 match.getHomeTeam().getShortName(),
@@ -168,6 +220,7 @@ public class LiveMatchNotifier {
     }
 
     private String buildSecondtimeMessage(Match match) {
+
         return String.format(
                 "🟢 ¡Empieza la segunda parte!%n%n%s %d - %d %s",
                 match.getHomeTeam().getShortName(),
@@ -178,6 +231,7 @@ public class LiveMatchNotifier {
     }
 
     private String buildFullTimeMessage(Match match) {
+
         return String.format(
                 "🏁 Final del partido%n%n%s %d - %d %s",
                 match.getHomeTeam().getShortName(),
@@ -187,4 +241,3 @@ public class LiveMatchNotifier {
         );
     }
 }
-
