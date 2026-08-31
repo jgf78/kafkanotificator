@@ -244,13 +244,23 @@ public class TelegramServiceImpl implements NotificationService {
 
     public void sendToAllGroups(String text) {
         for (String chatId : telegramProperties.getChatIdsGroups()) {
-            sendText(chatId, text);
+            try {
+                log.debug("Enviando mensaje a grupo Telegram chat_id {}", chatId);
+                sendText(chatId, text);
+            } catch (Exception e) {
+                log.error("Error enviando mensaje a grupo Telegram chat_id {}", chatId, e);
+            }
         }
     }
     
     public void sendToAllChannels(String text) {
         for (String chatId : telegramProperties.getChatIdsChannels()) {
-            sendText(chatId, text);
+            try {
+                log.debug("Enviando mensaje a canal Telegram chat_id {}", chatId);
+                sendText(chatId, text);
+            } catch (Exception e) {
+                log.error("Error enviando mensaje a canal Telegram chat_id {}", chatId, e);
+            }
         }
     }
 
