@@ -88,13 +88,6 @@ public class LiveMatchNotifier {
         // ⚽ GOL
         if (!home.equals(lastHomeScore) || !away.equals(lastAwayScore)) {
 
-            /*
-             * Actualizamos el marcador ANTES de enviar la notificación.
-             *
-             * Si Telegram, Kafka u otro servicio lanza una excepción,
-             * el mismo gol no volverá a detectarse en la siguiente
-             * ejecución del scheduler.
-             */
             lastHomeScore = home;
             lastAwayScore = away;
 
@@ -111,14 +104,7 @@ public class LiveMatchNotifier {
             return;
         }
 
-        /*
-         * IMPORTANTE:
-         * Actualizamos el estado ANTES de enviar cualquier notificación.
-         *
-         * Si el envío falla con una excepción (por ejemplo,
-         * "chat not found"), el siguiente ciclo no volverá a
-         * detectar el mismo cambio de estado.
-         */
+
         String previousStatus = lastStatus;
         lastStatus = currentStatus;
 
