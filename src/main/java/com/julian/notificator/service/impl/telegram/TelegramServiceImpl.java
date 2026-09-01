@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
@@ -452,12 +453,10 @@ public class TelegramServiceImpl implements NotificationService {
                 return telegramProperties.getChatIdsGroups();
 
             case ALL:
-                return new ArrayList<>(
-                    new HashSet<>() {{
-                        addAll(telegramProperties.getChatIdsChannels());
-                        addAll(telegramProperties.getChatIdsGroups());
-                    }}
-                );
+                Set<String> chatIds = new HashSet<>();
+                chatIds.addAll(telegramProperties.getChatIdsChannels());
+                chatIds.addAll(telegramProperties.getChatIdsGroups());
+                return new ArrayList<>(chatIds);
 
             case BOT:
             default:
