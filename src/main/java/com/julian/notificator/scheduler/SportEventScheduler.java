@@ -26,8 +26,8 @@ public class SportEventScheduler {
 
     private final SportEventService sportEventService;
 
-    //@Scheduled(cron = "0 0 0,12 * * *")
-    @Scheduled(cron = "0 */5 * * * *")
+    @Scheduled(cron = "0 0 0,12 * * *")
+    //@Scheduled(cron = "0 */5 * * * *")
     public void refreshSportEvents() {
 
         log.info("Starting sport events refresh...");
