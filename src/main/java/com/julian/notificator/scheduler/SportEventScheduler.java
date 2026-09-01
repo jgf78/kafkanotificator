@@ -59,46 +59,69 @@ public class SportEventScheduler {
 
         List<SportEvent> events = new ArrayList<>();
 
-        Document doc = Jsoup.connect(URL).get();
+        Document doc = Jsoup.connect(URL)
+                .timeout(15000)
+                .get();
 
-        // La tabla de eventos es #tbl
         Elements rows = doc.select("#tbl tbody tr:not(.sep)");
 
         for (Element row : rows) {
 
             Elements cells = row.select("> td");
 
-            // Una fila válida debe tener:
-            // 0 = Día
-            // 1 = Hora
-            // 2 = Deporte
-            // 3 = Competición
-            // 4 = Partido
-            // 5 = Enlaces
             if (cells.size() < 6) {
                 continue;
             }
 
-            SportEvent event = SportEvent.builder()
-                    .eventTime(cells.get(1).text())
-                    .sport(cells.get(2).text())
-                    .competition(cells.get(3).text())
-                    .matchName(cells.get(4).text())
-                    .build();
+            String eventTime = cells.get(1).text().trim();
+            String sport = cells.get(2).text().trim();
+            String competition = cells.get(3).text().trim();
+            String matchName = cells.get(4).text().trim();
 
+            // Buscar si ya tenemos este evento
+            SportEvent event = events.stream()
+                    .filter(e ->
+                            e.getEventTime().equals(eventTime)
+                            && e.getMatchName().equals(matchName)
+                    )
+                    .findFirst()
+                    .orElse(null);
+
+            // Si no existe, lo creamos
+            if (event == null) {
+
+                event = SportEvent.builder()
+                        .eventTime(eventTime)
+                        .sport(sport)
+                        .competition(competition)
+                        .matchName(matchName)
+                        .build();
+
+                events.add(event);
+            }
+
+            // Añadir enlaces de esta fila
             List<String> links = cells.get(5)
-                    .select("a[href^=acestream\\:\\/\\/]")
+                    .select("a[href]")
                     .stream()
-                    .map(a -> a.attr("href"))
+                    .map(a -> a.attr("href").trim())
+                    .filter(url -> !url.isEmpty())
+                    .distinct()
                     .toList();
 
-            links.forEach(url -> {
-                event.getLinks().add(
-                        buildLink(event, url)
-                );
-            });
+            for (String url : links) {
 
-            events.add(event);
+                boolean exists = event.getLinks().stream()
+                        .anyMatch(link ->
+                                link.getStreamUrl().equals(url)
+                        );
+
+                if (!exists) {
+                    event.getLinks().add(
+                            buildLink(event, url)
+                    );
+                }
+            }
         }
 
         return events;
