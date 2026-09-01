@@ -56,12 +56,12 @@ public class TrackingServiceImpl implements TrackingService{
 
             HttpEntity<String> entity = new HttpEntity<>(headers);
             
-            String url = UriComponentsBuilder
-                    .fromHttpUrl(baseUrl)
-                    .queryParam("track", trackCode)
-                    .build()
-                    .toUriString();
-
+           String url = UriComponentsBuilder
+                .fromUriString(baseUrl)
+                .queryParam("track", trackCode)
+                .build()
+                .encode()
+                .toUriString();
 
             ResponseEntity<String> response =
                     restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
