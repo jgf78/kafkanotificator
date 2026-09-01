@@ -26,16 +26,32 @@ public class SportEventScheduler {
 
     private final SportEventService sportEventService;
 
-    @Scheduled(cron = "0 0 0,12 * * *")
-    //@Scheduled(cron = "0 */5 * * * *")
+    //@Scheduled(cron = "0 0 0,12 * * *")
+    @Scheduled(cron = "0 */5 * * * *")
     public void refreshSportEvents() {
+
         log.info("Starting sport events refresh...");
+
         try {
+
             List<SportEvent> events = scrapeEvents();
+
+            log.info("Eventos encontrados: {}", events.size());
+
+            events.forEach(event ->
+                log.info("Evento: [{}] | enlaces: {}",
+                        event.getMatchName(),
+                        event.getLinks().size())
+            );
+
             sportEventService.refreshHashes(events);
+
             log.info("Sport events refreshed. Total events: {}", events.size());
+
         } catch (Exception e) {
+
             log.error("Error refreshing sport events", e);
+
         }
     }
 
