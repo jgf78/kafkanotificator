@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.julian.notificator.model.DestinationType;
 import com.julian.notificator.model.MessageRequest;
+import com.julian.notificator.model.telegram.DestinationTelegramType;
 import com.julian.notificator.model.telegram.TelegramPollRequest;
 import com.julian.notificator.service.KafkaProducerService;
 import com.julian.notificator.service.impl.alexa.AlexaServiceImpl;
@@ -48,7 +49,7 @@ public class MessageController {
         kafkaProducerService.sendMessage(request);
         return "Mensaje enviado a " + request.getDestination() + ": " + request.getMessage();
     }
-    
+
     @Operation(summary = "Send Pin Message", operationId = "sendPinMessage", description = "Send Pin Message", tags = {
             "Messages API", })
     @PostMapping("/sendPin")
@@ -56,9 +57,8 @@ public class MessageController {
         kafkaProducerService.sendPinMessage(messageRequest);
         return "Mensaje enviado y anclado: " + messageRequest.getMessage();
     }
-    
-    @Operation(summary = "Send Poll", operationId = "sendPoll", description = "Send Poll", tags = {
-            "Messages API", })
+
+    @Operation(summary = "Send Poll", operationId = "sendPoll", description = "Send Poll", tags = { "Messages API", })
     @PostMapping("/sendPoll")
     public String sendPoll(@RequestBody TelegramPollRequest request) {
         MessageRequest messageRequest = new MessageRequest();
@@ -68,24 +68,40 @@ public class MessageController {
     }
 
     @Operation(summary = "Send message with document", description = "Send message with document", tags = {
-            "Messages API", })
+            "Messages API" })
     @PostMapping("/sendFile")
     public String sendFile(
+
             @RequestParam("message") String message,
+
             @RequestParam(value = "file", required = false) MultipartFile file,
+
             @RequestParam(value = "filename", required = false) String filename,
-            @Parameter(
-                    description = "Destination of the message. Allowed values: DISCORD, TELEGRAM, MAIL",
-                    required = true,
-                    schema = @Schema(type = "string", allowableValues = {"DISCORD", "TELEGRAM", "MAIL"})
-                )
-            @RequestParam(value = "destination", required = true) String destinationStr) {
+
+            @Parameter(description = "Destination of the message. Allowed values: DISCORD, TELEGRAM, MAIL", required = true, schema = @Schema(type = "string", allowableValues = {
+                    "DISCORD", "TELEGRAM",
+                    "MAIL" })) @RequestParam(value = "destination", required = true) String destinationStr,
+
+            @Parameter(description = "Telegram destination. Allowed values: BOT, GROUPS, CHANNELS, ALL", required = false, schema = @Schema(type = "string", allowableValues = {
+                    "BOT", "GROUPS", "CHANNELS",
+                    "ALL" })) @RequestParam(value = "destinationTelegram", required = false) String destinationTelegramStr) {
+
         try {
+
             DestinationType destination = DestinationType.valueOf(destinationStr.toUpperCase());
-            kafkaProducerService.sendFile(message, file, filename, destination);
+
+            DestinationTelegramType destinationTelegram = destinationTelegramStr != null
+                    ? DestinationTelegramType.valueOf(destinationTelegramStr.toUpperCase())
+                    : DestinationTelegramType.ALL;
+
+            kafkaProducerService.sendFile(message, file, filename, destination, destinationTelegram);
+
             return "Mensaje enviado con éxito: " + message;
+
         } catch (Exception e) {
+
             log.error("Error enviando mensaje: ", e);
+
             return "Error enviando mensaje: " + e.getMessage();
         }
     }

@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.julian.notificator.model.DestinationType;
 import com.julian.notificator.model.MessagePayload;
 import com.julian.notificator.model.MessageRequest;
+import com.julian.notificator.model.telegram.DestinationTelegramType;
 import com.julian.notificator.service.KafkaProducerService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -64,11 +65,13 @@ public class KafkaProducerServiceImpl implements KafkaProducerService {
     }
 
     @Override
-    public void sendFile(String message, MultipartFile file, String filename, DestinationType destination) {
+    public void sendFile(String message, MultipartFile file, String filename, DestinationType destination,
+            DestinationTelegramType destinationTelegram) {
         try {
             MessageRequest messageRequest = new MessageRequest();
             messageRequest.setMessage(message);
             messageRequest.setDestination(destination);
+            messageRequest.setDestinationTelegram(destinationTelegram);
             MessagePayload messagePayload = new MessagePayload();
             messageRequest.setMessagePayload(messagePayload);
             
