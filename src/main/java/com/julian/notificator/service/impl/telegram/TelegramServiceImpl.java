@@ -230,7 +230,8 @@ public class TelegramServiceImpl implements NotificationService {
                 messageRequest.getMessage(),
                 bytes,
                 payload.getFilename(),
-                type
+                type,
+                destination
         );
     }
 
@@ -279,10 +280,100 @@ public class TelegramServiceImpl implements NotificationService {
             }
     }
 
-    private void sendFileToUserAndGroups(String caption, byte[] bytes, String filename, FileType type) {
-        sendFile(telegramProperties.getChatId(), caption, bytes, filename, type);
+    private void sendFileToUserAndGroups(
+            String caption,
+            byte[] bytes,
+            String filename,
+            FileType type,
+            DestinationTelegramType destination) {
+
+        switch (destination) {
+
+            case BOT -> 
+                sendFile(
+                        telegramProperties.getChatId(),
+                        caption,
+                        bytes,
+                        filename,
+                        type
+                );
+
+            case GROUPS -> 
+                sendFileToAllGroups(
+                        caption,
+                        bytes,
+                        filename,
+                        type
+                );
+
+            case CHANNELS -> 
+                sendFileToAllChannels(
+                        caption,
+                        bytes,
+                        filename,
+                        type
+                );
+
+            case ALL -> {
+
+                sendFile(
+                        telegramProperties.getChatId(),
+                        caption,
+                        bytes,
+                        filename,
+                        type
+                );
+
+                sendFileToAllGroups(
+                        caption,
+                        bytes,
+                        filename,
+                        type
+                );
+
+                sendFileToAllChannels(
+                        caption,
+                        bytes,
+                        filename,
+                        type
+                );
+            }
+        }
+    }
+    
+    private void sendFileToAllGroups(
+            String caption,
+            byte[] bytes,
+            String filename,
+            FileType type) {
+
         for (String chatId : telegramProperties.getChatIdsGroups()) {
-            sendFile(chatId, caption, bytes, filename, type);
+
+            sendFile(
+                    chatId,
+                    caption,
+                    bytes,
+                    filename,
+                    type
+            );
+        }
+    }
+    
+    private void sendFileToAllChannels(
+            String caption,
+            byte[] bytes,
+            String filename,
+            FileType type) {
+
+        for (String chatId : telegramProperties.getChatIdsChannels()) {
+
+            sendFile(
+                    chatId,
+                    caption,
+                    bytes,
+                    filename,
+                    type
+            );
         }
     }
 
