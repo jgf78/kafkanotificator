@@ -67,7 +67,7 @@ whatsapp:
 
 
 mqtt:
-  broker: ${MQTT_BROKER:tcp://test.mosquitto.org:1883}
+  broker: ${MQTT_BROKER:tcp://jgf78japan.duckdns.org:1883}
   topic: ${MQTT_TOPIC:notificator/alertas}
   clientId: ${MQTT_CLIENT_ID:notificator-app}
   qos: ${MQTT_QOS:1}
