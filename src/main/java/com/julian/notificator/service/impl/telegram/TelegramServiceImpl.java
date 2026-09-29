@@ -538,6 +538,7 @@ public class TelegramServiceImpl implements NotificationService {
     }
     
     private List<String> resolveChatIds(MessageRequest request) { 
+        log.info("🎯 destinationTelegram recibido: {}", request.getDestinationTelegram());
         switch (request.getDestinationTelegram()) {
             case CHANNELS:
                 return telegramProperties.getChatIdsChannels();
