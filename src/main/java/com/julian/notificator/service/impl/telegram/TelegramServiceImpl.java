@@ -65,7 +65,9 @@ public class TelegramServiceImpl implements NotificationService {
     
     @PostConstruct
     public void init() {
-        log.info("Grupos Telegram cargados: {}", telegramProperties.getChatIdsGroups());
+        log.info("📱 Telegram BOT: {}", telegramProperties.getChatId());
+        log.info("👥 Telegram GROUPS: {}", telegramProperties.getChatIdsGroups());
+        log.info("📢 Telegram CHANNELS: {}", telegramProperties.getChatIdsChannels());
     }
 
 
@@ -539,19 +541,18 @@ public class TelegramServiceImpl implements NotificationService {
         switch (request.getDestinationTelegram()) {
             case CHANNELS:
                 return telegramProperties.getChatIdsChannels();
-
             case GROUPS:
                 return telegramProperties.getChatIdsGroups();
-
             case ALL:
                 Set<String> chatIds = new HashSet<>();
                 chatIds.addAll(telegramProperties.getChatIdsChannels());
                 chatIds.addAll(telegramProperties.getChatIdsGroups());
+                chatIds.addAll(List.of(telegramProperties.getChatId()));
                 return new ArrayList<>(chatIds);
-
             case BOT:
+                return List.of(telegramProperties.getChatId());
             default:
-                return telegramProperties.getChatIdsGroups(); 
+                return List.of();
         }
     }
 }
