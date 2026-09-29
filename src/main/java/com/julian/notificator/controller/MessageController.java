@@ -13,7 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.julian.notificator.model.DestinationType;
 import com.julian.notificator.model.MessageRequest;
 import com.julian.notificator.model.telegram.DestinationTelegramType;
-import com.julian.notificator.model.telegram.TelegramPollRequest;
 import com.julian.notificator.service.KafkaProducerService;
 import com.julian.notificator.service.impl.alexa.AlexaServiceImpl;
 
