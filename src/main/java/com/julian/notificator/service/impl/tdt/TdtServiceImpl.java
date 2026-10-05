@@ -52,7 +52,7 @@ public class TdtServiceImpl implements TdtService {
         combinedChannels.add("M+ Vamos 3.es");
         combinedChannels.add("RMTV.TV");
         combinedChannels.add("TDP.TV");
-        combinedChannels.add("GOL.es");
+        combinedChannels.add("Replay.es");
         combinedChannels.add("Eurosport 1.es");
         combinedChannels.add("Eurosport 2.es");
 
