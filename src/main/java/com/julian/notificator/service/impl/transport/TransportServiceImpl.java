@@ -27,8 +27,10 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class TransportServiceImpl implements TransportService {
 
+//    private static final String OVERPASS_URL =
+//            "https://overpass-api.de/api/interpreter";
     private static final String OVERPASS_URL =
-            "https://overpass-api.de/api/interpreter";
+            "https://maps.mail.ru/osm/tools/overpass/api/interpreter";
 
     private static final String USER_AGENT =
             "Notificator/1.0 (contacto: julian.rss.android@gmail.com)";
