@@ -30,7 +30,6 @@ public class TransportServiceImpl implements TransportService {
     }
 
     @Override
-    //@Cacheable(value = "transportStops", key = "#latitude + '-' + #longitude + '-' + #radius")
     public List<TelegramStop> getStopsNearby(String latitude, String longitude, int radius) {
         
         log.info("Buscando transportes cercanos a latitud: {}, longitud:{} metros", latitude, longitude);
