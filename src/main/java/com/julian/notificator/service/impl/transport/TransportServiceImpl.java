@@ -37,6 +37,7 @@ public class TransportServiceImpl implements TransportService {
     private final ObjectMapper objectMapper;
 
     public TransportServiceImpl(
+            @org.springframework.beans.factory.annotation.Qualifier("overpassRestTemplate")
             RestTemplate restTemplate,
             ObjectMapper objectMapper) {
         this.restTemplate = restTemplate;

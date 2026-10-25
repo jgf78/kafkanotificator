@@ -1,3 +1,4 @@
+
 package com.julian.notificator.config;
 
 import org.springframework.context.annotation.Bean;
@@ -8,12 +9,25 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 public class RestTemplateConfig {
 
-    @Bean
-    RestTemplate restTemplate() {
-        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+    @Bean("overpassRestTemplate")
+    RestTemplate overpassRestTemplate() {
+        SimpleClientHttpRequestFactory factory =
+                new SimpleClientHttpRequestFactory();
+
         factory.setConnectTimeout(5000);
         factory.setReadTimeout(40000);
+
         return new RestTemplate(factory);
     }
 
+    @Bean("backendRestTemplate")
+    RestTemplate backendRestTemplate() {
+        SimpleClientHttpRequestFactory factory =
+                new SimpleClientHttpRequestFactory();
+
+        factory.setConnectTimeout(5000);
+        factory.setReadTimeout(50000);
+
+        return new RestTemplate(factory);
+    }
 }
