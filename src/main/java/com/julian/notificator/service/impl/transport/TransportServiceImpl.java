@@ -2,10 +2,13 @@ package com.julian.notificator.service.impl.transport;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Collections;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -25,6 +28,9 @@ public class TransportServiceImpl implements TransportService {
 
     private static final String OVERPASS_URL =
             "https://overpass-api.de/api/interpreter";
+
+    private static final String USER_AGENT =
+            "Notificator/1.0 (contacto: julian.rss.android@gmail.com)";
 
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
@@ -65,6 +71,11 @@ public class TransportServiceImpl implements TransportService {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(
                     MediaType.APPLICATION_FORM_URLENCODED);
+            headers.setAccept(
+                    Collections.singletonList(MediaType.APPLICATION_JSON));
+            headers.set(
+                    HttpHeaders.USER_AGENT,
+                    USER_AGENT);
 
             MultiValueMap<String, String> formData =
                     new LinkedMultiValueMap<>();
@@ -73,10 +84,20 @@ public class TransportServiceImpl implements TransportService {
             HttpEntity<MultiValueMap<String, String>> request =
                     new HttpEntity<>(formData, headers);
 
-            String response = restTemplate.postForObject(
+            ResponseEntity<String> httpResponse = restTemplate.exchange(
                     OVERPASS_URL,
+                    HttpMethod.POST,
                     request,
                     String.class);
+
+            if (!httpResponse.getStatusCode().is2xxSuccessful()) {
+                log.warn(
+                        "Overpass ha devuelto el estado HTTP: {}",
+                        httpResponse.getStatusCode());
+                return List.of();
+            }
+
+            String response = httpResponse.getBody();
 
             if (response == null || response.isBlank()) {
                 log.warn("Overpass ha devuelto una respuesta vacía");
@@ -132,8 +153,8 @@ public class TransportServiceImpl implements TransportService {
     public String buildTransportMessage(List<TelegramStop> stops) {
 
         StringBuilder sb = new StringBuilder();
-        sb.append("🚌🚆 *Transportes cercanos*\n");
-        sb.append("━━━━━━━━━━━━━━━━━━\n\n");
+        sb.append("🚌🚆 *Transportes cercanos*\\n");
+        sb.append("━━━━━━━━━━━━━━━━━━\\n\\n");
 
         List<TelegramStop> metroStations = stops.stream()
                 .filter(s -> s.type().equalsIgnoreCase("subway_entrance")
@@ -148,20 +169,20 @@ public class TransportServiceImpl implements TransportService {
         for (TelegramStop s : metroStations) {
             sb.append("🚆 *")
                     .append(UtilString.escapeMarkdown(s.displayName()))
-                    .append("*\n");
+                    .append("*\\n");
             sb.append("📍 Lat: ").append(s.lat())
-                    .append(", Lon: ").append(s.lon()).append("\n");
+                    .append(", Lon: ").append(s.lon()).append("\\n");
             sb.append("♿ Accesible: ")
                     .append(getAccessibleText(s.accessibility()))
-                    .append("\n");
+                    .append("\\n");
 
             if (s.ref() != null) {
-                sb.append("🔖 Ref: ").append(s.ref()).append("\n");
+                sb.append("🔖 Ref: ").append(s.ref()).append("\\n");
             }
             if (s.website() != null) {
-                sb.append("🌐 ").append(s.website()).append("\n");
+                sb.append("🌐 ").append(s.website()).append("\\n");
             }
-            sb.append("\n");
+            sb.append("\\n");
         }
 
         int busesToShow = Math.min(busStops.size(), 5);
@@ -171,26 +192,26 @@ public class TransportServiceImpl implements TransportService {
 
             sb.append("🚌 *")
                     .append(UtilString.escapeMarkdown(s.displayName()))
-                    .append("*\n");
+                    .append("*\\n");
             sb.append("📍 Lat: ").append(s.lat())
-                    .append(", Lon: ").append(s.lon()).append("\n");
+                    .append(", Lon: ").append(s.lon()).append("\\n");
             sb.append("♿ Accesible: ")
                     .append(getAccessibleText(s.accessibility()))
-                    .append("\n");
+                    .append("\\n");
 
             if (s.ref() != null) {
-                sb.append("🔖 Ref: ").append(s.ref()).append("\n");
+                sb.append("🔖 Ref: ").append(s.ref()).append("\\n");
             }
             if (s.website() != null) {
-                sb.append("🌐 ").append(s.website()).append("\n");
+                sb.append("🌐 ").append(s.website()).append("\\n");
             }
-            sb.append("\n");
+            sb.append("\\n");
         }
 
         if (busStops.size() > 5) {
             sb.append("…y ")
                     .append(busStops.size() - 5)
-                    .append(" paradas de bus más cercanas\n");
+                    .append(" paradas de bus más cercanas\\n");
         }
 
         return sb.toString();
