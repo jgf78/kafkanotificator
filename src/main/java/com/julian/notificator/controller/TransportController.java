@@ -42,7 +42,7 @@ public class TransportController {
             @RequestParam String latitude,
             @RequestParam String longitude) {
 
-        List<TelegramStop> stops = transportService.getStopsNearby(latitude, longitude, 250);
+        List<TelegramStop> stops = transportService.getStopsNearby(latitude, longitude, 500);
         return ResponseEntity.ok(stops);
     }
 }
