@@ -6,6 +6,7 @@ import java.util.function.BiConsumer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -37,22 +38,16 @@ import com.julian.notificator.service.TransportService;
 import com.julian.notificator.service.WeatherService;
 
 import jakarta.annotation.PostConstruct;
-import lombok.RequiredArgsConstructor;
 
 @Component
-@RequiredArgsConstructor
 public class TelegramBot extends TelegramLongPollingBot {
 
-    private static final Logger logger = LoggerFactory.getLogger(TelegramBot.class);
+    private static final Logger logger =
+            LoggerFactory.getLogger(TelegramBot.class);
 
-    @Value("${telegram.bot-token}")
-    private String botToken;
-
-    @Value("${telegram.bot-username}")
-    private String botUsername;
-
-    @Value("${telegram.backend-url}")
-    private String backendUrl;
+    private final String botToken;
+    private final String botUsername;
+    private final String backendUrl;
 
     private final RestTemplate restTemplate;
     private final FootballDataService footballDataService;
@@ -67,6 +62,38 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     private Map<String, BiConsumer<Long, String>> commandHandlers;
 
+    public TelegramBot(
+            @Value("${telegram.bot-token}") String botToken,
+            @Value("${telegram.bot-username}") String botUsername,
+            @Value("${telegram.backend-url}") String backendUrl,
+            @Qualifier("backendRestTemplate") RestTemplate restTemplate,
+            FootballDataService footballDataService,
+            CinemaDataService cinemaDataService,
+            WeatherService weatherService,
+            SeriesService seriesService,
+            TdtService tdtService,
+            LotteryService lotteryService,
+            TrackingService trackingService,
+            TransportService transportService,
+            CryptoService cryptoService) {
+
+        super();
+
+        this.botToken = botToken;
+        this.botUsername = botUsername;
+        this.backendUrl = backendUrl;
+        this.restTemplate = restTemplate;
+        this.footballDataService = footballDataService;
+        this.cinemaDataService = cinemaDataService;
+        this.weatherService = weatherService;
+        this.seriesService = seriesService;
+        this.tdtService = tdtService;
+        this.lotteryService = lotteryService;
+        this.trackingService = trackingService;
+        this.transportService = transportService;
+        this.cryptoService = cryptoService;
+    }
+
     // =======================
     // INIT COMMANDS
     // =======================
@@ -78,7 +105,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 Map.entry("/titulares", (chatId, text) -> handleTitulares(chatId)),
                 Map.entry("/realmadrid", (chatId, text) -> handleRealMadrid(chatId)),
                 Map.entry("/cartelera", (chatId, text) -> handleCartelera(chatId)),
-                Map.entry("/crypto", (chatId, text) -> handleCrypto(chatId)), 
+                Map.entry("/crypto", (chatId, text) -> handleCrypto(chatId)),
                 Map.entry("/tiempo", this::handleTiempo),
                 Map.entry("/track", this::handleTrack),
                 Map.entry("/series", this::handleSeries),
@@ -110,20 +137,27 @@ public class TelegramBot extends TelegramLongPollingBot {
             double lon = update.getMessage().getLocation().getLongitude();
 
             try {
-                String url = backendUrl + "/api/transports/nearby?latitude=" + lat + "&longitude=" + lon;
+                String url = backendUrl
+                        + "/api/transports/nearby?latitude="
+                        + lat
+                        + "&longitude="
+                        + lon;
 
-                TelegramStop[] stops = restTemplate.postForObject(url, null, TelegramStop[].class);
+                TelegramStop[] stops = restTemplate.postForObject(
+                        url, null, TelegramStop[].class);
 
                 if (stops == null || stops.length == 0) {
                     sendText(chatId, "🚫 No se encontraron transportes cerca.");
                 } else {
-                    String message = transportService.buildTransportMessage(List.of(stops));
+                    String message =
+                            transportService.buildTransportMessage(List.of(stops));
                     sendText(chatId, message);
                 }
 
             } catch (Exception e) {
                 logger.error("Error obteniendo transportes", e);
-                sendText(chatId, "❌ Error al consultar transportes cercanos.");
+                sendText(chatId,
+                        "❌ Error al consultar transportes cercanos.");
             }
 
             return;
@@ -134,17 +168,17 @@ public class TelegramBot extends TelegramLongPollingBot {
         // =============================
         if (update.getMessage().hasText()) {
             String text = update.getMessage().getText().trim();
-            String command = text.split(" ")[0].split("@")[0].toLowerCase(); // Ignora la mención al bot
+            String command =
+                    text.split(" ")[0].split("@")[0].toLowerCase();
 
             BiConsumer<Long, String> handler = commandHandlers.get(command);
 
             if (handler != null) {
                 handler.accept(chatId, text);
-            }
-            // Comando /transportes sin ubicación
-            else if (command.equals("/transportes")) {
-                sendText(chatId, "📍 Para buscar transportes cercanos necesitas activar tu ubicación "
-                        + "y luego usar /transportes en el chat.");
+            } else if (command.equals("/transportes")) {
+                sendText(chatId,
+                        "📍 Para buscar transportes cercanos necesitas activar tu ubicación "
+                                + "y luego usar /transportes en el chat.");
             }
         }
     }
@@ -158,8 +192,12 @@ public class TelegramBot extends TelegramLongPollingBot {
         sendText(chatId, "📰 Consultando titulares de prensa...");
 
         try {
-            String headlines = restTemplate.getForObject(backendUrl + "/api/news/headlines", String.class);
-            sendText(chatId, headlines != null ? headlines : "📰 No se han podido obtener los titulares.");
+            String headlines = restTemplate.getForObject(
+                    backendUrl + "/api/news/headlines", String.class);
+
+            sendText(chatId, headlines != null
+                    ? headlines
+                    : "📰 No se han podido obtener los titulares.");
         } catch (Exception e) {
             logger.error("Error en comando /titulares", e);
             sendText(chatId, "❌ Error al obtener los titulares.");
@@ -186,7 +224,8 @@ public class TelegramBot extends TelegramLongPollingBot {
             List<TmdbMovie> movies = cinemaDataService.getTop10NowPlaying();
 
             if (movies.isEmpty()) {
-                sendText(chatId, "🎬 No se ha podido obtener la cartelera en este momento.");
+                sendText(chatId,
+                        "🎬 No se ha podido obtener la cartelera en este momento.");
                 return;
             }
 
@@ -197,7 +236,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             sendText(chatId, "❌ Error al obtener la cartelera de cine.");
         }
     }
-    
+
     private void handleCrypto(Long chatId) {
 
         sendText(chatId, "🚀 Consultando Top 5 crypto actual...");
@@ -206,7 +245,8 @@ public class TelegramBot extends TelegramLongPollingBot {
             List<CryptoRecord> cryptos = cryptoService.getTop5Cryptos();
 
             if (cryptos.isEmpty()) {
-                sendText(chatId, "🚀 No se ha podido obtener el top 5 crypto en este momento.");
+                sendText(chatId,
+                        "🚀 No se ha podido obtener el top 5 crypto en este momento.");
                 return;
             }
 
@@ -216,7 +256,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             logger.error("Error en comando /crypto", e);
             sendText(chatId, "❌ Error al obtener el top 5 crypto.");
         }
-    }    
+    }
 
     private void handleTdt(Long chatId) {
 
@@ -226,7 +266,8 @@ public class TelegramBot extends TelegramLongPollingBot {
             List<TdtProgramme> tvNow = tdtService.getTvNow();
 
             if (tvNow.isEmpty()) {
-                sendText(chatId, "📺 No se ha podido obtener la guia de TV en este momento.");
+                sendText(chatId,
+                        "📺 No se ha podido obtener la guia de TV en este momento.");
                 return;
             }
 
@@ -246,7 +287,8 @@ public class TelegramBot extends TelegramLongPollingBot {
             LotteryResponse latestResults = lotteryService.getLatestResults();
 
             if (latestResults == null) {
-                sendText(chatId, "💰 No se han podido obtener los resultados de las loterías en este momento.");
+                sendText(chatId,
+                        "💰 No se han podido obtener los resultados de las loterías en este momento.");
                 return;
             }
 
@@ -272,8 +314,12 @@ public class TelegramBot extends TelegramLongPollingBot {
 
             WeeklyWeather weather = weatherService.getWeeklyForecast(city);
 
-            if (weather == null || weather.getDays() == null || weather.getDays().isEmpty()) {
-                sendText(chatId, "❌ No se ha podido obtener la previsión para *" + city + "*");
+            if (weather == null
+                    || weather.getDays() == null
+                    || weather.getDays().isEmpty()) {
+                sendText(chatId,
+                        "❌ No se ha podido obtener la previsión para *"
+                                + city + "*");
                 return;
             }
 
@@ -284,7 +330,8 @@ public class TelegramBot extends TelegramLongPollingBot {
             sendText(chatId, "❌ No he encontrado la ciudad indicada 😕");
         } catch (Exception e) {
             logger.error("Error en comando /tiempo", e);
-            sendText(chatId, "❌ Error al obtener el tiempo. Inténtalo más tarde.");
+            sendText(chatId,
+                    "❌ Error al obtener el tiempo. Inténtalo más tarde.");
         }
     }
 
@@ -296,15 +343,20 @@ public class TelegramBot extends TelegramLongPollingBot {
             String platform = text.replaceFirst("/series(@\\w+)?", "").trim();
 
             if (platform.isEmpty()) {
-                sendText(chatId, "❌ Uso correcto: /series Netflix, Hbo, Disney o Prime");
+                sendText(chatId,
+                        "❌ Uso correcto: /series Netflix, Hbo, Disney o Prime");
                 return;
             }
 
-            StreamingPlatform platformMatched = StreamingPlatform.from(platform.trim().toLowerCase());
-            List<TopSeries> series = seriesService.getTopByPlatform(platformMatched);
+            StreamingPlatform platformMatched =
+                    StreamingPlatform.from(platform.trim().toLowerCase());
+
+            List<TopSeries> series =
+                    seriesService.getTopByPlatform(platformMatched);
 
             if (series.isEmpty()) {
-                sendText(chatId, "🎬 No se ha podido obtener el top de las series en este momento.");
+                sendText(chatId,
+                        "🎬 No se ha podido obtener el top de las series en este momento.");
                 return;
             }
 
@@ -314,7 +366,8 @@ public class TelegramBot extends TelegramLongPollingBot {
             sendText(chatId, "❌ No he encontrado la plataforma indicada 😕");
         } catch (Exception e) {
             logger.error("Error en comando /series", e);
-            sendText(chatId, "❌ Error al obtener las series. Inténtalo más tarde.");
+            sendText(chatId,
+                    "❌ Error al obtener las series. Inténtalo más tarde.");
         }
     }
 
@@ -326,24 +379,29 @@ public class TelegramBot extends TelegramLongPollingBot {
             String numOrder = text.replaceFirst("/track(@\\w+)?", "").trim();
 
             if (numOrder.isEmpty()) {
-                sendText(chatId, "❌ Uso correcto: /track número de seguimiento");
+                sendText(chatId,
+                        "❌ Uso correcto: /track número de seguimiento");
                 return;
             }
 
             TrackingInfo trackingInfo = trackingService.getTracking(numOrder);
 
             if (trackingInfo == null) {
-                sendText(chatId, "📦 No hemos encontrado información para ese número de seguimiento.");
+                sendText(chatId,
+                        "📦 No hemos encontrado información para ese número de seguimiento.");
                 return;
             }
 
-            sendText(chatId, trackingService.buildTrackingMessage(trackingInfo));
+            sendText(chatId,
+                    trackingService.buildTrackingMessage(trackingInfo));
 
         } catch (IllegalArgumentException e) {
-            sendText(chatId, "❌ No he encontrado el número de seguimiento indicado 😕");
+            sendText(chatId,
+                    "❌ No he encontrado el número de seguimiento indicado 😕");
         } catch (Exception e) {
             logger.error("Error en comando /track", e);
-            sendText(chatId, "❌ Error al obtener el número de seguimiento. Inténtalo más tarde.");
+            sendText(chatId,
+                    "❌ Error al obtener el número de seguimiento. Inténtalo más tarde.");
         }
     }
 
