@@ -30,7 +30,7 @@ public class TransportServiceImpl implements TransportService {
 //    private static final String OVERPASS_URL =
 //            "https://overpass-api.de/api/interpreter";
     private static final String OVERPASS_URL =
-            "https://maps.mail.ru/osm/tools/overpass/api/interpreter";
+            "https://api.overpass.ch/v1/ovp_bd8CFMMsFyB6DxnjZbsY6CfFs7Fs6feH/interpreter";
 
     private static final String USER_AGENT =
             "Notificator/1.0 (contacto: julian.rss.android@gmail.com)";
