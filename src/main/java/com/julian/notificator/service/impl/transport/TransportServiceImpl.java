@@ -47,6 +47,8 @@ public class TransportServiceImpl implements TransportService {
                 """, radius, latitude, longitude,
                      radius, latitude, longitude,
                      radius, latitude, longitude);
+            
+            log.info("Consulta transportes: {}",query);
 
             String response = restTemplate.postForObject(
                     OVERPASS_URL,
