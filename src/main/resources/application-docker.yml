@@ -45,7 +45,7 @@ telegram:
 
   chat-ids-groups:
     - ${TELEGRAM_ID_GROUP}
-    - ${TELEGRAM_ID_GROUP_2}
+    #- ${TELEGRAM_ID_GROUP_2}
 
   bot-token: ${TELEGRAM_BOT_TOKEN}
 

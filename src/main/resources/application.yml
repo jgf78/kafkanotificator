@@ -100,7 +100,7 @@ telegram:
   
   chat-ids-groups:
     - ${TELEGRAM_ID_GROUP}
-    - ${TELEGRAM_ID_GROUP_2}
+    #- ${TELEGRAM_ID_GROUP_2}
 
   chat-ids-channels:
     - ${TELEGRAM_ID_CHANNEL}
