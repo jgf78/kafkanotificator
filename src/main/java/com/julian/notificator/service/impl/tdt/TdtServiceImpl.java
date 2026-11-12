@@ -42,6 +42,7 @@ public class TdtServiceImpl implements TdtService {
         combinedChannels.add("Cuatro.TV");
         combinedChannels.add("Telecinco.TV");
         combinedChannels.add("La Sexta.es");
+        combinedChannels.add("La Séptima.es");
         combinedChannels.add("Telemadrid.TV");
         combinedChannels.add("LaOtra.TV");
         combinedChannels.add("Movistar Plus.es");
