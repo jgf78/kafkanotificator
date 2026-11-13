@@ -1,8 +1,10 @@
+
 package com.julian.notificator.scheduler;
 
 import java.net.URL;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -24,12 +26,15 @@ import com.rometools.rome.io.XmlReader;
 @Component
 public class VideoGameNewsRss {
 
+    private static final DateTimeFormatter DATE_FORMATTER =
+            DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
     @Value("${rss.proxy-url5}")
     private String proxyUrl;
-    
+
     private final NotificationService discordService;
     private final Set<String> sentGuids = new HashSet<>();
-    
+
     public VideoGameNewsRss(
             @Qualifier("discordServiceImpl") NotificationService discordService,
             SubscriberService subscriberService) {
@@ -45,10 +50,10 @@ public class VideoGameNewsRss {
 
             feed.items().stream()
                     .filter(item -> item.pubDate() != null)
-                    .filter(item -> item.pubDate().isAfter(yesterdayLimit)) 
-                    .sorted(Comparator.comparing(RssItem::pubDate).reversed()) 
-                    .filter(item -> sentGuids.add(item.guid())) 
-                    .limit(5) 
+                    .filter(item -> item.pubDate().isAfter(yesterdayLimit))
+                    .sorted(Comparator.comparing(RssItem::pubDate).reversed())
+                    .filter(item -> sentGuids.add(item.guid()))
+                    .limit(5)
                     .forEach(item -> {
                         String message = formatMessage(item);
                         discordService.sendMessage(message);
@@ -74,13 +79,16 @@ public class VideoGameNewsRss {
                 #Gaming #InstantGaming
                 """,
                 item.title(),
-                item.pubDate() != null ? item.pubDate().toLocalDate() : "Desconocida",
+                item.pubDate() != null
+                        ? item.pubDate().format(DATE_FORMATTER)
+                        : "Desconocida",
                 item.description(),
                 item.link()
         );
     }
 
     public static class RssParser {
+
         public static RssFeed parse(String url) throws Exception {
             SyndFeed feed = new SyndFeedInput().build(new XmlReader(new URL(url)));
 
@@ -88,9 +96,12 @@ public class VideoGameNewsRss {
                     .map(entry -> new RssItem(
                             entry.getTitle(),
                             entry.getLink(),
-                            entry.getDescription() != null ? entry.getDescription().getValue() : "",
+                            entry.getDescription() != null
+                                    ? entry.getDescription().getValue() : "",
                             entry.getPublishedDate() != null
-                                    ? ZonedDateTime.ofInstant(entry.getPublishedDate().toInstant(), ZoneId.systemDefault())
+                                    ? ZonedDateTime.ofInstant(
+                                            entry.getPublishedDate().toInstant(),
+                                            ZoneId.systemDefault())
                                     : null,
                             entry.getUri()
                     ))
@@ -101,7 +112,9 @@ public class VideoGameNewsRss {
                     feed.getDescription(),
                     feed.getLink(),
                     feed.getPublishedDate() != null
-                            ? ZonedDateTime.ofInstant(feed.getPublishedDate().toInstant(), ZoneId.systemDefault())
+                            ? ZonedDateTime.ofInstant(
+                                    feed.getPublishedDate().toInstant(),
+                                    ZoneId.systemDefault())
                             : null,
                     items
             );
