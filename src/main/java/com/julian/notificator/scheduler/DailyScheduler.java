@@ -4,6 +4,7 @@ import java.time.DayOfWeek;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.EnumSet;
 import java.util.List;
 
 import org.springframework.context.ApplicationContext;
@@ -11,7 +12,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.julian.notificator.config.properties.DailySchedulerProperties;
+import com.julian.notificator.model.calendarofsaints.CalendarOfSaintsResponse;
 import com.julian.notificator.model.telegram.DestinationTelegramType;
+import com.julian.notificator.service.CalendarOfSaintsService;
 import com.julian.notificator.service.NotificationService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -20,8 +23,13 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class DailyScheduler {
 
+    private static final ZoneId MADRID_ZONE = ZoneId.of("Europe/Madrid");
+    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
+    private static final EnumSet<DayOfWeek> WEEKEND = EnumSet.of(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY);
+
     private final DailySchedulerProperties props;
     private final ApplicationContext context;
+    private final CalendarOfSaintsService calendarOfSaintsService;
 
     private static final List<String> PHRASES = List.of(
         "Hoy es un gran día para empezar algo nuevo.",
@@ -57,9 +65,13 @@ public class DailyScheduler {
         "Convierte este día en una victoria."
     );
 
-    public DailyScheduler(DailySchedulerProperties props, ApplicationContext context) {
+    public DailyScheduler(
+            DailySchedulerProperties props,
+            ApplicationContext context,
+            CalendarOfSaintsService calendarOfSaintsService) {
         this.props = props;
         this.context = context;
+        this.calendarOfSaintsService = calendarOfSaintsService;
     }
 
     @Scheduled(cron = "#{@dailyCron}", zone = "Europe/Madrid")
@@ -69,10 +81,10 @@ public class DailyScheduler {
             return;
         }
 
-        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Europe/Madrid"));
+        ZonedDateTime now = ZonedDateTime.now(MADRID_ZONE);
         DayOfWeek dayOfWeek = now.getDayOfWeek();
 
-        if (dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY) {
+        if (WEEKEND.contains(dayOfWeek)) {
             log.info("Fin de semana ({}), no se envía mensaje", dayOfWeek);
             return;
         }
@@ -80,19 +92,56 @@ public class DailyScheduler {
         NotificationService service =
                 context.getBean(props.getService(), NotificationService.class);
 
-        String hour = now.format(DateTimeFormatter.ofPattern("HH:mm"));
+        String hour = now.format(TIME_FORMATTER);
 
         int day = now.getDayOfMonth();
-        String phrase = PHRASES.get(day - 1);
+        int phraseIndex = Math.floorMod(day - 1, PHRASES.size());
+        String phrase = PHRASES.get(phraseIndex);
 
-        String finalMessage = String.format(
-                "%s son las %s, que tengas un feliz día 🙂%n%nMotivación del día: %s",
-                props.getMessage(), hour, phrase
+        StringBuilder message = new StringBuilder(
+                String.format(
+                        "%s son las %s, que tengas un feliz día 🙂%n%nMotivación del día: %s",
+                        props.getMessage(), hour, phrase
+                )
         );
+
+        // Consultar el santoral de España
+        try {
+            CalendarOfSaintsResponse saintsResponse = calendarOfSaintsService.getSaints();
+
+            if (saintsResponse != null
+                    && saintsResponse.success()
+                    && saintsResponse.saints() != null
+                    && !saintsResponse.saints().isBlank()) {
+
+                String saints = saintsResponse.saints().trim();
+                saints = stripTrailingPunctuation(saints);
+
+                message.append(String.format(
+                        "%n%nEl santoral de hoy es para: %s.",
+                        saints
+                ));
+            }
+
+        } catch (RuntimeException e) {
+            log.warn("No se ha podido consultar el santoral de hoy: {}", e.getMessage());
+        }
+
+        String finalMessage = message.toString();
 
         log.info("Enviando mensaje diario:\n{}", finalMessage);
 
         service.sendMessage(finalMessage, DestinationTelegramType.GROUPS);
+    }
+
+    private static String stripTrailingPunctuation(String value) {
+        int end = value.length();
+
+        while (end > 0 && (value.charAt(end - 1) == '.' || value.charAt(end - 1) == ',')) {
+            end--;
+        }
+
+        return value.substring(0, end);
     }
 
 }
